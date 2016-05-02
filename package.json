@@ -1,0 +1,31 @@
+{
+  "name": "api_automation",
+  "version": "1.0.0",
+  "main": "auto-require.js",
+  "dependencies": {
+    "chai": "3.5.0",
+    "chai-as-promised": "5.2.0",
+    "chai-fuzzy": "1.6.0",
+    "chai-things": "^0.2.0",
+    "mocha": "2.4.5",
+    "nock": "0.27.2",
+    "ramda": "^0.20.1",
+    "supertest": "1.1.0",
+    "when": "^3.7.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha test.js --timeout 10000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/altruisteec/backend-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/altruisteec/backend-api/issues"
+  },
+  "homepage": "https://github.com/altruisteec/backend-api#readme",
+  "description": ""
+}

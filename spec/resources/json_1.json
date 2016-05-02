@@ -1,0 +1,199 @@
+{
+	"title": "Announcement",
+	"uid": "announcement",
+	"inbuilt_class": true,
+	"schema": [{
+		"data_type": "group",
+		"display_name": "Announcements",
+		"uid": "announcements",
+		"field_metadata": {
+			"allow_rich_text": false,
+			"multiline": false
+		},
+		"unique": null,
+		"mandatory": false,
+		"multiple": true,
+		"schema": [{
+			"uid": "announcement",
+			"data_type": "group",
+			"display_name": "Announcement",
+			"field_metadata": {
+				"allow_rich_text": false,
+				"multiline": false
+			},
+			"unique": null,
+			"mandatory": false,
+			"multiple": true,
+			"schema": [{
+				"uid": "title",
+				"data_type": "text",
+				"display_name": "Title",
+				"max": null,
+				"min": null,
+				"format": "",
+				"field_metadata": {
+					"allow_rich_text": false,
+					"multiline": false
+				},
+				"unique": null,
+				"mandatory": false,
+				"multiple": false
+			}, {
+				"uid": "link",
+				"data_type": "text",
+				"display_name": "Link",
+				"max": null,
+				"min": null,
+				"format": "",
+				"field_metadata": {
+					"allow_rich_text": false,
+					"multiline": false
+				},
+				"unique": null,
+				"mandatory": false,
+				"multiple": false
+			}, {
+				"uid": "bg_color",
+				"data_type": "text",
+				"display_name": "Background Color",
+				"max": null,
+				"min": null,
+				"format": "",
+				"field_metadata": {
+					"allow_rich_text": false,
+					"multiline": false
+				},
+				"unique": null,
+				"mandatory": false,
+				"multiple": false
+			}, {
+				"uid": "title_color",
+				"data_type": "text",
+				"display_name": "Title Color",
+				"max": null,
+				"min": null,
+				"format": "",
+				"field_metadata": {
+					"allow_rich_text": false,
+					"multiline": false
+				},
+				"unique": null,
+				"mandatory": false,
+				"multiple": false
+			}, {
+				"uid": "bg_image_mobile",
+				"data_type": "file",
+				"display_name": "Background Image Mobile",
+				"field_metadata": {
+					"allow_rich_text": false,
+					"multiline": false
+				},
+				"unique": null,
+				"mandatory": false,
+				"multiple": false
+			}, {
+				"uid": "bg_image_tablet",
+				"data_type": "file",
+				"display_name": "Background Image Tablet",
+				"field_metadata": {
+					"allow_rich_text": false,
+					"multiline": false
+				},
+				"unique": null,
+				"mandatory": false,
+				"multiple": false
+			}, {
+				"uid": "background_image_web",
+				"data_type": "file",
+				"display_name": "Background Image Web",
+				"field_metadata": {
+					"allow_rich_text": false,
+					"multiline": false
+				},
+				"unique": null,
+				"mandatory": false,
+				"multiple": false
+			}, {
+				"uid": "logo",
+				"data_type": "file",
+				"display_name": "Logo",
+				"field_metadata": {
+					"allow_rich_text": false,
+					"multiline": false
+				},
+				"unique": null,
+				"mandatory": false,
+				"multiple": false
+			}, {
+				"uid": "start_at",
+				"data_type": "isodate",
+				"display_name": "Start At",
+				"field_metadata": {
+					"allow_rich_text": false,
+					"multiline": false
+				},
+				"unique": null,
+				"mandatory": false,
+				"multiple": false
+			}, {
+				"uid": "end_at",
+				"data_type": "isodate",
+				"display_name": "End At",
+				"field_metadata": {
+					"allow_rich_text": false,
+					"multiline": false
+				},
+				"unique": null,
+				"mandatory": false,
+				"multiple": false
+			}]
+		}, {
+			"data_type": "text",
+			"display_name": "Start At",
+			"uid": "start_at",
+			"field_metadata": {
+				"allow_rich_text": false,
+				"multiline": false
+			},
+			"unique": null,
+			"mandatory": false,
+			"multiple": false
+		}, {
+			"uid": "is_random",
+			"data_type": "boolean",
+			"display_name": "Random?",
+			"field_metadata": {
+				"allow_rich_text": false,
+				"multiline": false
+			},
+			"unique": null,
+			"mandatory": false,
+			"multiple": false
+		}]
+	}],
+	"last_activity": "2016-02-23T06:36:53.364Z",
+	"maintain_revisions": false,
+	"options": {
+		"inbuiltFields": {
+			"publish": false,
+			"location": false,
+			"tag": false
+		}
+	},
+	"abilities": {
+		"delete_all_objects": true,
+		"delete_object": true,
+		"update_object": true,
+		"create_object": true,
+		"get_all_objects": true,
+		"get_one_object": true
+	},
+	"DEFAULT_ACL": {
+		"others": {
+			"delete": false,
+			"update": true,
+			"read": true,
+			"create": true
+		}
+	}
+}
