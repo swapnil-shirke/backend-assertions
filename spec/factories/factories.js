@@ -1,24 +1,3 @@
-//---------------- create ui application 
-
-	// factories.addFactory('Create_App_UI', function(authtoken, api_key, data) {
-	// 	var app
-	// 	var sysRole1
-	// 	R.Promisify(factories.create('create_app', {
-	// 			"name": "Dev manager"
-	// 		})
-	// 		.then(function(res) {
-	// 			app = res.body.application
-	// 			return R.Promisify(factories.create('system_role'), res.body.api_key)
-	// 		})
-	// 		.then(function(sysRole) {
-	// 			sysRole1 = sysRole
-	// 			return R.Promisify(factories.create('system_role'), res.body.api_key)
-	// 		})
-	// 		.then(function() {
-
-	// 		})
-	// 	})
-
 
 //---------------- applications
 
@@ -346,10 +325,9 @@
 
 	factories.addFactory('get_all_objects', function(authtoken, api_key, classUid, body) {	
 		
-		body = body || {
-			"_method": "get"
-		}	
-		
+		body 						= body || {}	
+		body["_method"] = "GET"
+
 		return api.post(config.endpoints.classes + "/" + classUid + "/" + "objects")
 			.set('web_ui_api_key', config.web_ui_api_key)
 			.set('authtoken', authtoken)
@@ -370,6 +348,15 @@
 			.send(body)
 			.query(query)
 	})
+
+	factories.addFactory('delete_object', function(authtoken, api_key, classUid, objectId) {
+		
+		return api.delete(config.endpoints.classes + "/" + classUid + "/" + "objects" + "/" + objectId)
+			.set('web_ui_api_key', config.web_ui_api_key)
+			.set('authtoken', authtoken)
+			.set('application_api_key', api_key)
+	})
+
 
 	factories.addFactory('update_preserve_version', function(authtoken, api_key, classUid, objectId, body) {
 		
@@ -401,6 +388,23 @@
 			.send(body)
 	})
 
+	factories.addFactory('create_objects', function(count, authtoken, api_key, classUid, body){
+		
+		body = body || []
+
+		var promises = R.times(function(index){
+			return function(){
+				return R.Promisify(factories.create('Create_object', authtoken, api_key, classUid, {object:body[index]}))
+				.delay(100)
+				.then(function(res){
+					return res.body
+				})		
+			}
+		}, count)
+
+		return R.Promise.sequence(promises)
+	})
+
 
 
 	// factories.addFactory('update_object_multiple', function(count, authtoken, api_key, classUid, objectId, body){
@@ -424,24 +428,30 @@
 
 	// Abhijeet 
 
-	factories.addFactory('create_objects', function(count, authtoken, api_key, classUid, body){
-		var objectName = R.bltRandom(3)
-		var promises   = R.times(function(index){
-			return R.Promisify(factories.create('Create_object', authtoken, api_key, classUid, {
-					"object": {
-						"name": R.bltRandom(3),
-						"tags": [
-							"test"
-						]
-					}
-				}))
-			.then(function(res){
-				return res.body
-			})
-		}, count)
+	// factories.addFactory('create_objects', function(count, authtoken, api_key, classUid, body){
+	// 	var objectName = R.bltRandom(3)
+	// 	var promises   = R.times(function(index){
+	// 		return R.Promisify(factories.create('Create_object', authtoken, api_key, classUid, {
+	// 				"object": {
+	// 					"name": R.bltRandom(3),
+	// 					"tags": [
+	// 						"test"
+	// 					]
+	// 				}
+	// 			}))
+	// 		.then(function(res){
+	// 			return res.body
+	// 		})
+	// 	}, count)
 
-		return R.Promise.all(promises)
-	})
+	// 	return R.Promise.all(promises)
+	// })
+
+
+
+
+
+
 
 //---------------- (CMS) bulk sys acl
 	

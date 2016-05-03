@@ -59,7 +59,7 @@ describe('Application users registration ---', function() {
         done()
       })
       .catch(function(err) {
-        console.log(err.trace)
+        console.log(err)
       })
 
   })
