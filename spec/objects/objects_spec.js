@@ -307,6 +307,7 @@ describe('Testing objects', function() {
 
   	})
 
+  	
   	it('should get all objects using delta ALL query', function(done) {
 
   		var date = object3.created_at.substr(0, 19)
@@ -555,55 +556,82 @@ describe('Testing objects', function() {
 	});
 
 
-	describe.skip('Object uniquness', function() {
+	describe('Uniquness', function() {
 		
+		var user1, user2
+		var appUser1, appUser2
+		var tenant1
+
 		// create class and create mumtiple objects
   	before(function(done) {
-  		this.timeout(25000)
-  		R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
-				"class": {
-					"title": "supertest class3",
-					"uid": "supertest_class3",
-					"maintain_revisions": true,
-					"schema": [{
-						"multiple": false,
-						"mandatory": true,
-						"display_name": "Name",
-						"uid": "name",
-						"data_type": "text"
-					}],
-					"DEFAULT_ACL": {
-						"others": {
-							"create": true,
-							"read": true
-						}
-					}
-				}
-			}))
-			.then(function(res) {
-				myclass3 = res.body.class
-			})
-			.then(function(res) {
-				return R.Promisify(factories.create('Create_tenants', sys_user1.authtoken, app.api_key, {
+  		this.timeout(40000)
+  		R.Promisify(factories.create('Create_tenants', sys_user1.authtoken, app.api_key, {
 					"tenant": {
 						"uid": "india",
 						"name": "india",
 						"description": "india tenant is created by supertest"
 					}
 				}))
+			.then(function(res) {
+				tenant1 = res.body.tenant
 			})
 			.then(function(res) {
-				tenant = res.body.tenant
-			})
-			.then(function(res) {
-				return R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, myclass3.uid, {
-					"object": {
-						"name": "one"
+				return R.Promisify(factories.create('Create_tenants', sys_user1.authtoken, app.api_key, {
+					"tenant": {
+						"uid": "usa",
+						"name": "usa",
+						"description": "usa tenant is created by supertest"
 					}
 				}))
 			})
 			.then(function(res) {
-				object1 = res.body.object
+				tenant2 = res.body.tenant
+			})
+			.then(function(res) {
+				return factories.create('create_objects', 2, sys_user1.authtoken, app.api_key, 'built_io_application_user', [{
+					"published": true,
+					"active": true,
+					"username": "userOne",
+					"email": "userOne@mailinator.com",
+					"password": "raw123",
+					"password_confirmation": "raw123"
+				},{
+					"published": true,
+					"active": true,
+					"username": "userTwo",
+					"email": "userTwo@mailinator.com",
+					"password": "raw123",
+					"password_confirmation": "raw123"
+				}], tenant1.uid)
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, 'built_io_application_user', '', tenant1.uid))
+			})
+			.then(function(res) {
+				user1 = res.body.objects[0]
+				user2 = res.body.objects[1]
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('login_app_user', app.api_key, {
+				  "application_user": {
+				    "email": user1.email,
+				    "password": "raw123"
+				  }
+				}, tenant1.uid))
+			})
+			.then(function(res) {
+				appUser1 = res.body.application_user
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('login_app_user', app.api_key, {
+				  "application_user": {
+				    "email": user2.email,
+				    "password": "raw123"
+				  }
+				}, tenant1.uid))
+			})
+			.then(function(res) {
+				appUser2 = res.body.application_user
 			})
 			.then(function(res) {
 				done()
@@ -614,9 +642,675 @@ describe('Testing objects', function() {
 
   	})		
 
+  	describe.only('Localy unique', function() {
+			
+			var classLocal
+
+			before(function(done) {
+				this.timeout(20000)
+				R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+					"class": {
+						"uid": "myclass",
+						"title": "myclass",
+						"schema": [{
+							"uid": "uniquness",
+							"data_type": "text",
+							"display_name": "uniquness",
+							"mandatory": false,
+							"max": 6,
+							"min": 2,
+							"multiple": false,
+							"format": "",
+							"unique": "local",
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							}
+						}]
+					}
+				}))
+				.then(function(res) {
+					classLocal = res.body.class
+				})
+				.then(function(res) {
+					done()
+	      })
+	      .catch(function(err) {
+	        console.log(err)
+	      })
+			
+			})
+
+
+			it('should have only localy unique objects as per system user', function(done) {
+				this.timeout(20000)
+				
+  			R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, classLocal.uid, {
+					"object": {
+						"uniquness": "test"
+					}
+				}))
+				.then(function(res) {
+					// console.log(res.body)
+					return R.Promisify(factories.create('Create_object', sys_user2.authtoken, app.api_key, classLocal.uid, {
+						"object": {
+							"uniquness": "test"
+						}
+					}))
+				})
+				.then(function(res) {
+					// console.log(res.body)
+					res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
+					res.body.error_code.should.be.equal(119)
+					res.body.errors.should.be.deep.equal([ { uniquness: 'is not unique' } ])
+				})
+				.then(function(res) {
+					done()
+	      })
+	      .catch(function(err) {
+	        console.log(err)
+	      })
+  		
+
+  		});
+
+			
+			it('should have only localy unique objects as per application user', function(done) {
+				this.timeout(20000)
+  			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classLocal.uid, {
+					"object": {
+						"uniquness": "test1"
+					}
+				}))
+				.then(function(res) {
+					res.body.notice.should.equal('Woot! Object created successfully.')
+				})
+				.then(function(res) {
+					// console.log(res.body)
+					return R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classLocal.uid, {
+						"object": {
+							"uniquness": "test1"
+						}
+					}))
+				})
+				.then(function(res) {
+					res.body.notice.should.equal('Woot! Object created successfully.')
+				})
+				.then(function(res) {
+					// console.log(res.body)
+					return R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classLocal.uid, {
+						"object": {
+							"uniquness": "test1"
+						}
+					}))
+				})
+				.then(function(res) {
+					// console.log(res.body)
+					res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
+					res.body.error_code.should.be.equal(119)
+					res.body.errors.should.be.deep.equal([ { uniquness: 'is not unique' } ])
+				})
+				.then(function(res) {
+					done()
+	      })
+	      .catch(function(err) {
+	        console.log(err)
+	      })
+  		
+
+  		});
+
+			it.only('should have only localy unique objects as per application user and system user', function(done) {
+				this.timeout(50000)
+				console.log("===1")
+  			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classLocal.uid, tenant1.uid, {
+					"object": {
+						"uniquness": "test1"
+					}
+				}))
+				.then(function(res) {
+					console.log("===a")
+					res.body.notice.should.equal('Woot! Object created successfully.')
+				})
+				.then(function(res) {
+					console.log("===2")
+					return R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classLocal.uid, tenant1.uid, {
+						"object": {
+							"uniquness": "test1"
+						}
+					}))
+				})
+				.then(function(res) {
+					res.body.notice.should.equal('Woot! Object created successfully.')
+				})
+				.then(function(res) {
+					console.log("===3")
+					return R.Promisify(factories.create('Create_object', sys_user2.authtoken, app.api_key, classLocal.uid, {
+						"object": {
+							"uniquness": "test1"
+						}
+					}))
+				})
+				.then(function(res) {
+					res.body.notice.should.equal('Woot! Object created successfully.')
+				})
+				.then(function(res) {
+					console.log("===4")
+					return R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, classLocal.uid, {
+						"object": {
+							"uniquness": "test1"
+						}
+					}))
+				})
+				.then(function(res) {
+					console.log("===5")
+					// res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
+					// res.body.error_code.should.be.equal(119)
+					// res.body.errors.should.be.deep.equal([ { uniquness: 'is not unique' } ])
+				})
+				.then(function(res) {
+					done()
+	      })
+	      .catch(function(err) {
+	        console.log(err.trace)
+	      })
+  		
+
+  		});
+
+  		it.skip('should have only localy unique objects as per application user in tenant', function(done) {
+				this.timeout(20000)
+  			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classLocal.uid, {
+					"object": {
+						"uniquness": "test1"
+					}
+				}))
+				.then(function(res) {
+					res.body.notice.should.equal('Woot! Object created successfully.')
+				})
+				.then(function(res) {
+					// console.log(res.body)
+					return R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classLocal.uid, {
+						"object": {
+							"uniquness": "test1"
+						}
+					}))
+				})
+				.then(function(res) {
+					res.body.notice.should.equal('Woot! Object created successfully.')
+				})
+				.then(function(res) {
+					// console.log(res.body)
+					return R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classLocal.uid, {
+						"object": {
+							"uniquness": "test1"
+						}
+					}))
+				})
+				.then(function(res) {
+					// console.log(res.body)
+					res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
+					res.body.error_code.should.be.equal(119)
+					res.body.errors.should.be.deep.equal([ { uniquness: 'is not unique' } ])
+				})
+				.then(function(res) {
+					done()
+	      })
+	      .catch(function(err) {
+	        console.log(err)
+	      })
+  		
+
+  		});
+
+
+  	});
+
+
+  	describe('Global unique', function() {
+			
+			var classGlobal
+
+			before(function(done) {
+				this.timeout(20000)
+				R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+					"class": {
+						"uid": "myclass1",
+						"title": "myclass1",
+						"schema": [{
+							"uid": "name",
+							"data_type": "text",
+							"display_name": "name",
+							"mandatory": false,
+							"max": 7,
+							"min": 2,
+							"multiple": false,
+							"format": "",
+							"unique": "global",
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							}
+						}]
+					}
+				}))
+				.then(function(res) {
+					classGlobal = res.body.class
+				})
+				.then(function(res) {
+					done()
+	      })
+	      .catch(function(err) {
+	        console.log(err)
+	      })
+			
+			})
+
+
+			it('should have only globaly unique objects per user', function(done) {
+				this.timeout(35000)
+  			R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, classGlobal.uid, {
+					"object": {
+						"name": "batman"
+					}
+				}))
+				.then(function(res) {
+					return R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classGlobal.uid, {
+						"object": {
+							"name": "batman"
+						}
+					}))
+				})
+				.then(function(res) {
+					console.log(res.body)
+					res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
+					res.body.error_code.should.be.equal(119)
+					res.body.errors.should.be.deep.equal([ { name: 'is not unique' } ])
+				})
+				.then(function(res) {
+					done()
+	      })
+	      .catch(function(err) {
+	        console.log(err)
+	      })
+  		
+
+
+  		});
+
+
+  	});
+
+  		
+
+
 	});
 
+	
+	describe('System class group fields', function() {
+		
+		var userObj
 
+		before(function(done) {
+			R.Promisify(factories.create('Update_class', sys_user1.authtoken, app.api_key, 'built_io_application_user', {
+				"class": {
+					"schema": [{
+						"uid": "group1",
+						"data_type": "group",
+						"display_name": "group1",
+						"mandatory": true,
+						"max": null,
+						"min": null,
+						"multiple": false,
+						"format": "",
+						"unique": null,
+						"action": "add",
+						"field_metadata": {
+							"allow_rich_text": false,
+							"multiline": false
+						},
+						"schema": [{
+							"uid": "g1_field1",
+							"data_type": "text",
+							"display_name": "g1_field1",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"format": "",
+							"unique": null,
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							}
+						}, {
+							"uid": "g1_field2",
+							"data_type": "number",
+							"display_name": "g1_field2",
+							"mandatory": true,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"format": "",
+							"unique": null,
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							}
+						}, {
+							"uid": "g1_group1",
+							"data_type": "group",
+							"display_name": "g1_group1",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"format": "",
+							"unique": null,
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							},
+							"schema": [{
+								"uid": "g1_g1_field1",
+								"data_type": "text",
+								"display_name": "g1_g1_field1",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": false,
+								"format": "",
+								"unique": null,
+								"action": "add",
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": true
+								}
+							}, {
+								"uid": "g1_g1_group1",
+								"data_type": "group",
+								"display_name": "g1_g1_group1",
+								"mandatory": true,
+								"max": null,
+								"min": null,
+								"multiple": false,
+								"format": "",
+								"unique": null,
+								"action": "add",
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								},
+								"schema": [{
+									"uid": "g1_g1_g1_field1",
+									"data_type": "mixed",
+									"display_name": "g1_g1_g1_field1",
+									"mandatory": true,
+									"max": null,
+									"min": null,
+									"multiple": false,
+									"format": "",
+									"unique": "local",
+									"action": "add",
+									"field_metadata": {
+										"allow_rich_text": false,
+										"multiline": false
+									}
+								}]
+							}]
+						}, {
+							"uid": "g1_group2",
+							"data_type": "group",
+							"display_name": "g1_group2",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": true,
+							"format": "",
+							"unique": null,
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							},
+							"schema": [{
+								"uid": "g1_g2_field1",
+								"data_type": "number",
+								"display_name": "g1_g2_field1",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": true,
+								"format": "",
+								"unique": null,
+								"action": "add",
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								}
+							}, {
+								"uid": "g1_g2_group1",
+								"data_type": "group",
+								"display_name": "g1_g2_group1",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": false,
+								"format": "",
+								"unique": null,
+								"action": "add",
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								},
+								"schema": [{
+									"uid": "g1_g2_field1",
+									"data_type": "text",
+									"display_name": "g1_g2_field1",
+									"mandatory": true,
+									"max": 5,
+									"min": 2,
+									"multiple": true,
+									"format": "",
+									"unique": null,
+									"action": "add",
+									"field_metadata": {
+										"allow_rich_text": true,
+										"multiline": true
+									}
+								}]
+							}]
+						}]
+					}]
+				}
+			}))
+			.then(function(res) {
+				return R.Promisify(factories.create('create_app_user_object', sys_user1.authtoken, app.api_key, {
+					"object": {
+						"published": true,
+						"active": true,
+						"group1": {
+							"g1_field1": "group 1 field 1",
+							"g1_field2": "100",
+							"g1_group1": {
+								"g1_g1_field1": "group 1 group 1 field1",
+								"g1_g1_group1": {
+									"g1_g1_g1_field1": "group 1 group 1 group 1 field1"
+								}
+							},
+							"g1_group2": [{
+								"g1_g2_field1": ["100", "100"],
+								"g1_g2_group1": {
+									"g1_g2_field1": ["abcde"]
+								}
+							}]
+						},
+						"username": "testuser",
+						"email": "testuser@mailinator.com",
+						"password": "raw123",
+						"password_confirmation": "raw123",
+						"device_type": "ios"
+					}
+				}))
+			})
+			.then(function(res) {
+				userObj = res.body.object
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+
+		})	
+
+
+		it('should get application user object and check group field', function(done) {
+			R.Promisify(factories.create('get_app_user_objects', sys_user1.authtoken, app.api_key))
+			.then(function(res) {
+				object = res.body.objects[0]
+				
+				// R.pretty(res.body)
+				
+				// key assertion 
+				Object.keys(object).should.to.be.deep.equal(['published','group1','username','email','device_type','app_user_object_uid','created_by','updated_by','created_at','updated_at','uid','active','ACL','__loc','_version','tags'])
+				Object.keys(object.group1).should.to.be.deep.equal(['g1_field1','g1_field2','g1_group1','g1_group2'])
+				Object.keys(object.group1.g1_group1).should.to.be.deep.equal(['g1_g1_field1','g1_g1_group1'])
+				Object.keys(object.group1.g1_group1.g1_g1_group1).should.to.be.deep.equal(['g1_g1_g1_field1'])
+				Object.keys(object.group1.g1_group2[0]).should.to.be.deep.equal(['g1_g2_field1','g1_g2_group1'])
+				Object.keys(object.group1.g1_group2[0].g1_g2_group1).should.to.be.deep.equal(['g1_g2_field1'])
+
+				// value assertion
+				object.published.should.be.equal(true)
+				object.group1.should.be.deep.equal({
+	        "g1_field1": "group 1 field 1",
+	        "g1_field2": 100,
+	        "g1_group1": {
+	          "g1_g1_field1": "group 1 group 1 field1",
+	          "g1_g1_group1": {
+	            "g1_g1_g1_field1": "group 1 group 1 group 1 field1"
+	          }
+	        },
+	        "g1_group2": [
+	          {
+	            "g1_g2_field1": [
+	              100,
+	              100
+	            ],
+	            "g1_g2_group1": {
+	              "g1_g2_field1": [
+	                "abcde"
+	              ]
+	            }
+	          }
+	        ]
+	      })
+				object.username.should.be.equal(userObj.username)
+				object.email.should.be.equal(userObj.email)
+				object.device_type.should.be.equal('ios')
+				object.app_user_object_uid.should.be.equal('system')
+				object.created_by.should.be.equal(object.updated_by)
+				
+				object.created_at.should.be.equal(object.updated_at)
+				
+				object.uid.should.be.equal(userObj.uid)
+				object.active.should.be.equal(true)
+				object.ACL.should.be.deep.equal({})
+				object._version.should.be.equal(1)
+				object.tags.should.be.deep.equal([])
+
+				should.not.exist(object.__loc)
+
+			})
+			.then(function(res) {
+				done()
+			})
+		
+		});
+	
+		it('should update application user objects group fields ', function(done) {
+			R.Promisify(factories.create('update_object_app_user', sys_user1.authtoken, app.api_key, userObj.uid, {
+				"object": {
+					"group1": {
+						"g1_field1": "updated group 1 field 1",
+						"g1_field2": "900",
+						"g1_group1": {
+							"g1_g1_field1": "updated group 1 group 1 field1",
+							"g1_g1_group1": {
+								"g1_g1_g1_field1": "updated group 1 group 1 group 1 field1"
+							}
+						},
+						"g1_group2": [{
+							"g1_g2_field1": ["900", "900", "900"],
+							"g1_g2_group1": {
+								"g1_g2_field1": ["zxcvb"]
+							}
+						}]
+					}
+				}
+			}))
+			.then(function(res) {
+				object = res.body.object
+				// R.pretty(res.body)
+				
+				// key assertion 
+				Object.keys(object).should.to.be.deep.equal(['published','group1','username','email','device_type','app_user_object_uid','created_by','updated_by','created_at','updated_at','uid','active','ACL','__loc','_version','tags'])
+				Object.keys(object.group1).should.to.be.deep.equal(['g1_field1','g1_field2','g1_group2','g1_group1'])
+				Object.keys(object.group1.g1_group1).should.to.be.deep.equal(['g1_g1_field1','g1_g1_group1'])
+				Object.keys(object.group1.g1_group1.g1_g1_group1).should.to.be.deep.equal(['g1_g1_g1_field1'])
+				Object.keys(object.group1.g1_group2[0]).should.to.be.deep.equal(['g1_g2_field1','g1_g2_group1'])
+				Object.keys(object.group1.g1_group2[0].g1_g2_group1).should.to.be.deep.equal(['g1_g2_field1'])
+
+				// value assertion
+				object.published.should.be.equal(true)
+				object.group1.should.be.deep.equal({
+					"g1_field1": "updated group 1 field 1",
+					"g1_field2": 900,
+					"g1_group1": {
+						"g1_g1_field1": "updated group 1 group 1 field1",
+						"g1_g1_group1": {
+							"g1_g1_g1_field1": "updated group 1 group 1 group 1 field1"
+						}
+					},
+					"g1_group2": [{
+						"g1_g2_field1": [900, 900, 900],
+						"g1_g2_group1": {
+							"g1_g2_field1": ["zxcvb"]
+						}
+					}]
+				})
+				object.username.should.be.equal(userObj.username)
+				object.email.should.be.equal(userObj.email)
+				object.device_type.should.be.equal('ios')
+				object.app_user_object_uid.should.be.equal('system')
+				object.created_by.should.be.equal(object.updated_by)
+				
+				object.created_at.should.be.not.equal(object.updated_at)
+				
+				object.uid.should.be.equal(userObj.uid)
+				object.active.should.be.equal(true)
+				object.ACL.should.be.deep.equal({})
+				object._version.should.be.equal(2)
+				object.tags.should.be.deep.equal([])
+
+				should.not.exist(object.__loc)
+				
+			})
+			.then(function(res) {
+				done()
+			})
+			
+		
+		});
+
+
+	});
 
 
 	

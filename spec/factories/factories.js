@@ -162,7 +162,6 @@
 
 //---------------- system roles
 
-
 	factories.addFactory('Create_system_role', function(authtoken, api_key, data) {
 		data = data || {
 			name: 'custom_role'
@@ -296,13 +295,19 @@
 
 //---------------- objects
 
-	factories.addFactory('Create_object', function(authtoken, api_key, classUid, body) {
+	factories.addFactory('Create_object', function(authtoken, api_key, classUid, body, tenant_uid) {
+		body = body || {}
 
-		return api.post(config.endpoints.classes + "/" + classUid + "/" + "objects")
+		var call = api.post(config.endpoints.classes + "/" + classUid + "/" + "objects")
 			.set('web_ui_api_key', config.web_ui_api_key)
 			.set('authtoken', authtoken)
 			.set('application_api_key', api_key)
 			.send(body)
+
+			if(tenant_uid)
+				call.set('tenant_uid', tenant_uid)
+
+		return call
 	})
 
 	factories.addFactory('get_object', function(authtoken, api_key, classUid, objectId, body) {	
@@ -323,16 +328,21 @@
 			.query(body)
 	})
 
-	factories.addFactory('get_all_objects', function(authtoken, api_key, classUid, body) {	
+	factories.addFactory('get_all_objects', function(authtoken, api_key, classUid, body, tenant_uid) {	
 		
 		body 						= body || {}	
 		body["_method"] = "GET"
 
-		return api.post(config.endpoints.classes + "/" + classUid + "/" + "objects")
+		var call = api.post(config.endpoints.classes + "/" + classUid + "/" + "objects")
 			.set('web_ui_api_key', config.web_ui_api_key)
 			.set('authtoken', authtoken)
 			.set('application_api_key', api_key)
 			.query(body)
+
+			if(tenant_uid)
+				call.set('tenant_uid', tenant_uid)
+
+		return call 
 	})
 
 
@@ -349,6 +359,7 @@
 			.query(query)
 	})
 
+	
 	factories.addFactory('delete_object', function(authtoken, api_key, classUid, objectId) {
 		
 		return api.delete(config.endpoints.classes + "/" + classUid + "/" + "objects" + "/" + objectId)
@@ -368,6 +379,7 @@
 			.send(body)
 	})
 
+	
 	factories.addFactory('object_revert', function(authtoken, api_key, classUid, objectUid, tenant_uid, body) {
 
 		return api.post(config.endpoints.classes + "/" + classUid + "/" + "objects/" + objectUid + "/revert")
@@ -388,13 +400,14 @@
 			.send(body)
 	})
 
-	factories.addFactory('create_objects', function(count, authtoken, api_key, classUid, body){
+	
+	factories.addFactory('create_objects', function(count, authtoken, api_key, classUid, body, tenant_uid){
 		
 		body = body || []
 
 		var promises = R.times(function(index){
 			return function(){
-				return R.Promisify(factories.create('Create_object', authtoken, api_key, classUid, {object:body[index]}))
+				return R.Promisify(factories.create('Create_object', authtoken, api_key, classUid, {object:body[index]}, tenant_uid))
 				.delay(100)
 				.then(function(res){
 					return res.body
@@ -786,13 +799,19 @@
 			.send(body)
 	}) 
 
-	factories.addFactory('login_app_user', function(api_key, body) {
+	factories.addFactory('login_app_user', function(api_key, body, tenant_uid) {
 		
 		body = body || { }
 				
-		return api.post(config.endpoints.appUser_login)
+		var call = api.post(config.endpoints.appUser_login)
 			.set('application_api_key', api_key)
 			.send(body)
+
+			if(tenant_uid)
+				call.set('tenant_uid', tenant_uid)
+
+		return call	
+
 	})
 
 	factories.addFactory('logout_app_user', function(authtoken, api_key) {
@@ -811,7 +830,6 @@
 			.set('authtoken', authtoken)
 	}) 
 
-	
 
 	factories.addFactory('update_register_app_user', function(authtoken, api_key, appuserUid, body) {
 		
@@ -824,6 +842,7 @@
 			.expect(200)
 	})
 	
+
 	factories.addFactory('delete_register_app_user', function(authtoken, api_key, appuserUid) {
 		
 		return api.delete(config.endpoints.app_user_object + "/" + appuserUid)
@@ -832,6 +851,7 @@
 			.expect(200)
 	})
 
+
 	factories.addFactory('get_current_app_user', function(authtoken, api_key) {
 
 		return api.get(config.endpoints.applicationUser + "/current")
@@ -839,6 +859,7 @@
 			.set('authtoken', authtoken)
 			.expect(200)
 	})
+
 
 	factories.addFactory('app_user_retrieve_user_uid', function(api_key, body) {
 
@@ -849,6 +870,7 @@
 			.send(body)
 			.expect(200)
 	})
+
 
 	factories.addFactory('app_user_token', function(master_key, api_key, appuserUid) {
 		
@@ -866,6 +888,7 @@
 			.expect(200)
 	})
 
+	
 	factories.addFactory('req_forgot_password', function(api_key, body) {
 	
 		body = body || { }
@@ -887,6 +910,7 @@
 			.expect(200)
 	})
 
+	
 	factories.addFactory('validate_token_app_user', function(api_key, query) {
 	
 		query    = query || {}
