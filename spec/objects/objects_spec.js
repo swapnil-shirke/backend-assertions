@@ -1,4 +1,4 @@
-describe('Testing objects', function() {
+describe.only('Testing objects', function() {
 	
 	// var myclass, myclass1
 	var sys_user1, sys_user2
@@ -558,18 +558,19 @@ describe('Testing objects', function() {
 
 	describe('Uniquness', function() {
 		
-		var user1, user2
-		var appUser1, appUser2
-		var tenant1
+		var user1, user2, user3, user4, user5, user6
+		var appUser1, appUser2, appUser3, appUser4, appUser5, appUser6
+		var tenant1, tenant2
+		var classLocal, classGlobal, classUnique
 
 		// create class and create mumtiple objects
   	before(function(done) {
-  		this.timeout(40000)
+  		this.timeout(60000)
   		R.Promisify(factories.create('Create_tenants', sys_user1.authtoken, app.api_key, {
 					"tenant": {
-						"uid": "india",
-						"name": "india",
-						"description": "india tenant is created by supertest"
+						"uid": "mumbai",
+						"name": "mumbai",
+						"description": "mumbai tenant is created by supertest"
 					}
 				}))
 			.then(function(res) {
@@ -605,11 +606,35 @@ describe('Testing objects', function() {
 				}], tenant1.uid)
 			})
 			.then(function(res) {
+				return factories.create('create_objects', 2, sys_user1.authtoken, app.api_key, 'built_io_application_user', [{
+					"published": true,
+					"active": true,
+					"username": "userThree",
+					"email": "userThree@mailinator.com",
+					"password": "raw123",
+					"password_confirmation": "raw123"
+				},{
+					"published": true,
+					"active": true,
+					"username": "userFour",
+					"email": "userFour@mailinator.com",
+					"password": "raw123",
+					"password_confirmation": "raw123"
+				}], tenant2.uid)
+			})
+			.then(function(res) {
 				return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, 'built_io_application_user', '', tenant1.uid))
 			})
 			.then(function(res) {
 				user1 = res.body.objects[0]
 				user2 = res.body.objects[1]
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, 'built_io_application_user', '', tenant2.uid))
+			})
+			.then(function(res) {
+				user3 = res.body.objects[0]
+				user4 = res.body.objects[1]
 			})
 			.then(function(res) {
 				return R.Promisify(factories.create('login_app_user', app.api_key, {
@@ -634,6 +659,74 @@ describe('Testing objects', function() {
 				appUser2 = res.body.application_user
 			})
 			.then(function(res) {
+				return R.Promisify(factories.create('login_app_user', app.api_key, {
+				  "application_user": {
+				    "email": user3.email,
+				    "password": "raw123"
+				  }
+				}, tenant2.uid))
+			})
+			.then(function(res) {
+				appUser3 = res.body.application_user
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('login_app_user', app.api_key, {
+				  "application_user": {
+				    "email": user4.email,
+				    "password": "raw123"
+				  }
+				}, tenant2.uid))
+			})
+			.then(function(res) {
+				appUser4 = res.body.application_user
+			})
+			.then(function(res) {
+				return factories.create('create_objects', 2, sys_user1.authtoken, app.api_key, 'built_io_application_user', [{
+					"published": true,
+					"active": true,
+					"username": "userFive",
+					"email": "userFive@mailinator.com",
+					"password": "raw123",
+					"password_confirmation": "raw123"
+				},{
+					"published": true,
+					"active": true,
+					"username": "userSix",
+					"email": "userSix@mailinator.com",
+					"password": "raw123",
+					"password_confirmation": "raw123"
+				}])
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, 'built_io_application_user', ''))
+			})
+			.then(function(res) {
+				user5 = res.body.objects[0]
+				user6 = res.body.objects[1]
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('login_app_user', app.api_key, {
+				  "application_user": {
+				    "email": user5.email,
+				    "password": "raw123"
+				  }
+				}))
+			})
+			.then(function(res) {
+				appUser5 = res.body.application_user
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('login_app_user', app.api_key, {
+				  "application_user": {
+				    "email": user6.email,
+				    "password": "raw123"
+				  }
+				}))
+			})
+			.then(function(res) {
+				appUser6 = res.body.application_user
+			})
+			.then(function(res) {
 				done()
       })
       .catch(function(err) {
@@ -642,9 +735,9 @@ describe('Testing objects', function() {
 
   	})		
 
-  	describe.only('Localy unique', function() {
+  	describe('Localy unique', function() {
 			
-			var classLocal
+			// var classLocal
 
 			before(function(done) {
 				this.timeout(20000)
@@ -683,7 +776,7 @@ describe('Testing objects', function() {
 			})
 
 
-			it('should have only localy unique objects as per system user', function(done) {
+			it('should have only localy unique objects per system user', function(done) {
 				this.timeout(20000)
 				
   			R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, classLocal.uid, {
@@ -716,13 +809,13 @@ describe('Testing objects', function() {
   		});
 
 			
-			it('should have only localy unique objects as per application user', function(done) {
-				this.timeout(20000)
+			it('should have only localy unique objects per application user(tenant)', function(done) {
+				this.timeout(35000)
   			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classLocal.uid, {
 					"object": {
 						"uniquness": "test1"
 					}
-				}))
+				}, tenant1.uid))
 				.then(function(res) {
 					res.body.notice.should.equal('Woot! Object created successfully.')
 				})
@@ -732,7 +825,7 @@ describe('Testing objects', function() {
 						"object": {
 							"uniquness": "test1"
 						}
-					}))
+					}, tenant1.uid))
 				})
 				.then(function(res) {
 					res.body.notice.should.equal('Woot! Object created successfully.')
@@ -743,10 +836,9 @@ describe('Testing objects', function() {
 						"object": {
 							"uniquness": "test1"
 						}
-					}))
+					}, tenant1.uid))
 				})
 				.then(function(res) {
-					// console.log(res.body)
 					res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
 					res.body.error_code.should.be.equal(119)
 					res.body.errors.should.be.deep.equal([ { uniquness: 'is not unique' } ])
@@ -761,31 +853,40 @@ describe('Testing objects', function() {
 
   		});
 
-			it.only('should have only localy unique objects as per application user and system user', function(done) {
-				this.timeout(50000)
-				console.log("===1")
-  			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classLocal.uid, tenant1.uid, {
+			
+			it('should have only localy unique objects as per application user and system user', function(done) {
+				this.timeout(35000)
+  			R.Promisify(factories.create('Create_object', '', app.api_key, classLocal.uid, {
 					"object": {
 						"uniquness": "test1"
 					}
 				}))
 				.then(function(res) {
-					console.log("===a")
 					res.body.notice.should.equal('Woot! Object created successfully.')
 				})
 				.then(function(res) {
-					console.log("===2")
-					return R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classLocal.uid, tenant1.uid, {
-						"object": {
-							"uniquness": "test1"
-						}
-					}))
-				})
+				 	return R.Promisify(factories.create('Create_object', '', app.api_key, classLocal.uid, {
+				 		"object": {
+				 			"uniquness": "test1"
+				 		}
+				 	}))
+				 })
+				 .then(function(res) {
+				 	res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
+					res.body.error_code.should.be.equal(119)
+					res.body.errors.should.be.deep.equal([ { uniquness: 'is not unique' } ])
+				 })
+				 .then(function(res) {
+				 	return R.Promisify(factories.create('Create_object', appUser3.authtoken, app.api_key, classLocal.uid, {
+				 		"object": {
+				 			"uniquness": "test1"
+				 		}
+				 	}, tenant2.uid))
+				 })
+				 .then(function(res) {
+				 	 res.body.notice.should.equal('Woot! Object created successfully.')
+				 })
 				.then(function(res) {
-					res.body.notice.should.equal('Woot! Object created successfully.')
-				})
-				.then(function(res) {
-					console.log("===3")
 					return R.Promisify(factories.create('Create_object', sys_user2.authtoken, app.api_key, classLocal.uid, {
 						"object": {
 							"uniquness": "test1"
@@ -796,7 +897,6 @@ describe('Testing objects', function() {
 					res.body.notice.should.equal('Woot! Object created successfully.')
 				})
 				.then(function(res) {
-					console.log("===4")
 					return R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, classLocal.uid, {
 						"object": {
 							"uniquness": "test1"
@@ -804,22 +904,22 @@ describe('Testing objects', function() {
 					}))
 				})
 				.then(function(res) {
-					console.log("===5")
-					// res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
-					// res.body.error_code.should.be.equal(119)
-					// res.body.errors.should.be.deep.equal([ { uniquness: 'is not unique' } ])
+					res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
+					res.body.error_code.should.be.equal(119)
+					res.body.errors.should.be.deep.equal([ { uniquness: 'is not unique' } ])
 				})
 				.then(function(res) {
 					done()
 	      })
 	      .catch(function(err) {
-	        console.log(err.trace)
+	        console.log(err)
 	      })
   		
 
   		});
 
-  		it.skip('should have only localy unique objects as per application user in tenant', function(done) {
+  		
+  		it('should have only localy unique objects as per application user in tenant', function(done) {
 				this.timeout(20000)
   			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classLocal.uid, {
 					"object": {
@@ -870,7 +970,7 @@ describe('Testing objects', function() {
 
   	describe('Global unique', function() {
 			
-			var classGlobal
+			// var classGlobal
 
 			before(function(done) {
 				this.timeout(20000)
@@ -917,14 +1017,35 @@ describe('Testing objects', function() {
 					}
 				}))
 				.then(function(res) {
-					return R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classGlobal.uid, {
+					return R.Promisify(factories.create('Create_object', '', app.api_key, classGlobal.uid, {
 						"object": {
 							"name": "batman"
 						}
 					}))
 				})
 				.then(function(res) {
-					console.log(res.body)
+					res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
+					res.body.error_code.should.be.equal(119)
+					res.body.errors.should.be.deep.equal([ { name: 'is not unique' } ])
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classGlobal.uid, {
+						"object": {
+							"name": "batman"
+						}
+					}, tenant1.uid))
+				})
+				.then(function(res) {
+					res.body.notice.should.equal('Woot! Object created successfully.')
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classGlobal.uid, {
+						"object": {
+							"name": "batman"
+						}
+					}, tenant1.uid))
+				})
+				.then(function(res) {
 					res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
 					res.body.error_code.should.be.equal(119)
 					res.body.errors.should.be.deep.equal([ { name: 'is not unique' } ])
@@ -935,15 +1056,432 @@ describe('Testing objects', function() {
 	      .catch(function(err) {
 	        console.log(err)
 	      })
-  		
-
 
   		});
 
 
   	});
 
-  		
+
+  	describe('Change uniquness', function() {
+
+  
+			it('should not be able to uniquness change local to global on class', function(done) {
+				
+				R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+					"class": {
+						"uid": "uniqueclass",
+						"title": "uniqueclass",
+						"schema": [{
+							"uid": "name",
+							"data_type": "text",
+							"display_name": "name",
+							"mandatory": false,
+							"max": 7,
+							"min": 2,
+							"multiple": false,
+							"format": "",
+							"unique": "global",
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							}
+						}]
+					}
+				}))
+				.then(function(res) {
+				 classUnique = res.body.class
+				 classUnique.schema[0].unique.should.be.equal('global')
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('Update_class', sys_user1.authtoken, app.api_key, classUnique.uid, {
+						"class": {
+							"schema": [{
+								"uid": "name",
+								"data_type": "text",
+								"display_name": "name",
+								"mandatory": false,
+								"max": 7,
+								"min": 2,
+								"multiple": false,
+								"format": "",
+								"unique": "local",
+								"action": "add",
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								}
+							}]
+						}
+					}))
+				})
+				.then(function(res) {
+					res.body.notice.should.be.equal('Woot! Class updated successfully!')
+					classUnique.schema[0].unique.should.be.equal('global')
+				})
+				.then(function(res) {
+					done()
+	      })
+	      .catch(function(err) {
+	        console.log(err)
+	      })
+			
+			});
+
+			it('should be able to change uniquness local to null on class', function(done) {
+				
+				R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+					"class": {
+						"uid": "uniqueClass",
+						"title": "uniqueClass",
+						"schema": [{
+							"uid": "name",
+							"data_type": "text",
+							"display_name": "name",
+							"mandatory": false,
+							"max": 7,
+							"min": 2,
+							"multiple": false,
+							"format": "",
+							"unique": "local",
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							}
+						}]
+					}
+				}))
+				.then(function(res) {
+				 // R.pretty(res.body)
+				 classUnique = res.body.class
+				 classUnique.schema[0].unique.should.be.equal('local')
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('Update_class', sys_user1.authtoken, app.api_key, classUnique.uid, {
+						"class": {
+							"schema": [{
+								"uid": "name",
+								"data_type": "text",
+								"display_name": "name",
+								"mandatory": false,
+								"max": 7,
+								"min": 2,
+								"multiple": false,
+								"format": "",
+								"unique": null,
+								"action": "add",
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								}
+							}]
+						}
+					}))
+				})
+				.then(function(res) {
+					res.body.notice.should.be.equal('Woot! Class updated successfully!')
+					classUpdated = res.body.class
+					should.not.exist(classUpdated.schema[0].unique)
+				})
+				.then(function(res) {
+					done()
+	      })
+	      .catch(function(err) {
+	        console.log(err.trace)
+	      })
+			
+			});
+
+			it('should be able to change uniquness global to null on class', function(done) {
+				
+				R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+					"class": {
+						"uid": "uniqueClass2",
+						"title": "uniqueClass2",
+						"schema": [{
+							"uid": "name",
+							"data_type": "text",
+							"display_name": "name",
+							"mandatory": false,
+							"max": 7,
+							"min": 2,
+							"multiple": false,
+							"format": "",
+							"unique": "global",
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							}
+						}]
+					}
+				}))
+				.then(function(res) {
+				 // R.pretty(res.body)
+				 classUnique = res.body.class
+				 classUnique.schema[0].unique.should.be.equal('global')
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('Update_class', sys_user1.authtoken, app.api_key, classUnique.uid, {
+						"class": {
+							"schema": [{
+								"uid": "name",
+								"data_type": "text",
+								"display_name": "name",
+								"mandatory": false,
+								"max": 7,
+								"min": 2,
+								"multiple": false,
+								"format": "",
+								"unique": null,
+								"action": "add",
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								}
+							}]
+						}
+					}))
+				})
+				.then(function(res) {
+					res.body.notice.should.be.equal('Woot! Class updated successfully!')
+					classUpdated = res.body.class
+					should.not.exist(classUpdated.schema[0].unique)
+				})
+				.then(function(res) {
+					done()
+	      })
+	      .catch(function(err) {
+	        console.log(err.trace)
+	      })
+			
+			});
+
+			it('should update class with other unique fields and create objects', function(done) {
+				this.timeout(15000)
+				// grp Golbal fields local
+				R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+					"class": {
+						"uid": "grpClass",
+						"title": "grpClass",
+						"schema": [{
+							"uid": "name",
+							"data_type": "text",
+							"display_name": "name",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"format": "",
+							"unique": null,
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							}
+						}, {
+							"uid": "grp1",
+							"data_type": "group",
+							"display_name": "grp1",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"format": "",
+							"unique": "global",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							},
+							"schema": [{
+								"uid": "id1",
+								"data_type": "text",
+								"display_name": "id1",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": false,
+								"format": "",
+								"unique": "local",
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								}
+							}, {
+								"uid": "num1",
+								"data_type": "number",
+								"display_name": "num1",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": true,
+								"format": "",
+								"unique": "local",
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								}
+							}]
+						}]
+					}
+				}))
+				.then(function(res) {
+					classUpdate = res.body.class
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('Create_object', appUser5.authtoken, app.api_key, classUpdate.uid, {
+						"object": {
+							"name": "test",
+							"grp1": {
+								"id1": "myid123",
+								"num1": ["1", "2", "3"]
+							}
+						}
+					}))
+				})
+				.then(function(res) {
+					res.body.notice.should.be.equal('Woot! Object created successfully.')
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('Create_object', appUser6.authtoken, app.api_key, classUpdate.uid, {
+						"object": {
+							"name": "test",
+							"grp1": {
+								"id1": "myid123",
+								"num1": ["3", "2", "1"]
+							}
+						}
+					}))
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('Update_class', sys_user1.authtoken, app.api_key, 'built_io_application_user', {
+						"class": {
+							"title": "grpClass",
+							"uid": "grpclass",
+							"inbuilt_class": false,
+							"schema": [{
+								"uid": "name",
+								"data_type": "text",
+								"display_name": "name",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": false,
+								"format": "",
+								"unique": null,
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								}
+							}, {
+								"uid": "grp1",
+								"data_type": "group",
+								"display_name": "grp1",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": false,
+								"format": "",
+								"unique": "global",
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								},
+								"schema": [{
+									"uid": "id1",
+									"data_type": "text",
+									"display_name": "id1",
+									"mandatory": false,
+									"max": null,
+									"min": null,
+									"multiple": false,
+									"format": "",
+									"unique": "local",
+									"field_metadata": {
+										"allow_rich_text": false,
+										"multiline": false
+									}
+								}, {
+									"uid": "num1",
+									"data_type": "number",
+									"display_name": "num1",
+									"mandatory": false,
+									"max": null,
+									"min": null,
+									"multiple": true,
+									"format": "",
+									"unique": "local",
+									"field_metadata": {
+										"allow_rich_text": false,
+										"multiline": false
+									}
+								}]
+							}, {
+								"uid": "age",
+								"data_type": "number",
+								"display_name": "age",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": false,
+								"format": "",
+								"unique": "global",
+								"action": "add",
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								}
+							}]
+						}
+					}))
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('Create_object', appUser6.authtoken, app.api_key, classUpdate.uid, {
+						"object": {
+							"name": "test",
+							"grp1": {
+								"id1": "myid456",
+								"num1": ["4", "5", "6"]
+							},
+							"age": 10
+						}
+					}))
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('Create_object', appUser5.authtoken, app.api_key, classUpdate.uid, {
+						"object": {
+							"name": "test",
+							"grp1": {
+								"id1": "myid456",
+								"num1": ["4", "5", "6"]
+							},
+							"age": 10 //checking
+						}
+					}))
+				})
+				.then(function(res) {
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+					  "error_code": 119,
+					  "errors": [
+					    {
+					      "grp1": "is not unique"
+					    }
+					  ]
+					})
+				})
+ 				.then(function(res) {
+					done()
+	      })
+	      .catch(function(err) {
+	        console.log(err)
+	      })
+
+			});
+
+		});
+
 
 
 	});
@@ -1309,9 +1847,17 @@ describe('Testing objects', function() {
 		
 		});
 
-
 	});
 
+
+
+
+
+
+	
+	describe('Reference objects', function() {
+		
+	});
 
 	
 });

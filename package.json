@@ -15,7 +15,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "mocha test.js --timeout 10000"
+    "test": "mocha test.js --timeout 15000"
   },
   "repository": {
     "type": "git",

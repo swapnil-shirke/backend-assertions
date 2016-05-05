@@ -264,7 +264,7 @@
 	factories.addFactory('Update_class', function(authtoken, api_key, classUid, body) {
 
 		body = body || {}
-
+		
 		return api.put(config.endpoints.classes + "/" + classUid)
 			.set('web_ui_api_key', config.web_ui_api_key)
 			.set('authtoken', authtoken)
@@ -296,8 +296,9 @@
 //---------------- objects
 
 	factories.addFactory('Create_object', function(authtoken, api_key, classUid, body, tenant_uid) {
+		
 		body = body || {}
-
+		
 		var call = api.post(config.endpoints.classes + "/" + classUid + "/" + "objects")
 			.set('web_ui_api_key', config.web_ui_api_key)
 			.set('authtoken', authtoken)
