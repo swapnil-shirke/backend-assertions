@@ -1,4 +1,4 @@
-describe.only('Testing objects', function() {
+describe('Testing objects', function() {
 	
 	// var myclass, myclass1
 	var sys_user1, sys_user2

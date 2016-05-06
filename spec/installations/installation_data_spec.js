@@ -33,7 +33,7 @@ describe('Installation data ---', function() {
 	after(function(done) {
 		factories.create('Delete_application', authtoken, api_key)
 			.end(function(err, res1) {
-				console.log("application delete")
+				// console.log("application delete")
 				done(err)
 			})
 	})

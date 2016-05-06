@@ -14,7 +14,7 @@ describe('Uploads --- ', function() {
 
 
 	before(function(done) {
-		this.timeout(25000)
+		this.timeout(35000)
 
 		R.Promisify(factories.create('login_system_user'))
 			.then(function(res) {
@@ -58,7 +58,7 @@ describe('Uploads --- ', function() {
 	})
 
 	before(function(done) {
-		this.timeout(15000)
+		this.timeout(25000)
 
 		var email = 'jack.danials@mailinator.com'
 		var password = 'raw123'
@@ -105,7 +105,7 @@ describe('Uploads --- ', function() {
 	})
 
 	before(function(done) {
-		this.timeout(20000)
+		this.timeout(25000)
 
 		R.Promisify(factories.create('login_system_user', config.user3))
 			.then(function(res) {
@@ -257,7 +257,7 @@ describe('Uploads --- ', function() {
 		var filename2 = 'wmv_1.wmv'
 
 		before(function(done) {
-			this.timeout(7000)
+			this.timeout(15000)
 
 
 			R.Promisify(factories.create('create_upload', authtoken, api_key, filename2))
