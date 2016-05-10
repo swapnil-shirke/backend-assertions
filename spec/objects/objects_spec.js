@@ -51,6 +51,7 @@ describe('Testing objects', function() {
   })
 
 
+
   describe('Get objects', function() {
  
   	var myclass
@@ -509,6 +510,7 @@ describe('Testing objects', function() {
 
   	})
 
+
   	it('should get single object', function(done) {
 
   		R.Promisify(factories.create('get_object', sys_user1.authtoken, app.api_key, myclass3.uid, object1.uid))
@@ -521,6 +523,7 @@ describe('Testing objects', function() {
   		})
 
   	});
+
 
   	it('should update object', function(done) {
 
@@ -538,6 +541,7 @@ describe('Testing objects', function() {
   		})
 
   	});
+
 
   	it('should delete object', function(done) {
 
@@ -623,14 +627,14 @@ describe('Testing objects', function() {
 				}], tenant2.uid)
 			})
 			.then(function(res) {
-				return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, 'built_io_application_user', '', tenant1.uid))
+				return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, 'built_io_application_user', '','', tenant1.uid))
 			})
 			.then(function(res) {
 				user1 = res.body.objects[0]
 				user2 = res.body.objects[1]
 			})
 			.then(function(res) {
-				return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, 'built_io_application_user', '', tenant2.uid))
+				return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, 'built_io_application_user', '','', tenant2.uid))
 			})
 			.then(function(res) {
 				user3 = res.body.objects[0]
@@ -734,6 +738,8 @@ describe('Testing objects', function() {
       })
 
   	})		
+  	
+
 
   	describe('Localy unique', function() {
 			
@@ -964,7 +970,6 @@ describe('Testing objects', function() {
 
   		});
 
-
   	});
 
 
@@ -1058,7 +1063,6 @@ describe('Testing objects', function() {
 	      })
 
   		});
-
 
   	});
 
@@ -1483,7 +1487,6 @@ describe('Testing objects', function() {
 		});
 
 
-
 	});
 
 	
@@ -1772,6 +1775,7 @@ describe('Testing objects', function() {
 		
 		});
 	
+		
 		it('should update application user objects group fields ', function(done) {
 			R.Promisify(factories.create('update_object_app_user', sys_user1.authtoken, app.api_key, userObj.uid, {
 				"object": {
@@ -1843,21 +1847,12 @@ describe('Testing objects', function() {
 			.then(function(res) {
 				done()
 			})
-			
-		
+				
 		});
 
+
 	});
 
-
-
-
-
-
-	
-	describe('Reference objects', function() {
-		
-	});
 
 	
 });

@@ -139,7 +139,6 @@ describe('General settings ---', function() {
         })
 
 
-
     });
 
 
@@ -334,8 +333,6 @@ describe('General settings ---', function() {
 
 
   });
-
-
 
 
 
@@ -543,38 +540,160 @@ describe('General settings ---', function() {
   });
 
 
-  describe.skip('Federated login', function() {
 
-    var e = function(u) {
-      return encodeURIComponent(u);
-    }
-    var base = 'https://accounts.google.com/o/oauth2/auth';
-    var response_type = e('token');
-    var client_id = e('969047238720-20r228jrpv3gsecp56egpvvpdi68pcec.apps.googleusercontent.com');
-    var redirect_uri = e('http://google.com');
-    var scope = e('https://www.googleapis.com/auth/userinfo.email');
-    var state = e('lollalal');
-    var approval_prompt = e('auto');
 
-    base = base +
-      '?response_type=' + response_type +
-      '&client_id=' + client_id +
-      '&redirect_uri=' + redirect_uri +
-      '&scope=' + scope +
-      '&state=' + state +
-      '&approval_prompt=' + approval_prompt;
 
-    it('should have google Federated Login', function(done) {
-      // R.pretty(base)
-      R.Promisify(api.get(base))
+
+
+  describe('Enable or disable, Permitted login schemes', function() {
+        
+    before(function(done) {
+      R.Promisify(factories.create('Update_app_settings', sys_user1.authtoken, app1.api_key, {
+        "app_settings": {
+          "login_schemes": {
+            "google": false,
+            "facebook": false,
+            "twitter": false,
+            "traditional": false,
+            "anyauth": true
+          }
+        }
+      }))
       .then(function(res) {
-        console.log(res.body)
+        done()
+      })
+      .catch(function(err) {
+        console.log(err)
+      })
+
+    })
+    
+
+    it('should disable traditional login', function(done) {
+      R.Promisify(factories.create('login_app_user', app1.api_key, {
+        "application_user": {
+          "email": user2.email,
+          "password": "raw123"
+        }
+      }))
+      .then(function(res) {
+        res.body.should.be.deep.equal({ error_message: 'Bummer. Login failed. Please try again.',
+          error_code: 131,
+          errors: [ { access_denied: 'Logging in via traditional is not allowed.' } ] 
+        })
       })
       .then(function(res) {
         done()
       })
+      .catch(function(err) {
+        console.log(err)
+      })
+    
+
     });
-  
+
+
+    it('should disable Google login', function(done) {
+      
+      R.Promisify(factories.create('register_app_user', app1.api_key, {
+        "application_user": {
+          "auth_data": {
+            "google": {
+                "access_token": "ya29.CjHeAiM_voLZbQFdGxlzuHW1sweJFFzWfK5mHZn5Q5wkxTnnnZFa7axbhxEbuJ8cJz-N"
+            }
+          }
+        }
+      }))
+      .then(function(res) {
+        
+        res.body.should.be.deep.equal({
+          "error_message": "Bummer. Login failed. Please try again.",
+          "error_code": 131,
+          "errors": [
+            {
+                "access_denied": "Logging in via google is not allowed."
+            }
+          ]
+        })
+      })
+      .then(function(res) {
+        done()
+      })
+      .catch(function(err) {
+        console.log(err)
+      })
+    
+
+    });
+
+
+    it('should disable facebook login', function(done) {
+      R.Promisify(factories.create('register_app_user', app1.api_key, {
+        "application_user": {
+          "auth_data": {
+            "facebook": {
+              "access_token": "ya29.AHES6ZSvSaMpLeToKeNVowjHEZrJA_J0k8"
+            }
+          }
+        }
+      }))
+      .then(function(res) {
+        res.body.should.be.deep.equal({
+          "error_message": "Bummer. Login failed. Please try again.",
+          "error_code": 131,
+          "errors": [
+            {
+              "access_denied": "Logging in via facebook is not allowed."
+            }
+          ]
+        })
+      })
+      .then(function(res) {
+        done()
+      })
+      .catch(function(err) {
+        console.log(err)
+      })
+    
+
+    });
+
+
+    it('should disable twitter login', function(done) {
+      R.Promisify(factories.create('register_app_user', app1.api_key, {
+      "application_user": {
+        "auth_data": {
+            "twitter": {
+              "token": "ya29.AHES6ZSvSaMpLeToKeNVowjHEZrJA_J0k8",
+              "token_secret": "aMpLeToKeNVowjHEZrJA_J0k8",
+              "consumer_key": "aMpLeToKeNVowjHEZrJA_J0k8kjfs78",
+              "consumer_secret": "aMpLeToKeNVowjHEZrJA_J0kfd878"
+            }
+          }
+        }
+      }))
+      .then(function(res) {
+        res.body.should.be.deep.equal({
+          "error_message": "Bummer. Login failed. Please try again.",
+          "error_code": 131,
+          "errors": [
+            {
+              "access_denied": "Logging in via twitter is not allowed."
+            }
+          ]
+        })
+      })
+      .then(function(res) {
+        done()
+      })
+      .catch(function(err) {
+        console.log(err)
+      })
+    
+
+    });
+
+
 
   });
 

@@ -7,7 +7,8 @@ describe('Application users registration ---', function() {
   var roleId
 
   var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
-  var appUserName = R.bltRandom(8);
+  var appUserName  = R.bltRandom(8);
+
 
   before(function(done) {
     this.timeout(25000)
@@ -63,6 +64,7 @@ describe('Application users registration ---', function() {
       })
 
   })
+
 
   after(function(done) {
     factories.create('Delete_application', authtoken, api_key)
@@ -337,53 +339,53 @@ describe('Application users registration ---', function() {
           "last_name": "objectUpdate"
         }
       })
-        .end(function(err, res) {
+      .end(function(err, res) {
 
-          var object = res.body.object
+        var object = res.body.object
 
-          // Keys assertion
-          Object.keys(object).should.to.be.deep.equal(['published', '__loc', 'username', 'email', 'first_name', 'last_name', 'device_type', 'tags', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', 'ACL', '_version'])
+        // Keys assertion
+        Object.keys(object).should.to.be.deep.equal(['published', '__loc', 'username', 'email', 'first_name', 'last_name', 'device_type', 'tags', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', 'ACL', '_version'])
 
-          // Data type assertion
-          object.published.should.be.a('boolean')
-          object.__loc.should.be.a('array')
-          object.username.should.be.a('string')
-          object.email.should.be.a('string')
-          object.first_name.should.be.a('string')
-          object.last_name.should.be.a('string')
-          object.device_type.should.be.a('string')
-          object.ACL.should.be.a('object')
-          object.app_user_object_uid.should.be.a('string')
-          object.created_by.should.be.a('string')
-          object.updated_by.should.be.a('string')
-          object.created_at.should.be.a('string')
-          object.updated_at.should.be.a('string')
-          object.uid.should.be.a('string')
-          object._version.should.be.a('number')
-          object.tags.should.be.a('array')
+        // Data type assertion
+        object.published.should.be.a('boolean')
+        object.__loc.should.be.a('array')
+        object.username.should.be.a('string')
+        object.email.should.be.a('string')
+        object.first_name.should.be.a('string')
+        object.last_name.should.be.a('string')
+        object.device_type.should.be.a('string')
+        object.ACL.should.be.a('object')
+        object.app_user_object_uid.should.be.a('string')
+        object.created_by.should.be.a('string')
+        object.updated_by.should.be.a('string')
+        object.created_at.should.be.a('string')
+        object.updated_at.should.be.a('string')
+        object.uid.should.be.a('string')
+        object._version.should.be.a('number')
+        object.tags.should.be.a('array')
 
-          // Value assertion
-          object.published.should.be.equal(true)
-          object.__loc.should.be.deep.equal(appUser1.__loc)
-          // object.__loc[0].should.be.equal(appUser.__loc[0])
-          // object.__loc[1].should.be.equal(appUser.__loc[1])
-          object.username.should.be.equal(appUser1.username)
-          object.email.should.be.equal(appUser1.email)
-          object.first_name.should.be.equal('objectUpdate')
-          object.last_name.should.be.equal('objectUpdate')
-          object.device_type.should.be.equal('ios')
+        // Value assertion
+        object.published.should.be.equal(true)
+        object.__loc.should.be.deep.equal(appUser1.__loc)
+        // object.__loc[0].should.be.equal(appUser.__loc[0])
+        // object.__loc[1].should.be.equal(appUser.__loc[1])
+        object.username.should.be.equal(appUser1.username)
+        object.email.should.be.equal(appUser1.email)
+        object.first_name.should.be.equal('objectUpdate')
+        object.last_name.should.be.equal('objectUpdate')
+        object.device_type.should.be.equal('ios')
 
-          object.app_user_object_uid.should.be.equal('system')
-          object.created_by.should.be.equal(userUID)
-          object.updated_by.should.be.equal(object.created_by)
-          object.created_at.should.be.not.equal(object.updated_at)
+        object.app_user_object_uid.should.be.equal('system')
+        object.created_by.should.be.equal(userUID)
+        object.updated_by.should.be.equal(object.created_by)
+        object.created_at.should.be.not.equal(object.updated_at)
 
-          object._version.should.be.equal(2)
-          object.tags.should.be.deep.equal(['testuser', 'backend'])
+        object._version.should.be.equal(2)
+        object.tags.should.be.deep.equal(['testuser', 'backend'])
 
-          done(err)
+        done(err)
 
-        })
+      })
 
     });
 
@@ -452,6 +454,64 @@ describe('Application users registration ---', function() {
           done(err)
 
         })
+
+    });
+
+
+    it.skip('should get application user objects count', function(done) {
+
+      factories.create('get_app_user_objects', authtoken, api_key, '', {
+        "count": "true"
+      })
+      .expect(200)
+      .end(function(err, res) {
+        console.log(res.body)
+        
+        // var object = R.last(res.body.objects)
+
+        // // Keys assertion
+        // Object.keys(object).should.to.be.deep.equal(['published', '__loc', 'username', 'email', 'first_name', 'last_name', 'device_type', 'tags', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', 'ACL', '_version'])
+
+        // // Data type assertion
+        // object.published.should.be.a('boolean')
+        // object.__loc.should.be.a('array')
+        // object.username.should.be.a('string')
+        // object.email.should.be.a('string')
+        // object.first_name.should.be.a('string')
+        // object.last_name.should.be.a('string')
+        // object.device_type.should.be.a('string')
+        // object.ACL.should.be.a('object')
+        // object.app_user_object_uid.should.be.a('string')
+        // object.created_by.should.be.a('string')
+        // object.updated_by.should.be.a('string')
+        // object.created_at.should.be.a('string')
+        // object.updated_at.should.be.a('string')
+        // object.uid.should.be.a('string')
+        // object._version.should.be.a('number')
+        // object.tags.should.be.a('array')
+
+        // // Value assertion
+        // object.published.should.be.equal(true)
+        // object.__loc.should.be.deep.equal(appUser.__loc)
+        // // object.__loc[0].should.be.equal(appUser.__loc[0])
+        // // object.__loc[1].should.be.equal(appUser.__loc[1])
+        // object.username.should.be.equal(appUser.username)
+        // object.email.should.be.equal(appUser.email)
+        // object.first_name.should.be.equal(appUser.first_name)
+        // object.last_name.should.be.equal(appUser.last_name)
+        // object.device_type.should.be.equal('ios')
+
+        // object.app_user_object_uid.should.be.equal('system')
+        // object.created_by.should.be.equal(userUID)
+        // object.updated_by.should.be.equal(object.created_by)
+        // object.created_at.should.be.equal(object.updated_at)
+
+        // object._version.should.be.equal(1)
+        // object.tags.should.be.deep.equal(['testuser', 'backend'])
+
+        done(err)
+
+      })
 
     });
 
