@@ -330,11 +330,11 @@
 	})
 
 	factories.addFactory('get_all_objects', function(authtoken, api_key, classUid, query, body, tenant_uid) {	
+
 		query = query || {}
 		body 						= body || {}	
 		body["_method"] = "GET"
-		console.log(body)
-		console.log(query)
+
 		var call = api.post(config.endpoints.classes + "/" + classUid + "/" + "objects")
 			.set('web_ui_api_key', config.web_ui_api_key)
 			.set('authtoken', authtoken)

@@ -327,8 +327,8 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it.skip('should get object using $or query', function(done) {
-  		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, {
+  	it('should get object using $or query', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
 				"query": {
 					"$or": [{
 						"author": {
@@ -344,10 +344,10 @@ describe('Queries and reference', function() {
 				}
 			}))
 			.then(function(res) {
-				console.log(res.body)
-				// object = R.last(res.body.objects)
-				// object.author.should.be.equal('chetan')
-				// object.bookname.should.be.equal('Life of psy')
+				object1 = res.body.objects[0]
+				object2 = res.body.objects[1]
+				object1.author.should.be.equal('chetan')
+				object2.bookname.should.be.equal('FTJ')
 			})
 			.then(function(res) {
 				done()
@@ -360,27 +360,24 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it.only('should get object using $or query', function(done) {
-  		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, {
+  	it('should get object using $and query', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
 				"query": {
-					"$or": [{
+					"$and": [{
 						"author": {
 							"$regex": "^chetan",
 							"$options": "i"
 						}
 					}, {
-						"bookname": {
-							"$regex": "^FTJ",
-							"$options": "i"
-						}
+						"daysold": 90
 					}]
 				}
 			}))
 			.then(function(res) {
-				console.log(res.body)
-				// object = R.last(res.body.objects)
-				// object.author.should.be.equal('chetan')
-				// object.bookname.should.be.equal('Life of psy')
+				object = R.last(res.body.objects)
+				object.author.should.be.equal('chetan')
+				object.bookname.should.be.equal('Life of psy')
+				object.daysold.should.be.equal(90)
 			})
 			.then(function(res) {
 				done()
@@ -393,12 +390,520 @@ describe('Queries and reference', function() {
   	});
 
 
+  	it('should get object using $lt(less then) operators', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
+			 	"query": {
+			    "daysold": {
+			      "$lt": 125
+			    }
+			  }
+			}))
+			.then(function(res) {
+				object1 = res.body.objects[0]
+				object2 = res.body.objects[1]
+				object1.daysold.should.be.equal(90)
+				object2.daysold.should.be.equal(100)
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
 
 
+  	});
+
+
+  	it('should get object using $lte(less then or equal to) operators', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
+			 	"query": {
+			    "daysold": {
+			      "$lte": 125
+			    }
+			  }
+			}))
+			.then(function(res) {
+				object1 = res.body.objects[0]
+				object2 = res.body.objects[1]
+				object3 = res.body.objects[2]
+				object1.daysold.should.be.equal(125)
+				object2.daysold.should.be.equal(90)
+				object3.daysold.should.be.equal(100)
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+
+
+  	});
+
+
+  	it('should get object using $gt(greater than) operators', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
+			 	"query": {
+			    "daysold": {
+			      "$gt": 125
+			    }
+			  }
+			}))
+			.then(function(res) {
+				object1 = res.body.objects[0]
+				object2 = res.body.objects[1]
+				object3 = res.body.objects[2]
+				object1.daysold.should.be.equal(135)
+				object2.daysold.should.be.equal(130)
+				object3.daysold.should.be.equal(160)
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+
+
+  	});
+
+
+  	it('should get object using $gte(greater than or equal to) operators', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
+			 	"query": {
+			    "daysold": {
+			      "$gte": 130
+			    }
+			  }
+			}))
+			.then(function(res) {
+				object1 = res.body.objects[0]
+				object2 = res.body.objects[1]
+				object3 = res.body.objects[2]
+				object1.daysold.should.be.equal(135)
+				object2.daysold.should.be.equal(130)
+				object3.daysold.should.be.equal(160)
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+
+
+  	});
+
+
+  	it('should get object using $ne(not equal to) operators', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
+			 	"query": {
+			    "daysold": {
+			      "$ne": 130
+			    }
+			  }
+			}))
+			.then(function(res) {
+				// R.pretty(res.body)
+
+				object1 = res.body.objects[0]
+				object2 = res.body.objects[1]
+				object3 = res.body.objects[2]
+				object4 = res.body.objects[3]
+				object5 = res.body.objects[4]
+				
+				object1.daysold.should.be.equal(135)
+				object2.daysold.should.be.equal(125)
+				object3.daysold.should.be.equal(90)
+				object4.daysold.should.be.equal(160)
+				object5.daysold.should.be.equal(100)
+				
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+
+
+  	});
+
+
+  	it('should get object using $in(contained In) operators', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
+			 	"query": {
+			    "daysold": {
+			      "$in": [130, 125, 90]
+			    }
+			  }
+			}))
+			.then(function(res) {
+				object1 = res.body.objects[0]
+				object2 = res.body.objects[1]
+				object3 = res.body.objects[2]
+				
+				object1.daysold.should.be.equal(125)
+				object2.daysold.should.be.equal(90)
+				object3.daysold.should.be.equal(130)
+				
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+
+
+  	});
+
+
+  	it('should get object using $in(not contained In) operators', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
+			 	"query": {
+			    "daysold": {
+			      "$nin": [130, 125, 90]
+			    }
+			  }
+			}))
+			.then(function(res) {
+				// R.pretty(res.body)
+
+				object1 = res.body.objects[0]
+				object2 = res.body.objects[1]
+				object3 = res.body.objects[2]
+				
+				object1.daysold.should.be.equal(135)
+				object2.daysold.should.be.equal(160)
+				object3.daysold.should.be.equal(100)
+				
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+
+
+  	});
+
+
+  	it('should get object using $exists(exists) operators', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
+			 	"query": {
+			    "bookname": {
+			      "$exists": true
+			    }
+			  }
+			}))
+			.then(function(res) {
+				object = R.last(res.body.objects)
+				object.bookname.should.be.equal('FTJ')
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+
+
+  	});
 
 
   });
 
+
+	describe('Reference objects', function() {
+		
+		var myclass1, myclass2
+
+  	
+  	before(function(done) {
+  		this.timeout(45000)
+			R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+				"class": {
+					"title": "project",
+					"uid": "project",
+					"inbuilt_class": false,
+					"schema": [{
+						"uid": "name",
+						"data_type": "text",
+						"display_name": "name",
+						"mandatory": false,
+						"max": null,
+						"min": null,
+						"multiple": false,
+						"format": "",
+						"unique": null,
+						"field_metadata": {
+							"allow_rich_text": false,
+							"multiline": false
+						}
+					}, {
+						"uid": "description",
+						"data_type": "text",
+						"display_name": "description",
+						"mandatory": false,
+						"max": null,
+						"min": null,
+						"multiple": false,
+						"format": "",
+						"unique": null,
+						"field_metadata": {
+							"allow_rich_text": false,
+							"multiline": false
+						}
+					}]
+				}
+			}))
+			.then(function(res) {
+				myclass1 = res.body.class
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+					"class": {
+						"title": "Bugs",
+						"uid": "bugs",
+						"inbuilt_class": false,
+						"schema": [{
+							"data_type": "text",
+							"display_name": "Name",
+							"field_metadata": null,
+							"format": "",
+							"mandatory": true,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"uid": "name"
+						}, {
+							"data_type": "text",
+							"display_name": "Description",
+							"field_metadata": null,
+							"format": "",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"uid": "description"
+						}, {
+							"data_type": "text",
+							"display_name": "Reproducible?",
+							"field_metadata": null,
+							"format": "^(Always|Sometimes|Rarely|Unable)$",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"uid": "reproducible"
+						}, {
+							"data_type": "isodate",
+							"display_name": "Due Date",
+							"field_metadata": null,
+							"format": null,
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"uid": "due_date"
+						}, {
+							"data_type": "text",
+							"display_name": "Severity",
+							"field_metadata": null,
+							"format": "^(|Show Stopper|Critical|Major|Minor)$",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"uid": "severity"
+						}, {
+							"data_type": "text",
+							"display_name": "Status",
+							"field_metadata": null,
+							"format": "^(Open|In Progress|To Be Tested|Closed)$",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"uid": "status"
+						}, {
+							"data_type": "reference",
+							"display_name": "Project",
+							"field_metadata": null,
+							"format": null,
+							"mandatory": true,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"reference_to": "project",
+							"uid": "project"
+						}]
+					}
+				}))
+			})
+			.then(function(res) {
+				myclass2 = res.body.class
+			})
+			.then(function(res) {
+				return factories.create('create_objects', 2, appUser1.authtoken, app.api_key, myclass1.uid, [{
+					"name": "backend",
+					"description": "This is a backend project"
+				},
+				{
+					"name": "flow",
+					"description": "This is a flow project"
+				}])
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, myclass1.uid))
+			})
+			.then(function(res) {
+				object1 = res.body.objects[0]
+				object2 = res.body.objects[1]
+			})
+			.then(function(res) {
+				return factories.create('create_objects', 6, appUser2.authtoken, app.api_key, myclass2.uid, [{
+					"name": "one",
+					"project": [object1.uid]
+				},{
+					"name": "two",
+					"project": [object1.uid]
+				},{
+					"name": "three",
+					"project": [object1.uid]
+				},{
+					"name": "four",
+					"project": [object2.uid]
+				},{
+					"name": "five",
+					"project": [object2.uid]
+				},{
+					"name": "six",
+					"project": [object2.uid]
+				}])
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+
+		})
+
+
+
+
+		it('should get reference objects using $in_query query', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, {
+			  "query": {
+			    "project": {
+			      "$in_query": {
+			        "name": "backend"
+			      }
+			    }
+			  }
+			}))
+			.then(function(res) {
+				object = R.last(res.body.objects)
+				object.name.should.be.equal('four')
+				object.project[0].should.be.equal(object2.uid)
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+  	
+
+  	});
+
+
+
+		it('should get reference objects using $nin_query query', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, {
+			  "query": {
+			    "project": {
+			      "$nin_query": {
+			        "name": "flow"
+			      }
+			    }
+			  }
+			}))
+			.then(function(res) {
+				object = R.last(res.body.objects)
+				object.name.should.be.equal('four')
+				object.project[0].should.be.equal(object2.uid)
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+  	
+
+  	});
+
+
+		it('should get reference objects using include[]', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, '', {
+			  "method": "get",
+			  "include": [
+			    "project"
+			  ]
+			}))
+			.then(function(res) {
+				// R.pretty(res.body)
+				object = R.last(res.body.objects)
+				object.name.should.be.equal('one')
+				object.project[0].name.should.be.equal('flow')
+				object.project[0].app_user_object_uid.should.be.equal(appUser1.uid)
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+  	
+
+  	});
+
+
+		it.only('should get reference objects using include[]', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, '', {
+			  "_method": "get",
+			  "only": {
+			    "BASE": [
+			      "uid"
+			    ]
+			  }
+			}))
+			.then(function(res) {
+				R.pretty(res.body)
+				// object = R.last(res.body.objects)
+				// object.name.should.be.equal('one')
+				// object.project[0].name.should.be.equal('flow')
+				// object.project[0].app_user_object_uid.should.be.equal(appUser1.uid)
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+  	
+
+  	});
+
+
+
+});
 
 
 
