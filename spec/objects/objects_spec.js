@@ -560,7 +560,7 @@ describe('Testing objects', function() {
 	});
 
 
-	describe('Uniquness', function() {
+	describe.only('Uniquness', function() {
 		
 		var user1, user2, user3, user4, user5, user6
 		var appUser1, appUser2, appUser3, appUser4, appUser5, appUser6

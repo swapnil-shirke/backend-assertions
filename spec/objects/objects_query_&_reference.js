@@ -184,6 +184,11 @@ describe('Queries and reference', function() {
 							"multiline": false
 						}
 					}],
+					"options": {
+						"inbuiltFields": {
+							"publish": true,
+						}
+					},
 					"DEFAULT_ACL": {
 						"others": {
 							"create": true,
@@ -198,7 +203,7 @@ describe('Queries and reference', function() {
 				myclass = res.body.class
 			})
 			.then(function(res) {
-				return factories.create('create_objects', 6, sys_user1.authtoken, app.api_key, myclass.uid, [{
+				return factories.create('create_objects', 6, appUser1.authtoken, app.api_key, myclass.uid, [{
 					"author": "swapnil",
 					"bookname": "FTJ",
 					"address": {
@@ -614,11 +619,113 @@ describe('Queries and reference', function() {
   	});
 
 
+  	it('should get objects and include owner', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
+			  "_method": "get",
+			  "include_owner": true
+			}))
+			.then(function(res) {
+				object = R.last(res.body.objects)
+				Object.keys(object).should.to.be.deep.equal(['author','bookname','address','daysold','app_user_object_uid','created_at','updated_at','uid','published','ACL','__loc','_version','created_by','updated_by','tags','_owner'])
+				Object.keys(object._owner).should.to.be.deep.equal(['published','username','email','app_user_object_uid','created_by','updated_by','created_at','updated_at','uid','active','ACL','__loc','_version','tags','last_login_at'])
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+
+
+  	});
+
+
+  	it('should get objects and include count', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
+			  "_method": "get",
+			  "include_count": true
+			}))
+			.then(function(res) {
+				R.pretty(res.body)
+				res.body.count.should.be.equal(6)
+				res.body.objects.length.should.be.equal(6)
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+
+
+  	});
+
+
+  	it('should get objects and include schema', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
+			  "_method": "get",
+			  "include_schema": true
+			}))
+			.then(function(res) {
+				// R.pretty(res.body)
+				object = R.last(res.body.objects)
+				Object.keys(res.body).should.to.be.deep.equal(['objects','schema'])
+				res.body.schema[0].uid.should.be.equal('author')
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+
+
+  	});
+
+
+
+  	it('should get objects and include unpublished', function(done) {
+  		R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, myclass.uid, {
+					"object": {
+						"name": "one",
+						"published": false
+					}
+				}))
+  		.then(function(res) {
+  			// console.log(res.body)
+  		})
+  		.then(function(res) {
+	  		return R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass.uid, '', {
+				  "_method": "get",
+				  "include_unpublished": true
+				}))
+  		})
+			.then(function(res) {
+				// R.pretty(res.body)
+				object = res.body.objects[0]
+				Object.keys(object).should.to.be.deep.equal(['published','app_user_object_uid','created_by','updated_by','created_at','updated_at','uid','ACL','__loc','_version','tags'])
+				object.published.should.be.equal(false)
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+
+
+  	});
+
+
+  
+
   });
 
 
+
+
 	describe('Reference objects', function() {
-		
+
 		var myclass1, myclass2
 
   	
@@ -740,7 +847,12 @@ describe('Queries and reference', function() {
 							"multiple": false,
 							"reference_to": "project",
 							"uid": "project"
-						}]
+						}],
+						"options": {
+							"inbuiltFields": {
+								"location": true
+							}
+						}
 					}
 				}))
 			})
@@ -875,7 +987,7 @@ describe('Queries and reference', function() {
   	});
 
 
-		it.only('should get reference objects using include[]', function(done) {
+		it('should get objects using ONLY BASE query', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, '', {
 			  "_method": "get",
 			  "only": {
@@ -885,11 +997,116 @@ describe('Queries and reference', function() {
 			  }
 			}))
 			.then(function(res) {
-				R.pretty(res.body)
-				// object = R.last(res.body.objects)
+				// R.pretty(res.body)
+				object = R.last(res.body.objects)
+				Object.keys(object).should.to.be.deep.equal(['uid'])
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+  	
+
+  	});
+
+
+		it('should get reference objects using include[] and Only BASE query', function(done) {
+  		R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, '', {
+			  "_method": "get",
+			  "include": [
+			    "project"
+			  ],
+			  "only": {
+			    "BASE": [
+			      "project"
+			    ],
+			    "project": [
+			      "description"
+			    ]
+			  }
+			}))
+			.then(function(res) {
+				// R.pretty(res.body)
+				object = R.last(res.body.objects)
+				Object.keys(object).should.to.be.deep.equal(['project','uid'])
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+  	
+
+  	});
+
+
+		it('should get objects using except BASE query', function(done) {  		
+			R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, '', {
+			  "_method": "get",
+			  "except": {
+			    "BASE": ["project"]
+			  }
+			}))
+			.then(function(res) {
+				// R.pretty(res.body)
+				object = R.last(res.body.objects)
+				object.name.should.be.equal('one')
+				should.not.exist(object.project)
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+  	
+
+  	});
+
+
+  	it('should get reference objects using include[] and except BASE query', function(done) {  		
+			R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, '', { 
+				"include": ["project"],
+			  "_method": "get",
+			  "except": {
+			    "project": ["name", "tags", "_version", "created_by", "updated_by", "__loc", "app_user_object_uid", "uid", "published", "created_at","updated_at", "description","ACL"]
+			  }
+			}))
+			.then(function(res) {
+				// R.pretty(res.body)
+				object = R.last(res.body.objects)
+				Object.keys(object.project[0]).should.to.be.deep.equal(['uid'])
+				object.name.should.be.equal('one')
+				
 				// object.name.should.be.equal('one')
-				// object.project[0].name.should.be.equal('flow')
-				// object.project[0].app_user_object_uid.should.be.equal(appUser1.uid)
+				// object.project.should.be.deep.equal({'uid'})
+				
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+        console.log(err)
+      })
+  	
+
+  	});
+
+
+  	it('should get objects using exists[field_uid] query', function(done) {  		
+			R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, '', {
+			  "_method": "get",
+			  "exists": {
+			    "ACL": true,
+			    "name": true
+			  }
+			}))
+			.then(function(res) {
+				object = R.last(res.body.objects)
+				object.name.should.be.equal('one')
 			})
 			.then(function(res) {
 				done()
@@ -903,7 +1120,10 @@ describe('Queries and reference', function() {
 
 
 
-});
+
+
+
+	});
 
 
 
