@@ -127,9 +127,15 @@ describe('General settings ---', function() {
           return R.Promisify(factories.create('create_upload', appUser2.authtoken, app1.api_key, filename3))
         })
         .then(function(res) {
-          res.body.error_message.should.be.equal('Bummer. File creation failed. Please try again.')
-          res.body.error_code.should.be.equal(142)
-          res.body.errors[0].should.be.deep.equal({ content_type: 'is not included in the list of valid values' })
+          res.body.should.be.deep.equal({
+            "error_message": "Bummer. File creation failed. Please try again.",
+            "error_code": 142,
+            "errors": {
+              "content_type": [
+                "is not included in the list of valid values"
+              ]
+            }
+          })
         })
         .then(function(res) {
           done()
@@ -175,17 +181,29 @@ describe('General settings ---', function() {
     it('should restrict blackted files only', function(done) {
       R.Promisify(factories.create('create_upload', appUser1.authtoken, app1.api_key, filename1))
         .then(function(res) {
-          res.body.error_message.should.be.equal('Bummer. File creation failed. Please try again.')
-          res.body.error_code.should.be.equal(142)
-          res.body.errors[0].should.be.deep.equal({ content_type: 'is not included in the list of valid values' })
+          res.body.should.be.deep.equal({
+            "error_message": "Bummer. File creation failed. Please try again.",
+            "error_code": 142,
+            "errors": {
+              "content_type": [
+                "is not included in the list of valid values"
+              ]
+            }
+          })
         })
         .then(function(res) {
           return R.Promisify(factories.create('create_upload', sys_user1.authtoken, app1.api_key, filename2))
         })
         .then(function(res) {
-          res.body.error_message.should.be.equal('Bummer. File creation failed. Please try again.')
-          res.body.error_code.should.be.equal(142)
-          res.body.errors[0].should.be.deep.equal({ content_type: 'is not included in the list of valid values' })
+          res.body.should.be.deep.equal({
+            "error_message": "Bummer. File creation failed. Please try again.",
+            "error_code": 142,
+            "errors": {
+              "content_type": [
+                "is not included in the list of valid values"
+              ]
+            }
+          })
         })
         .then(function(res) {
           return R.Promisify(factories.create('create_upload', appUser2.authtoken, app1.api_key, filename3))
@@ -239,6 +257,7 @@ describe('General settings ---', function() {
       .catch(function(err) {
         console.log(err)
       })
+    
     })
 
 
@@ -257,12 +276,12 @@ describe('General settings ---', function() {
           res.body.should.be.deep.equal({
             "error_message": "Bummer. File update failed. Please try again.",
             "error_code": 143,
-            "errors": [
-              {
-                "content_type": "is not included in the list of valid values"
-              }
-            ]
-          }          )
+            "errors": {
+              "content_type": [
+                "is not included in the list of valid values"
+              ]
+            }
+          })
         })
         .then(function(res) {
           done()
@@ -270,7 +289,6 @@ describe('General settings ---', function() {
         .catch(function(err) {
           console.log(err)
         })
-
 
 
     });
@@ -540,11 +558,6 @@ describe('General settings ---', function() {
   });
 
 
-
-
-
-
-
   describe('Enable or disable, Permitted login schemes', function() {
         
     before(function(done) {
@@ -577,9 +590,14 @@ describe('General settings ---', function() {
         }
       }))
       .then(function(res) {
-        res.body.should.be.deep.equal({ error_message: 'Bummer. Login failed. Please try again.',
-          error_code: 131,
-          errors: [ { access_denied: 'Logging in via traditional is not allowed.' } ] 
+        res.body.should.be.deep.equal({
+          "error_message": "Bummer. Login failed. Please try again.",
+          "error_code": 131,
+          "errors": {
+            "access_denied": [
+              "Logging in via traditional is not allowed."
+            ]
+          }
         })
       })
       .then(function(res) {
@@ -594,7 +612,6 @@ describe('General settings ---', function() {
 
 
     it('should disable Google login', function(done) {
-      
       R.Promisify(factories.create('register_app_user', app1.api_key, {
         "application_user": {
           "auth_data": {
@@ -605,15 +622,14 @@ describe('General settings ---', function() {
         }
       }))
       .then(function(res) {
-        
         res.body.should.be.deep.equal({
           "error_message": "Bummer. Login failed. Please try again.",
           "error_code": 131,
-          "errors": [
-            {
-                "access_denied": "Logging in via google is not allowed."
-            }
-          ]
+          "errors": {
+            "access_denied": [
+              "Logging in via google is not allowed."
+            ]
+          }
         })
       })
       .then(function(res) {
@@ -641,11 +657,11 @@ describe('General settings ---', function() {
         res.body.should.be.deep.equal({
           "error_message": "Bummer. Login failed. Please try again.",
           "error_code": 131,
-          "errors": [
-            {
-              "access_denied": "Logging in via facebook is not allowed."
-            }
-          ]
+          "errors": {
+            "access_denied": [
+              "Logging in via facebook is not allowed."
+            ]
+          }
         })
       })
       .then(function(res) {
@@ -676,11 +692,11 @@ describe('General settings ---', function() {
         res.body.should.be.deep.equal({
           "error_message": "Bummer. Login failed. Please try again.",
           "error_code": 131,
-          "errors": [
-            {
-              "access_denied": "Logging in via twitter is not allowed."
-            }
-          ]
+          "errors": {
+            "access_denied": [
+              "Logging in via twitter is not allowed."
+            ]
+          }
         })
       })
       .then(function(res) {

@@ -805,16 +805,19 @@ describe('Application users registration ---', function() {
           "password": "raw123"
         }
       })
-        .end(function(err, res) {
-
-          res.body.error_message.should.be.equal('Bummer. Login failed. Please try again.')
-          res.body.error_code.should.be.equal(131)
-          res.body.errors.should.be.deep.equal([{
-            auth: 'Looks like your email or password is invalid'
-          }])
-
-          done(err)
+      .end(function(err, res) {
+        res.body.should.be.deep.equal({
+          "error_message": "Bummer. Login failed. Please try again.",
+          "error_code": 131,
+          "errors": {
+            "auth": [
+              "Looks like your email or password is invalid"
+            ]
+          }
         })
+
+        done(err)
+      })
 
     });
 
@@ -883,10 +886,8 @@ describe('Application users registration ---', function() {
 
       factories.create('logout_app_user', "userAuthtoken", api_key)
         .end(function(err, res) {
-
           res.body.error_message.should.be.equal('Access denied. You have insufficient permissions to perform this operation.')
           res.body.error_code.should.be.equal(162)
-
           done(err)
         })
 
@@ -924,6 +925,7 @@ describe('Application users registration ---', function() {
 
     var appUser4, userAuthtoken1
     this.timeout(25000)
+    
     before(function(done) {
       
       appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
@@ -971,11 +973,10 @@ describe('Application users registration ---', function() {
 
     
     it('should get current login application user', function(done) {
-      // this.timeout(10000)
-
+      this.timeout(30000)
+      
       R.Promisify(factories.create('get_current_app_user', userAuthtoken1, api_key))
         .then(function(res) {
-          
           user = res.body.application_user
           userAuthtoken = res.body.application_user.authtoken
 
@@ -1018,14 +1019,12 @@ describe('Application users registration ---', function() {
 
           user.uid.should.be.equal(appUser4.uid)
           user.active.should.be.equal(true)
-          user.ACL.should.be.deep.equal({
-            can: ['update', 'delete']
-          })
+          user.ACL.should.be.deep.equal({ })
           user._version.should.be.equal(2)
           user.isApplicationUser.should.be.equal(true)
-
+        })
+        .then(function(res) {
           done()
-
         })
         .catch(function(err) {
           console.log(err)

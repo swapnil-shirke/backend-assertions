@@ -163,6 +163,7 @@ describe('Applications ---', function() {
     
     })
 
+
     it('should provide applications count in response', function(done) {
       factories.create('Get_all_applications', authtoken, {
           "_method": "get",
@@ -179,7 +180,9 @@ describe('Applications ---', function() {
     
     });
 
-    it('should Get application and includ collaborators in response', function(done) {
+
+    it('should Get application and include collaborators in response', function(done) {
+      this.timeout(25000)
       factories.create('login_system_user', config.user2)
         .end(function(err, res) {
           
@@ -198,15 +201,13 @@ describe('Applications ---', function() {
                   }
                 })
                 .end(function(err, res2) {
-
-                  //res2.body.applications.length.should.be.equal(1)
-
+                  
                   var application = res2.body.applications[0]
                   
-                  // Keys assertion
+                // Keys assertion
                   Object.keys(application).should.to.be.deep.equal(['created_at', 'updated_at', 'uid', 'name', 'api_key', 'owner_uid', 'user_uids', 'master_key', 'collaborators', 'SYS_ACL'])
-                  Object.keys(application.collaborators[0]).should.to.be.deep.equal(['uid', 'created_at', 'updated_at', 'email', 'username', 'plan_id', 'is_owner', 'roles'])
-                  Object.keys(application.collaborators[1]).should.to.be.deep.equal(['uid', 'created_at', 'updated_at', 'email', 'username', 'plan_id', 'roles'])
+                  Object.keys(application.collaborators[1]).should.to.be.deep.equal(['uid', 'created_at', 'updated_at', 'email', 'username', 'plan_id', 'is_owner', 'roles'])
+                  Object.keys(application.collaborators[0]).should.to.be.deep.equal(['uid', 'created_at', 'updated_at', 'email', 'username', 'plan_id', 'roles'])
                     // Data type assertion
                   application.created_at.should.be.a('string')
                   application.updated_at.should.be.a('string')
@@ -224,7 +225,6 @@ describe('Applications ---', function() {
                   application.collaborators[0].email.should.be.a('string')
                   application.collaborators[0].username.should.be.a('string')
                   application.collaborators[0].plan_id.should.be.a('array')
-                  application.collaborators[0].is_owner.should.be.a('boolean')
                   application.collaborators[0].roles.should.be.a('array')
 
                   application.collaborators[1].uid.should.be.a('string')
@@ -233,6 +233,7 @@ describe('Applications ---', function() {
                   application.collaborators[1].email.should.be.a('string')
                   application.collaborators[1].username.should.be.a('string')
                   application.collaborators[1].plan_id.should.be.a('array')
+                  application.collaborators[1].is_owner.should.be.a('boolean')
                   application.collaborators[1].roles.should.be.a('array')
 
                   application.collaborators[0].plan_id[0].should.be.a('string')
@@ -251,13 +252,13 @@ describe('Applications ---', function() {
                   application.owner_uid.should.be.equal(userUID)
                   application.owner_uid.should.be.equal(application.user_uids[0])
 
-                  application.collaborators[0].uid.should.be.equal(userUID)
-                  application.collaborators[1].uid.should.not.be.equal(userUID)
+                  application.collaborators[1].uid.should.be.equal(userUID)
+                  application.collaborators[0].uid.should.not.be.equal(userUID)
                   application.collaborators[1].plan_id[0].should.be.equal('free_trial')
                   application.collaborators[0].plan_id[0].should.be.equal('free_trial')
-                  application.collaborators[0].username.should.be.equal(username)
-                  application.collaborators[0].email.should.be.equal(email)
-                  application.collaborators[0].is_owner.should.be.equal(true)
+                  application.collaborators[1].username.should.be.equal(username)
+                  application.collaborators[1].email.should.be.equal(email)
+                  application.collaborators[1].is_owner.should.be.equal(true)
 
                   //application.created_at.should.be.equal(application.updated_at)
 
@@ -269,6 +270,7 @@ describe('Applications ---', function() {
     
     });
     
+
     it('should Get application and includ application variables in response.', function(done) {
       
       factories.create('Update_app_settings', authtoken, api_key, {

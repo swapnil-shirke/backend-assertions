@@ -646,7 +646,6 @@ describe('Queries and reference', function() {
 			  "include_count": true
 			}))
 			.then(function(res) {
-				R.pretty(res.body)
 				res.body.count.should.be.equal(6)
 				res.body.objects.length.should.be.equal(6)
 			})

@@ -1098,6 +1098,7 @@ describe('Bulk sys ACL --- ', function() {
 
 
 		it('should set roles to collaborators in bulk', function(done) {
+			// this.timeout(55000)
 			var users = {}
 
 			users[userUID_1] = [
@@ -1112,48 +1113,26 @@ describe('Bulk sys ACL --- ', function() {
 				users: users
 			})
 				.end(function(err, res) {
-					
 					res.body.notice.should.be.equal("The roles were applied successfully.")
 
 					var users1 = res.body.users[0]
 					var users2 = res.body.users[1]
 					
 
-					// key assertions
-					Object.keys(users1).should.to.be.deep.equal(['uid', 'created_at', 'updated_at', 'email', 'username', 'plan_id', 'roles'])
-					Object.keys(users1.roles[0]).should.to.be.deep.equal(['uid', 'name', 'description', 'users', 'roles', 'created_at', 'updated_at', 'owner', 'application', 'SYS_ACL'])
-					Object.keys(users1.roles[1]).should.to.be.deep.equal(['uid', 'name', 'description', 'users', 'roles', 'created_at', 'updated_at', 'owner', 'application', 'SYS_ACL'])
+				// key assertions
 					Object.keys(users2).should.to.be.deep.equal(['uid', 'created_at', 'updated_at', 'email', 'username', 'plan_id', 'roles'])
 					Object.keys(users2.roles[0]).should.to.be.deep.equal(['uid', 'name', 'description', 'users', 'roles', 'created_at', 'updated_at', 'owner', 'application', 'SYS_ACL'])
+					Object.keys(users2.roles[1]).should.to.be.deep.equal(['uid', 'name', 'description', 'users', 'roles', 'created_at', 'updated_at', 'owner', 'application', 'SYS_ACL'])
+					Object.keys(users1).should.to.be.deep.equal(['uid', 'created_at', 'updated_at', 'email', 'username', 'plan_id', 'roles'])
+					Object.keys(users1.roles[0]).should.to.be.deep.equal(['uid', 'name', 'description', 'users', 'roles', 'created_at', 'updated_at', 'owner', 'application', 'SYS_ACL'])
 
-					// value assertions
-					users1.uid.should.be.equal(userUID_1)
-					users1.email.should.be.equal(email_1)
-					users1.username.should.be.equal(username_1)
+				// value assertions
+					users2.uid.should.be.equal(userUID_1)
+					users2.email.should.be.equal(email_1)
+					users2.username.should.be.equal(username_1)
 
-					users1.roles[0].uid.should.be.equal(devRole)
-					users1.roles[0].users[0].should.be.equal(userUID_1)
-					users1.roles[0].owner.should.be.equal(email)
-					users1.roles[0].application.api_key.should.be.equal(api_key)
-					users1.roles[0].application.owner_uid.should.be.equal(userUID)
-					users1.roles[0].application.master_key.should.be.equal(master_key)
-					users1.roles[0].application.user_uids[0].should.be.equal(userUID)
-					users1.roles[0].application.user_uids[1].should.be.equal(userUID_1)
-					users1.roles[0].application.user_uids[2].should.be.equal(userUID_2)
-
-					users1.roles[1].uid.should.be.equal(contentRole)
-					users1.roles[1].users[0].should.be.equal(userUID_1)
-					users1.roles[1].owner.should.be.equal(email)
-					users1.roles[1].application.api_key.should.be.equal(api_key)
-					users1.roles[0].application.master_key.should.be.equal(master_key)
-					users1.roles[1].application.owner_uid.should.be.equal(userUID)
-
-					users2.uid.should.be.equal(userUID_2)
-					users2.email.should.be.equal(email_2)
-					users2.username.should.be.equal(username_2)
-
-					users2.roles[0].uid.should.be.equal(supertestRole)
-					users2.roles[0].users[0].should.be.equal(userUID_2)
+					users2.roles[0].uid.should.be.equal(devRole)
+					users2.roles[0].users[0].should.be.equal(userUID_1)
 					users2.roles[0].owner.should.be.equal(email)
 					users2.roles[0].application.api_key.should.be.equal(api_key)
 					users2.roles[0].application.owner_uid.should.be.equal(userUID)
@@ -1161,6 +1140,27 @@ describe('Bulk sys ACL --- ', function() {
 					users2.roles[0].application.user_uids[0].should.be.equal(userUID)
 					users2.roles[0].application.user_uids[1].should.be.equal(userUID_1)
 					users2.roles[0].application.user_uids[2].should.be.equal(userUID_2)
+
+					users2.roles[1].uid.should.be.equal(contentRole)
+					users2.roles[1].users[0].should.be.equal(userUID_1)
+					users2.roles[1].owner.should.be.equal(email)
+					users2.roles[1].application.api_key.should.be.equal(api_key)
+					users2.roles[0].application.master_key.should.be.equal(master_key)
+					users2.roles[1].application.owner_uid.should.be.equal(userUID)
+
+					users1.uid.should.be.equal(userUID_2)
+					users1.email.should.be.equal(email_2)
+					users1.username.should.be.equal(username_2)
+
+					users1.roles[0].uid.should.be.equal(supertestRole)
+					users1.roles[0].users[0].should.be.equal(userUID_2)
+					users1.roles[0].owner.should.be.equal(email)
+					users1.roles[0].application.api_key.should.be.equal(api_key)
+					users1.roles[0].application.owner_uid.should.be.equal(userUID)
+					users1.roles[0].application.master_key.should.be.equal(master_key)
+					users1.roles[0].application.user_uids[0].should.be.equal(userUID)
+					users1.roles[0].application.user_uids[1].should.be.equal(userUID_1)
+					users1.roles[0].application.user_uids[2].should.be.equal(userUID_2)
 
 
 
@@ -1183,11 +1183,11 @@ describe('Bulk sys ACL --- ', function() {
 
 					// R.pretty(users1)
 
-					Object.keys(users1).should.to.be.deep.equal(['uid', 'classes', 'isOwner'])
-					Object.keys(users1.classes).should.to.be.deep.equal(['built_io_application_user', 'built_io_application_user_role', 'built_io_installation_data', 'built_io_upload', 'supertest_class'])
-
-					Object.keys(users2).should.to.be.deep.equal(['uid', 'classes'])
+					Object.keys(users2).should.to.be.deep.equal(['uid', 'classes', 'isOwner'])
 					Object.keys(users2.classes).should.to.be.deep.equal(['built_io_application_user', 'built_io_application_user_role', 'built_io_installation_data', 'built_io_upload', 'supertest_class'])
+
+					Object.keys(users1).should.to.be.deep.equal(['uid', 'classes'])
+					Object.keys(users1.classes).should.to.be.deep.equal(['built_io_application_user', 'built_io_application_user_role', 'built_io_installation_data', 'built_io_upload', 'supertest_class'])
 
 
 

@@ -560,7 +560,7 @@ describe('Testing objects', function() {
 	});
 
 
-	describe.only('Uniquness', function() {
+	describe('Uniqueness', function() {
 		
 		var user1, user2, user3, user4, user5, user6
 		var appUser1, appUser2, appUser3, appUser4, appUser5, appUser6
@@ -746,7 +746,7 @@ describe('Testing objects', function() {
 			// var classLocal
 
 			before(function(done) {
-				this.timeout(20000)
+				this.timeout(30000)
 				R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
 					"class": {
 						"uid": "myclass",
@@ -799,10 +799,15 @@ describe('Testing objects', function() {
 					}))
 				})
 				.then(function(res) {
-					// console.log(res.body)
-					res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
-					res.body.error_code.should.be.equal(119)
-					res.body.errors.should.be.deep.equal([ { uniquness: 'is not unique' } ])
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+					  "error_code": 119,
+					  "errors": {
+					    "uniquness": [
+					      "is not unique"
+					    ]
+					  }
+					})
 				})
 				.then(function(res) {
 					done()
@@ -826,7 +831,6 @@ describe('Testing objects', function() {
 					res.body.notice.should.equal('Woot! Object created successfully.')
 				})
 				.then(function(res) {
-					// console.log(res.body)
 					return R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classLocal.uid, {
 						"object": {
 							"uniquness": "test1"
@@ -837,7 +841,6 @@ describe('Testing objects', function() {
 					res.body.notice.should.equal('Woot! Object created successfully.')
 				})
 				.then(function(res) {
-					// console.log(res.body)
 					return R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classLocal.uid, {
 						"object": {
 							"uniquness": "test1"
@@ -845,9 +848,15 @@ describe('Testing objects', function() {
 					}, tenant1.uid))
 				})
 				.then(function(res) {
-					res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
-					res.body.error_code.should.be.equal(119)
-					res.body.errors.should.be.deep.equal([ { uniquness: 'is not unique' } ])
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+					  "error_code": 119,
+					  "errors": {
+					    "uniquness": [
+					      "is not unique"
+					    ]
+					  }
+					})
 				})
 				.then(function(res) {
 					done()
@@ -861,7 +870,7 @@ describe('Testing objects', function() {
 
 			
 			it('should have only localy unique objects as per application user and system user', function(done) {
-				this.timeout(35000)
+				this.timeout(45000)
   			R.Promisify(factories.create('Create_object', '', app.api_key, classLocal.uid, {
 					"object": {
 						"uniquness": "test1"
@@ -878,9 +887,15 @@ describe('Testing objects', function() {
 				 	}))
 				 })
 				 .then(function(res) {
-				 	res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
-					res.body.error_code.should.be.equal(119)
-					res.body.errors.should.be.deep.equal([ { uniquness: 'is not unique' } ])
+					 	res.body.should.be.deep.equal({
+						  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+						  "error_code": 119,
+						  "errors": {
+						    "uniquness": [
+						      "is not unique"
+						    ]
+						  }
+						})
 				 })
 				 .then(function(res) {
 				 	return R.Promisify(factories.create('Create_object', appUser3.authtoken, app.api_key, classLocal.uid, {
@@ -910,9 +925,15 @@ describe('Testing objects', function() {
 					}))
 				})
 				.then(function(res) {
-					res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
-					res.body.error_code.should.be.equal(119)
-					res.body.errors.should.be.deep.equal([ { uniquness: 'is not unique' } ])
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+					  "error_code": 119,
+					  "errors": {
+					    "uniquness": [
+					      "is not unique"
+					    ]
+					  }
+					})
 				})
 				.then(function(res) {
 					done()
@@ -926,8 +947,8 @@ describe('Testing objects', function() {
 
   		
   		it('should have only localy unique objects as per application user in tenant', function(done) {
-				this.timeout(20000)
-  			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classLocal.uid, {
+				this.timeout(95000)
+  			R.Promisify(factories.create('Create_object', appUser5.authtoken, app.api_key, classLocal.uid, {
 					"object": {
 						"uniquness": "test1"
 					}
@@ -936,8 +957,7 @@ describe('Testing objects', function() {
 					res.body.notice.should.equal('Woot! Object created successfully.')
 				})
 				.then(function(res) {
-					// console.log(res.body)
-					return R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classLocal.uid, {
+					return R.Promisify(factories.create('Create_object', appUser6.authtoken, app.api_key, classLocal.uid, {
 						"object": {
 							"uniquness": "test1"
 						}
@@ -947,7 +967,6 @@ describe('Testing objects', function() {
 					res.body.notice.should.equal('Woot! Object created successfully.')
 				})
 				.then(function(res) {
-					// console.log(res.body)
 					return R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classLocal.uid, {
 						"object": {
 							"uniquness": "test1"
@@ -955,20 +974,28 @@ describe('Testing objects', function() {
 					}))
 				})
 				.then(function(res) {
-					// console.log(res.body)
-					res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
-					res.body.error_code.should.be.equal(119)
-					res.body.errors.should.be.deep.equal([ { uniquness: 'is not unique' } ])
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+					  "error_code": 119,
+					  "errors": {
+					    "uniquness": [
+					      "is not unique"
+					    ]
+					  }
+					})
 				})
 				.then(function(res) {
 					done()
 	      })
 	      .catch(function(err) {
-	        console.log(err)
+	        console.log(err.trace)
 	      })
   		
 
   		});
+
+
+
 
   	});
 
@@ -1029,9 +1056,15 @@ describe('Testing objects', function() {
 					}))
 				})
 				.then(function(res) {
-					res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
-					res.body.error_code.should.be.equal(119)
-					res.body.errors.should.be.deep.equal([ { name: 'is not unique' } ])
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+					  "error_code": 119,
+					  "errors": {
+					    "name": [
+					      "is not unique"
+					    ]
+					  }
+					})
 				})
 				.then(function(res) {
 					return R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classGlobal.uid, {
@@ -1051,9 +1084,15 @@ describe('Testing objects', function() {
 					}, tenant1.uid))
 				})
 				.then(function(res) {
-					res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
-					res.body.error_code.should.be.equal(119)
-					res.body.errors.should.be.deep.equal([ { name: 'is not unique' } ])
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+					  "error_code": 119,
+					  "errors": {
+					    "name": [
+					      "is not unique"
+					    ]
+					  }
+					})
 				})
 				.then(function(res) {
 					done()
@@ -1063,6 +1102,8 @@ describe('Testing objects', function() {
 	      })
 
   		});
+
+  	
 
   	});
 
@@ -1133,6 +1174,7 @@ describe('Testing objects', function() {
 			
 			});
 
+			
 			it('should be able to change uniquness local to null on class', function(done) {
 				
 				R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
@@ -1198,6 +1240,7 @@ describe('Testing objects', function() {
 			
 			});
 
+			
 			it('should be able to change uniquness global to null on class', function(done) {
 				
 				R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
@@ -1262,6 +1305,7 @@ describe('Testing objects', function() {
 	      })
 			
 			});
+
 
 			it('should update class with other unique fields and create objects', function(done) {
 				this.timeout(15000)
@@ -1468,11 +1512,11 @@ describe('Testing objects', function() {
 					res.body.should.be.deep.equal({
 					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
 					  "error_code": 119,
-					  "errors": [
-					    {
-					      "grp1": "is not unique"
-					    }
-					  ]
+					  "errors": {
+					    "grp1": [
+					      "is not unique"
+					    ]
+					  }
 					})
 				})
  				.then(function(res) {
@@ -1483,6 +1527,8 @@ describe('Testing objects', function() {
 	      })
 
 			});
+
+		
 
 		});
 
