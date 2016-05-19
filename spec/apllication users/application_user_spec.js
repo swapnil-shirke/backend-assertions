@@ -10,6 +10,8 @@ describe('Application users registration ---', function() {
   var appUserName  = R.bltRandom(8);
 
 
+
+
   before(function(done) {
     this.timeout(25000)
     R.Promisify(factories.create('login_system_user'))
@@ -74,6 +76,8 @@ describe('Application users registration ---', function() {
       })
 
   })
+
+
 
 
 

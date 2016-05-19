@@ -682,7 +682,6 @@ describe('Queries and reference', function() {
   	});
 
 
-
   	it('should get objects and include unpublished', function(done) {
   		R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, myclass.uid, {
 					"object": {
@@ -715,7 +714,6 @@ describe('Queries and reference', function() {
 
   	});
 
-
   
 
   });
@@ -726,7 +724,7 @@ describe('Queries and reference', function() {
 	describe('Reference objects', function() {
 
 		var myclass1, myclass2
-
+		var object1, object2
   	
   	before(function(done) {
   		this.timeout(45000)
@@ -1117,7 +1115,26 @@ describe('Queries and reference', function() {
 
   	});
 
+  	it('should create reference object without passing array', function(done) {
+  		
+  		var pro = object1.uid
+  		
+  		R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass2.uid, {
+				"object": {
+					"name": "seven",
+					"project": pro
+				}
+			}))
+  		.then(function(res) {
+  			object = res.body.object
+  			object.project.should.be.deep.equal([pro])
+  		})
+  		.then(function(res) {
+  			done()
+  		})
+  	
 
+  	});
 
 
 
