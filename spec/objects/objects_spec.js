@@ -555,10 +555,10 @@ describe('Testing objects', function() {
 
 	describe('Object Update operations', function() {
 		
-		var myclass7
+		var myclass7, object
 
 		before(function(done) {
-			this.timeout(25000)
+			this.timeout(45000)
 			R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
 				"class": {
 						"uid": "points",
@@ -687,7 +687,7 @@ describe('Testing objects', function() {
 		describe('PUSH-PULL on group(array) field', function() {
 
 			
-			it('should give error message for -ve index field', function(done) {
+			it('should give error message for -ve index key', function(done) {
 				
 				var objUid = object.uid 
 	 			
@@ -720,7 +720,7 @@ describe('Testing objects', function() {
 			});
 
 			
-			it.skip('should be able to PUSH value (using object property) in array field present in group', function(done) {
+			it.skip('should be able to PUSH value (object property) in array field present in group', function(done) {
 				
 				var objUid = object.uid 
 	 			
@@ -738,15 +738,15 @@ describe('Testing objects', function() {
 				}))
 				.then(function(res) {
 					R.pretty(res.body)
-					// res.body.should.be.deep.equal({
-					//   "error_message": "Bummer. Object update failed. Please enter valid data.",
-					//   "error_code": 121,
-					//   "errors": {
-					//     "Invalid parameters": [
-					//       "have invalid update operation(s). Please check if they were performed on null values."
-					//     ]
-					//   }
-					// })
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object update failed. Please enter valid data.",
+					  "error_code": 121,
+					  "errors": {
+					    "Invalid parameters": [
+					      "have invalid update operation(s). Please check if they were performed on null values."
+					    ]
+					  }
+					})
 				})
 				.then(function(res) {
 					done()
@@ -756,7 +756,7 @@ describe('Testing objects', function() {
 			});
 
 
-			it.skip('should able to PUSH value (using object property) in array field present in group without pasing index', function(done) {
+			it.skip('should able to PUSH value (object property) in array field present in group without pasing index', function(done) {
 				
 				var objUid = object.uid 
 	 			
@@ -783,7 +783,7 @@ describe('Testing objects', function() {
 			});
 
 
-			it('should able to PUSH value(using dot property) in array field present in group', function(done) {
+			it('should able to PUSH value(dot property) in array field present in group', function(done) {
 				
 				var objUid = object.uid 
 	 			
@@ -799,6 +799,7 @@ describe('Testing objects', function() {
 				}))
 				.then(function(res) {
 					object = res.body.object
+					res.body.notice.should.be.equal('Woot! Object updated successfully.')
 					// object.roundone.hits.should.have.length(6)
 					object.roundone.hits[0].should.be.equal(666)
 				})
@@ -810,7 +811,40 @@ describe('Testing objects', function() {
 			});
 
 
-			it('should able to PUSH value without passing index', function(done) {
+			it('should give error for field validation for PUSH operation', function(done) {
+				
+				var objUid = object.uid 
+	 			
+				R.Promisify(factories.create('update_object', appUser1.authtoken, app.api_key, myclass7.uid, objUid, {
+					"object": {
+						"roundone.hits": {
+							"PUSH": {
+								"data": "supertest",
+								"index": 2
+							}
+						}
+					}
+				}))
+				.then(function(res) {
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object update failed. Please enter valid data.",
+					  "error_code": 121,
+					  "errors": {
+					    "roundone.hits.0": [
+					      "is not number"
+					    ]
+					  }
+					})					
+				})
+				.then(function(res) {
+					done()
+				})
+			
+
+			});
+
+
+			it('should able to PUSH value(dot property) without passing index', function(done) {
 				
 				var objUid = object.uid 
 	 			
@@ -824,6 +858,7 @@ describe('Testing objects', function() {
 					}
 				}))
 				.then(function(res) {
+					res.body.notice.should.be.equal('Woot! Object updated successfully.')
 					object = R.last(res.body.object.roundone.hits)
 					object.should.be.equal(999)
 				})
@@ -835,7 +870,7 @@ describe('Testing objects', function() {
 			});
 
 
-			it('should able to create object and PUSH values', function(done) {
+			it('should able to create object and PUSH values in it', function(done) {
 				
 				var objUid = object.uid 
 	 			
@@ -862,8 +897,34 @@ describe('Testing objects', function() {
 
 			});
 
+			it.skip('should provide error message when "data" key is not present', function(done) {
+				
+				var objUid = object.uid 
+	 			
+				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
+					"object": {
+						"roundone": {
+							"hits": {
+								"PUSH": [786]
+							}
+						}
+					}
+				}))
+				.then(function(res) {
+					R.pretty(res.body)
+					// res.body.notice.should.be.equal('Woot! Object created successfully.')
+					// object = res.body.object.roundone.hits[0]
+					// object.should.be.equal(555)
+				})
+				.then(function(res) {
+					done()
+				})
+			
 
-			it.skip('should able to create object and PUSH values using dot property', function(done) {
+			});
+
+
+			it.skip('should able to create object and PUSH values in it using dot property', function(done) {
 				
 				var objUid = object.uid 
 	 			
@@ -890,14 +951,528 @@ describe('Testing objects', function() {
 			});
 
 
+			//----------------------------------------------
 
 
+
+			it('should be able to PULL value(object property) from array while updating object', function(done) {
+				
+	 			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
+					"object": {
+						"roundone": {
+							"hits": ["101", "102", "103", "104", "105"],
+							"name": "supertest1"
+						}
+					}
+				}))
+	 			.then(function(res) {
+	 				objUid = res.body.object.uid
+	 			})
+	 			.then(function(res) {
+	 				return R.Promisify(factories.create('update_object', appUser1.authtoken, app.api_key, myclass7.uid, objUid, {
+						"object": {
+							"roundone": {
+								"hits": {
+									"PULL": {
+										"data": 105
+									}
+								}
+							}
+						}
+					}))	
+	 			})
+				.then(function(res) {
+					R.pretty(res.body)
+					res.body.notice.should.be.equal('Woot! Object updated successfully.')
+					object = res.body.object
+					object.roundone.hits.should.be.deep.equal([101, 102, 103, 104])
+				})
+				.then(function(res) {
+					done()
+				})
+			
+
+			});
+
+
+			it('should be able to PULL multiple values(object property) from array while updating object', function(done) {
+				
+	 			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
+					"object": {
+						"roundone": {
+							"hits": ["201", "202", "203", "204", "205"],
+							"name": "supertest2"
+						}
+					}
+				}))
+	 			.then(function(res) {
+	 				objUid = res.body.object.uid
+	 			})
+	 			.then(function(res) {
+	 				return R.Promisify(factories.create('update_object', appUser1.authtoken, app.api_key, myclass7.uid, objUid, {
+						"object": {
+							"roundone": {
+								"hits": {
+									"PULL": {
+										"data": [201, 202, 203, 204, 205]
+									}
+								}
+							}
+						}
+					}))	
+	 			})
+				.then(function(res) {
+					res.body.notice.should.be.equal('Woot! Object updated successfully.')
+					object = res.body.object
+					object.roundone.hits.should.be.deep.equal([])
+					// object.roundone.hits[1].should.be.not.equal([3])
+				})
+				.then(function(res) {
+					done()
+				})
+			
+
+			});
+
+
+			it('should provide error message for data key for PULL operation', function(done) {
+				
+				var objUid = object.uid 
+	 			
+				R.Promisify(factories.create('update_object', appUser1.authtoken, app.api_key, myclass7.uid, objUid, {
+					"object": {
+						"roundone": {
+							"hits": {
+								"PULL": "supertest"
+							}
+						}
+					}
+				}))
+				.then(function(res) {
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object update failed. Please enter valid data.",
+					  "error_code": 121,
+					  "errors": {
+					    "roundone.hits": [
+					      "has a invalid array operation."
+					    ]
+					  }
+					})
+				})
+				.then(function(res) {
+					done()
+				})
+			
+
+			});
+
+
+			it('should be able to PULL value(dot property) from array while updating object', function(done) {
+				
+				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
+					"object": {
+						"roundone": {
+							"hits": ["401", "402", "403", "404", "405"],
+							"name": "supertest3"
+						}
+					}
+				}))
+	 			.then(function(res) {
+	 				console.log(res.body)
+	 				objUid = res.body.object.uid
+	 			})
+				.then(function(res) {
+					return R.Promisify(factories.create('update_object', appUser1.authtoken, app.api_key, myclass7.uid, objUid, {
+						"object": {
+							"roundone": {
+								"hits": {
+									"PULL": {
+										"data": 405
+									}
+								}
+							}
+						}
+					}))
+				})
+				.then(function(res) {
+					object = R.last(res.body.object.roundone.hits)
+					object.should.not.equal(405)
+				})
+				.then(function(res) {
+					done()
+				})
+			
+
+			});
 
 			
 		});
 
 
+		describe('UPDATE on group(array) field', function() {
+			
+			var myclass8, object1			
 
+			before(function(done) {
+				this.timeout(45000)
+				R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+						"class": {
+							"title": "myclass8",
+							"uid": "complex",
+							"inbuilt_class": false,
+							"schema": [{
+								"uid": "status",
+								"data_type": "text",
+								"display_name": "status",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": false,
+								"format": "",
+								"unique": null,
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								}
+							}, {
+								"uid": "group",
+								"data_type": "group",
+								"display_name": "group",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": true,
+								"format": "",
+								"unique": null,
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								},
+								"schema": [{
+									"uid": "name",
+									"data_type": "text",
+									"display_name": "name",
+									"mandatory": false,
+									"max": null,
+									"min": null,
+									"multiple": false,
+									"format": "",
+									"unique": null,
+									"field_metadata": {
+										"allow_rich_text": false,
+										"multiline": false
+									}
+								}, {
+									"uid": "marks",
+									"data_type": "number",
+									"display_name": "marks",
+									"mandatory": false,
+									"max": null,
+									"min": null,
+									"multiple": true,
+									"format": "",
+									"unique": null,
+									"field_metadata": {
+										"allow_rich_text": false,
+										"multiline": false
+									}
+								}, {
+									"uid": "subject",
+									"data_type": "group",
+									"display_name": "subject",
+									"mandatory": false,
+									"max": null,
+									"min": null,
+									"multiple": true,
+									"format": "",
+									"unique": null,
+									"field_metadata": {
+										"allow_rich_text": false,
+										"multiline": false
+									},
+									"schema": [{
+										"uid": "list",
+										"data_type": "text",
+										"display_name": "list",
+										"mandatory": false,
+										"max": null,
+										"min": null,
+										"multiple": true,
+										"format": "",
+										"unique": null,
+										"field_metadata": {
+											"allow_rich_text": false,
+											"multiline": false
+										}
+									}]
+								}]
+							}]
+						}
+					}))
+					.then(function(res) {
+						myclass8 = res.body.class
+					})
+					.then(function(res) {
+						return R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass8.uid, {
+							"object": {
+								"status": "PASS",
+								"group": [{
+									"name": "userone",
+									"marks": [52, 59, 57, 45],
+									"subject": [{
+										"list": ["PHY", "MATH", "SCI"]
+									}, {
+										"list": ["COM", "IT"]
+									}]
+								}, {
+									"name": "userTwo",
+									"marks": [69, 47, 66, 67],
+									"subject": [{
+										"list": ["PHY", "MATH", "SCI"]
+									}, {
+										"list": ["BIO", "ZOO", "MAR"]
+									}]
+								}]
+							}
+						}))
+					})
+					.then(function(res) {
+						R.pretty(res.body)
+						object1 = res.body.object
+					})
+					.then(function(res) {
+						done()
+					})
+					.catch(function(err) {
+						console.log(err)
+					})
+
+			})
+			
+
+
+			
+			it.skip('should give error message for -ve index in UPDATE operation', function(done) {
+				
+	 			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
+					"object": {
+						"roundone": {
+							"hits": ["201", "202", "203", "204", "205"],
+							"name": "supertest2"
+						}
+					}
+				}))
+				.then(function(res) {
+	 				objUid = res.body.object.uid
+	 			})
+				.then(function(res) {
+					return R.Promisify(factories.create('update_object', appUser1.authtoken, app.api_key, myclass7.uid, objUid, {
+						"object": {
+							"roundone": {
+								"hits": {
+									"PUSH": {
+										"data": 9999,
+										"index": -1
+									}
+								}
+							}
+						}
+					}))
+				})
+				.then(function(res) {
+					R.pretty(res.body)
+					// res.body.should.be.deep.equal({
+					//   "error_message": "Bummer. Object update failed. Please enter valid data.",
+					//   "error_code": 121,
+					//   "errors": {
+					//     "Invalid parameters": [
+					//       "have invalid update operation(s). Please check if they were performed on null values."
+					//     ]
+					//   }
+					// })
+				})
+				.then(function(res) {
+					done()
+				})
+			
+
+			});			
+
+			
+			it.skip('should UPDATE then value(object property) at provided index', function(done) {
+				
+	 			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
+					"object": {
+						"roundone": {
+							"hits": ["201", "202", "203", "204", "205"],
+							"name": "supertest2"
+						}
+					}
+				}))
+				.then(function(res) {
+	 				objUid = res.body.object.uid
+	 			})
+				.then(function(res) {
+					return R.Promisify(factories.create('update_object', appUser1.authtoken, app.api_key, myclass7.uid, objUid, {
+						"object": {
+							"roundone": {
+								"hits": {
+									"PUSH": {
+										"data": 9999,
+										"index": 1
+									}
+								}
+							}
+						}
+					}))
+				})
+				.then(function(res) {
+					R.pretty(res.body)
+					// res.body.should.be.deep.equal({
+					//   "error_message": "Bummer. Object update failed. Please enter valid data.",
+					//   "error_code": 121,
+					//   "errors": {
+					//     "Invalid parameters": [
+					//       "have invalid update operation(s). Please check if they were performed on null values."
+					//     ]
+					//   }
+					// })
+				})
+				.then(function(res) {
+					done()
+				})
+			
+
+			});
+
+			
+			it('should UPDATE then value(dot property) at provided index', function(done) {
+				
+	 			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
+					"object": {
+						"roundone": {
+							"hits": ["501", "502", "503", "504", "505"],
+							"name": "supertest2"
+						}
+					}
+				}))
+				.then(function(res) {
+	 				objUid = res.body.object.uid
+	 			})
+				.then(function(res) {
+					return R.Promisify(factories.create('update_object', appUser1.authtoken, app.api_key, myclass7.uid, objUid, {
+						"object": {
+							"roundone.hits": {
+								"UPDATE": {
+									"data": "666",
+									"index": 0
+								}
+							}
+						}
+					}))
+				})
+				.then(function(res) {
+					res.body.notice.should.be.equal('Woot! Object updated successfully.')
+					object = res.body.object
+					object.roundone.hits[0].should.be.equal(666)
+				})
+				.then(function(res) {
+					done()
+				})
+			
+
+			});
+
+
+			it.skip('should should provide error message for multiple values(object property) PUSH on same object', function(done) {
+				
+				var objUid = object1.uid
+
+	 			R.Promisify(factories.create('update_object', appUser1.authtoken, app.api_key, myclass8.uid, objUid, {
+						"object": {
+							"group": {
+								"UPDATE": {
+									"index": 0,
+									"data": {
+										"marks": {
+											"PUSH": {
+												"data": [502, 503]
+											}
+										},
+										"subject": {
+											"list": {
+												"PUSH": {
+													"data": ["ENG"]
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}))
+				.then(function(res) {
+					R.pretty(res.body)
+					// res.body.notice.should.be.equal('Woot! Object updated successfully.')
+					// object = res.body.object
+					// object.roundone.hits[0].should.be.equal(666)
+				})
+				.then(function(res) {
+					done()
+				})
+			
+
+			});
+
+
+			it('should should provide error message for multiple values(object property) PUSH on same object', function(done) {
+				
+				var objUid = object1.uid
+
+	 			R.Promisify(factories.create('update_object', appUser1.authtoken, app.api_key, myclass8.uid, objUid, {
+					"object": {
+						"group": {
+							"UPDATE": {
+								"index": 0,
+								"data": {
+									"marks": {
+										"PUSH": {
+											"data": [99, 98]
+										}
+									},
+									"subject.list": {
+										"PUSH": {
+											"data": ["FRN"]
+										},
+										"subject.list": {
+											"PUSH": {
+												"data": ["JAP"]
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}))
+				.then(function(res) {
+					R.pretty(res.body)
+					// res.body.notice.should.be.equal('Woot! Object updated successfully.')
+					// object = res.body.object
+					// object.roundone.hits[0].should.be.equal(666)
+				})
+				.then(function(res) {
+					done()
+				})
+			
+
+			});
+
+
+
+
+		
+		});
 
 
 
@@ -1656,7 +2231,7 @@ describe('Testing objects', function() {
 
 
 			it('should update class with other unique fields and create objects', function(done) {
-				this.timeout(15000)
+				this.timeout(25000)
 				// grp Golbal fields local
 				R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
 					"class": {
