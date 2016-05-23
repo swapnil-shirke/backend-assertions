@@ -553,7 +553,7 @@ describe('Testing objects', function() {
 	});
 
 
-	describe('Object Update operations', function() {
+	describe('Object update operations', function() {
 		
 		var myclass7, object
 
@@ -737,7 +737,6 @@ describe('Testing objects', function() {
 					}
 				}))
 				.then(function(res) {
-					R.pretty(res.body)
 					res.body.should.be.deep.equal({
 					  "error_message": "Bummer. Object update failed. Please enter valid data.",
 					  "error_code": 121,
@@ -771,10 +770,6 @@ describe('Testing objects', function() {
 						}
 					}
 				}))
-				.then(function(res) {
-					R.pretty(res.body)
-			
-				})
 				.then(function(res) {
 					done()
 				})
@@ -1067,7 +1062,7 @@ describe('Testing objects', function() {
 			});
 
 
-			it('should be able to PULL value(dot property) from array while updating object', function(done) {
+			it('should be able to PULL value(object property) from array while updating object', function(done) {
 				
 				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
 					"object": {
@@ -1107,6 +1102,7 @@ describe('Testing objects', function() {
 
 			
 		});
+
 
 
 		describe('UPDATE on group(array) field', function() {
@@ -1237,7 +1233,6 @@ describe('Testing objects', function() {
 						}))
 					})
 					.then(function(res) {
-						R.pretty(res.body)
 						object1 = res.body.object
 					})
 					.then(function(res) {
@@ -1299,7 +1294,7 @@ describe('Testing objects', function() {
 			});			
 
 			
-			it.skip('should UPDATE then value(object property) at provided index', function(done) {
+			it.skip('should UPDATE the value(object property) at provided index', function(done) {
 				
 	 			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
 					"object": {
@@ -1425,7 +1420,7 @@ describe('Testing objects', function() {
 			});
 
 
-			it('should should provide error message for multiple values(object property) PUSH on same object', function(done) {
+			it('should should provide error message for multiple values(dot property) PUSH on same object', function(done) {
 				
 				var objUid = object1.uid
 
@@ -1440,13 +1435,13 @@ describe('Testing objects', function() {
 											"data": [99, 98]
 										}
 									},
-									"subject.list": {
+									"subject.0.list": {
 										"PUSH": {
 											"data": ["FRN"]
 										},
-										"subject.list": {
-											"PUSH": {
-												"data": ["JAP"]
+										"subject.0.list": {
+											"PULL": {
+												"data": ["PHY"]
 											}
 										}
 									}
@@ -1469,12 +1464,672 @@ describe('Testing objects', function() {
 			});
 
 
-
-
 		
 		});
 
+		
+		describe('ADD_SUB', function() {
+			
+			before(function(done) {
+				this.timeout(25000)
+				
+				R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+					"class": {
+						"uid": "cash",
+						"title": "cash",
+						"schema": [{
+							"uid": "cash_plus",
+							"data_type": "number",
+							"display_name": "cash_plus",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": true,
+							"format": "",
+							"unique": null,
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							}
+						}, {
+							"uid": "cash_minus",
+							"data_type": "number",
+							"display_name": "cash_minus",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"format": "",
+							"unique": null,
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							}
+						}, {
+							"uid": "group_cash",
+							"data_type": "group",
+							"display_name": "group_cash",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"format": "",
+							"unique": null,
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							},
+							"schema": [{
+								"uid": "add_cash",
+								"data_type": "number",
+								"display_name": "add_cash",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": true,
+								"format": "",
+								"unique": null,
+								"action": "add",
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								}
+							}, {
+								"uid": "remove_cash",
+								"data_type": "number",
+								"display_name": "remove_cash",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": false,
+								"format": "",
+								"unique": null,
+								"action": "add",
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								}
+							}]
+						}]
+					}
+				}))
+				.then(function(res) {
+					classMath = res.body.class
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, classMath.uid, {
+						"object": {
+							"cash_plus": [4900, 6300],
+							"cash_minus": 8500.7,
+							"group_cash": {
+								"add_cash": [52, 75],
+								"remove_cash": 264.56
+							}
+						}
+					}))
+				})
+				.then(function(res) {
+					objectMath = res.body.object
+				})
+				.then(function(res) {
+					done()
+				})
+				
 
+			})
+
+
+			it('should provide error message for array when index is not specifyed for field to ADD/SUB', function(done) {
+				
+				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
+					"object": {
+						"cash_plus": {
+						    "ADD": 2000
+						},
+						"cash_minus": {
+							"SUB": 500
+						}
+					}
+				}))
+				.then(function(res) {
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object update failed. Please enter valid data.",
+					  "error_code": 121,
+					  "errors": {
+					    "cash_plus": [
+					      "is not multiple"
+					    ]
+					  }
+					})
+				})
+				.then(function(res) {
+					done()
+				})
+			
+			});
+
+
+			it('should able to ADD given number in present field in an array', function(done) {
+				
+				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
+					"object": {
+						"cash_plus.0": {
+						    "ADD": 2000
+						}
+					}
+				}))
+				.then(function(res) {
+					res.body.notice.should.be.equal('Woot! Object updated successfully.')
+					object = res.body.object
+					object.cash_plus[0].should.be.equal(6900)
+					object.cash_plus[1].should.be.equal(6300)
+				})
+				.then(function(res) {
+					done()
+				})
+			
+			});
+
+
+			it('should able to SUB given number in present field in an array', function(done) {
+				
+				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
+					"object": {
+						"cash_minus": {
+							"SUB": 500.7
+						}
+					}
+				}))
+				.then(function(res) {
+					res.body.notice.should.be.equal('Woot! Object updated successfully.')
+					object = res.body.object
+					object.cash_minus.should.be.equal(8000.000000000001)
+				})
+				.then(function(res) {
+					done()
+				})
+			
+			});
+
+
+			it.skip('should provide error for null field ADD/sub operation', function(done) {
+				
+				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
+					"object": {
+						"cash_plus.4": {
+						    "ADD": 2000
+						}
+					}
+				}))
+				.then(function(res) {
+					return R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
+						"object": {
+							"cash_plus.3": {
+							    "ADD": 2000
+							}
+						}
+					}))
+				})
+				.then(function(res) {
+					R.pretty(res.body)
+					// {
+					//   "error_message": "Bummer. Object update failed. Please enter valid data.",
+					//   "error_code": 121,
+					//   "errors": {
+					//     "5742cad56c0d05b67bbf1c8e')} has the field '3": [
+					//       "has a invalid array operation."
+					//     ]
+					//   }
+					// }
+				})
+				.then(function(res) {
+					done()
+				})
+			
+			});
+
+
+			it('should able to ADD given number to number field present inside the group', function(done) {
+				
+				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
+					"object": {
+							"group_cash.add_cash.0": {"ADD": 50}
+						}
+					}
+				))
+				.then(function(res) {
+					res.body.notice.should.be.equal('Woot! Object updated successfully.')
+					object = res.body.object
+					object.group_cash.add_cash[0].should.be.equal(102)
+					object.group_cash.add_cash[1].should.be.equal(75)
+					object.group_cash.remove_cash.should.be.equal(264.56)
+				})
+				.then(function(res) {
+					done()
+				})
+			
+			});
+
+
+			it('should able to SUB given number to number field present inside the group', function(done) {
+				
+				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
+						"object": {
+							"group_cash.remove_cash": {
+								"SUB": 200
+							}
+						}
+					}))
+				.then(function(res) {
+					res.body.notice.should.be.equal('Woot! Object updated successfully.')
+					object = res.body.object
+					object.group_cash.remove_cash.should.be.equal(64.56)
+				})
+				.then(function(res) {
+					done()
+				})
+			
+			});
+
+
+			it('should provide error message for incorrect group field', function(done) {
+				
+				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
+					"object": {
+						"group_cash.remove_cash.0": {
+							"SUB": 264
+						}
+					}
+				}))
+				.then(function(res) {
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object update failed. Please enter valid data.",
+					  "error_code": 121,
+					  "errors": {
+					    "parameters": [
+					      "has a invalid array operation."
+					    ]
+					  }
+					})
+				})
+				.then(function(res) {
+					done()
+				})
+			
+			});
+
+
+			it('should able to ADD given number to number field present inside the group', function(done) {
+				
+				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
+					"object": {
+							"group_cash.add_cash": {"ADD": 50}
+						}
+					}
+				))
+				.then(function(res) {
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object update failed. Please enter valid data.",
+					  "error_code": 121,
+					  "errors": {
+					    "group_cash.add_cash": [
+					      "is not multiple"
+					    ]
+					  }
+					})
+				})
+				.then(function(res) {
+					done()
+				})
+			
+			});
+
+
+
+		});
+
+
+		describe('UPSERT', function() {
+
+			var classInfo
+
+			before(function(done) {
+				this.timeout(35000)
+				R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+					"class": {
+						"title": "myclass9",
+						"uid": "myclass9",
+						"inbuilt_class": false,
+						"schema": [{
+							"uid": "name",
+							"data_type": "text",
+							"display_name": "name",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"format": "",
+							"unique": null,
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							}
+						}, {
+							"uid": "age",
+							"data_type": "number",
+							"display_name": "age",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"format": "",
+							"unique": null,
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							}
+						}, {
+							"uid": "address",
+							"data_type": "group",
+							"display_name": "address",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"format": "",
+							"unique": null,
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							},
+							"schema": [{
+								"uid": "city",
+								"data_type": "text",
+								"display_name": "city",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": false,
+								"format": "",
+								"unique": null,
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								}
+							}, {
+								"uid": "state",
+								"data_type": "text",
+								"display_name": "state",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": false,
+								"format": "",
+								"unique": null,
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								}
+							}]
+						}]
+					}
+				}))
+				.then(function(res) {
+					classInfo = res.body.class
+				})
+				.then(function(res) {
+					return factories.create('create_objects', 4, appUser1.authtoken, app.api_key, classInfo.uid, [{
+						"name": "sam",
+						"age": "20",
+						"address": {
+							"city": "mumbai",
+							"state": "MH"
+						}
+					}, {
+						"name": "sam",
+						"age": "26",
+						"address": {
+							"city": "pune",
+							"state": "MH"
+						}
+					}, {
+						"name": "sham",
+						"age": "32",
+						"address": {
+							"city": "dharmashala",
+							"state": "HM"
+						}
+					}, {
+						"name": "sing",
+						"age": "24",
+						"address": {
+							"city": "sardar",
+							"state": "PU"
+						}
+					}])
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, classInfo.uid))
+				})
+				.then(function(res) {
+					object1 = res.body.objects[0].uid
+					object2 = res.body.objects[1].uid
+					object3 = res.body.objects[2].uid
+					object4 = res.body.objects[3].uid
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+						"class": {
+							"title": "subject",
+							"uid": "subject",
+							"inbuilt_class": false,
+							"schema": [{
+								"uid": "sub_name",
+								"data_type": "text",
+								"display_name": "sub_name",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": false,
+								"format": "",
+								"unique": null,
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								},
+								"reference_to": "myclass9"
+							}, {
+								"uid": "owner",
+								"data_type": "reference",
+								"display_name": "owner",
+								"mandatory": false,
+								"max": null,
+								"min": null,
+								"multiple": false,
+								"format": "",
+								"unique": null,
+								"field_metadata": {
+									"allow_rich_text": false,
+									"multiline": false
+								},
+								"reference_to": "myclass9"
+							}]
+						}
+					}))
+				})
+				.then(function(res) {
+					classRef = res.body.class
+				})
+				.then(function(res) {
+					return factories.create('create_objects', 4, appUser1.authtoken, app.api_key, classRef.uid, [{
+						"sub_name": "math",
+						"owner": [object1]
+					},
+					{
+						"sub_name": "ENG",
+						"owner": [object2]
+					},
+					{
+						"sub_name": "SCI",
+						"owner": [object3]
+					},
+					{
+						"sub_name": "COM",
+						"owner": [object4]
+					}])
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, classRef.uid))
+				})
+				.then(function(res) {
+					done()
+				})
+				.catch(function(err) {
+        	console.log(err)
+      	})
+				
+
+			})
+
+
+			it('should search and update object using UPSERT operation', function(done) {
+				
+				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classInfo.uid, {
+				  "UPSERT": {
+				    "address.city": "pune"
+				  },
+				  "object": {
+				    "name": "sachin",
+				    "age": 36,
+				    "address": {
+				      "state": "DL",
+				      "city": "mumbai"
+				    }
+				  }
+				}))
+				.then(function(res) {
+					res.body.notice.should.be.equal('Woot! Object updated successfully.')
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, classInfo.uid))
+				})
+				.then(function(res) {
+					object = res.body.objects[0]
+					object.name.should.be.equal('sachin')
+					object.address.state.should.be.equal('DL')
+					object.address.city.should.be.equal('mumbai')
+				})
+				.then(function(res) {
+					done()
+				})
+			
+			});
+
+			
+			it('should search and create new object if not found', function(done) {
+				// console.log(classInfo.uid)
+				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classInfo.uid, {
+				  "UPSERT": {
+				    "city": "ooty"
+				  },
+				  "object": {
+				    "name": "hari",
+				    "age": 28,
+				    "address": {
+				      "state": "kerala",
+				      "city": "ooty"
+				    }
+				  }
+				}))
+				.then(function(res) {
+					// R.pretty(res.body)
+					res.body.notice.should.be.equal('Woot! Object created successfully.')
+					object = res.body.object
+					object.name.should.be.equal('hari')
+					object.age.should.be.equal(28)
+					object.address.state.should.be.equal('kerala')
+					object.address.city.should.be.equal('ooty')
+				})
+				.then(function(res) {
+					done()
+				})
+			
+			});
+
+			
+			it('should able update reference object using UPSERT', function(done) {
+				// console.log(classInfo.uid)
+				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classRef.uid, {
+			    "object": {
+		        "owner": [{
+		          "UPSERT": {
+		              "name": "sing"
+		          },
+		          "age": 55,
+		          "address.state": "KT",
+		          "address.city": "hampi"
+		        }]
+			    }
+				}))
+				.then(function(res) {
+					res.body.notice.should.be.equal('Woot! Object created successfully.')
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, classInfo.uid, {
+					 "query": {
+					    "name": "sing"
+					  }
+					}))
+				})
+				.then(function(res) {
+					R.pretty(res.body)
+				})
+				.then(function(res) {
+					done()
+				})
+			
+			});
+
+			
+			it('should provide error message for duplicate field while UPSERT', function(done) {
+				// console.log(classInfo.uid)
+				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classRef.uid, {
+			    "object": {
+		        "owner": [{
+		          "UPSERT": {
+		              "name": "sam"
+		          },
+		          "age": 55,
+		          "address.state": "KT",
+		          "address.city": "hampi"
+		        }]
+			    }
+				}))
+				.then(function(res) {
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+					  "error_code": 119,
+					  "errors": {
+					    "owner.0.UPSERT": [
+					      "Bummer. Upsert failed. Multiple matching objects were found."
+					    ]
+					  }
+					})
+				})
+				.then(function(res) {
+					done()
+				})
+			
+			});	
+
+
+		
+
+
+		});
 
 
 	});

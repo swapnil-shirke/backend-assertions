@@ -407,7 +407,7 @@
 	factories.addFactory('create_objects', function(count, authtoken, api_key, classUid, body, tenant_uid){
 		
 		body = body || []
-
+		
 		var promises = R.times(function(index){
 			return function(){
 				return R.Promisify(factories.create('Create_object', authtoken, api_key, classUid, {object:body[index]}, tenant_uid))
