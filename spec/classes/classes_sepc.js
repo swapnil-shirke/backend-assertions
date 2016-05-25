@@ -1,10 +1,12 @@
 describe('classes ---', function() {
+	
 	var authtoken, userUID
 	var api_key
 	var username
 	var email
 	var appname
 
+	
 	before(function(done) {
 		factories.create('login_system_user')
 			.end(function(err, res) {
@@ -17,8 +19,10 @@ describe('classes ---', function() {
 
 				done(err)
 			})
+	
 	})
 
+	
 	before(function(done) {
 		factories.create('Create_application', authtoken)
 			.end(function(err, res) {
@@ -30,19 +34,26 @@ describe('classes ---', function() {
 				//console.log(res.body)
 				done(err)
 			})
+	
 	})
 
+	
 	after(function(done) {
 		factories.create('Delete_application', authtoken, api_key)
 			.end(function(err, res1) {
 				console.log("application delete")
 				done(err)
 			})
+	
 	})
 
-	describe('Get all inbuilt classes', function() {
 
-		it('should Get all classes', function(done) {
+
+
+	describe('Get classes(inbuilt)', function() {
+
+
+		it('should be able to get all classes present', function(done) {
 			factories.create('Get_all_classes', authtoken, api_key, {
 					"_method": "get"
 				})
@@ -141,9 +152,10 @@ describe('classes ---', function() {
 
 					done(err)
 				})
+		
 		});
 
-		it('should Get classes count', function(done) {
+		it('should be able to get count for the classes present', function(done) {
 			factories.create('Get_all_classes', authtoken, api_key, {
 					"_method": "get",
 					"count": true
@@ -158,9 +170,10 @@ describe('classes ---', function() {
 
 					done(err)
 				})
+		
 		});
 
-		it('should classes using limit', function(done) {
+		it('should be able to get classes using limit param', function(done) {
 			factories.create('Get_all_classes', authtoken, api_key, {
 					"_method": "get",
 					"limit": 1
@@ -183,9 +196,10 @@ describe('classes ---', function() {
 
 					done(err)
 				})
+		
 		});
 
-		it('should classes using skip', function(done) {
+		it('should be able to get classes using skip param', function(done) {
 			factories.create('Get_all_classes', authtoken, api_key, {
 					"_method": "get",
 					"skip": 3
@@ -209,9 +223,10 @@ describe('classes ---', function() {
 
 					done(err)
 				})
+		
 		});
 
-		it('should classes simple query', function(done) {
+		it('should be able to get classes simple query', function(done) {
 			factories.create('Get_all_classes', authtoken, api_key, {
 					"_method": "get",
 					"query": {
@@ -237,13 +252,16 @@ describe('classes ---', function() {
 
 					done(err)
 				})
+		
 		});
+
 
 	})
 
-	describe('Create class', function() {
+	
+	describe('Class creation', function() {
 
-		it('should create a class', function(done) {
+		it('should be able to create a class for given app', function(done) {
 
 			// var class_name = product_supertest;
 			// var class_uid  = product_supertest;
@@ -315,13 +333,16 @@ describe('classes ---', function() {
 
 					done(err)
 				})
+		
 		});
 
 	})
 
-	describe('Get single class', function() {
+	
+	describe('Get class', function() {
 
-		it('should Get single(built_io_installation_data) class', function(done) {
+		
+		it('should be able to get single(built_io_installation_data) class', function(done) {
 			
 			var classUid = "built_io_installation_data"
 			
@@ -356,9 +377,10 @@ describe('classes ---', function() {
 
 					done(err)
 				})
+		
 		});
 
-		it('should Get single(built_io_application_user_role) class', function(done) {
+		it('should be able to get single(built_io_application_user_role) class', function(done) {
 			
 			var classUid = "built_io_application_user_role"
 			
@@ -395,9 +417,10 @@ describe('classes ---', function() {
 
 					done(err)
 				})
+		
 		});
 
-		it('should Get single(built_io_application_user) class', function(done) {
+		it('should be able to get single(built_io_application_user) class', function(done) {
 			
 			var classUid = "built_io_application_user"
 			
@@ -432,9 +455,10 @@ describe('classes ---', function() {
 
 					done(err)
 				})
+		
 		});
 
-		it('should Get single(built_io_upload) class', function(done) {
+		it('should be able to get single(built_io_upload) class', function(done) {
 			
 			var classUid = "built_io_upload"
 			
@@ -469,15 +493,16 @@ describe('classes ---', function() {
 					
 					done(err)
 				})
+		
 		});
 	
-	})
 
+	})
 
 
 	describe('Update class', function() {
 
-		it('should update the class', function(done) {
+		it('should be able to update the given class', function(done) {
 			
 			factories.create('Create_class', authtoken, api_key, {
 					"class": {
@@ -568,13 +593,15 @@ describe('classes ---', function() {
 							done(err)
 						})
 				})
+		
 		});
 	
 	})
 
+	
 	describe('Delete Class', function(done) {
 
-		it('should delete class', function(done) {
+		it('should be able to delete class', function(done) {
 			factories.create('Create_class', authtoken, api_key, {
 					"class": {
 						"title": "new class",
@@ -606,6 +633,7 @@ describe('classes ---', function() {
  					
 					
 				})
+		
 		});
 
 	})

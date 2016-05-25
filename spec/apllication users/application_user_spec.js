@@ -1,4 +1,4 @@
-describe('Application users registration ---', function() {
+describe('App users ---', function() {
 
   var authtoken, userUID, username, email
   var api_key, appname, master_key
@@ -81,7 +81,7 @@ describe('Application users registration ---', function() {
 
 
 
-  describe('Create application user object', function() {
+  describe('App user creation', function() {
 
     var appUser1
 
@@ -118,7 +118,7 @@ describe('Application users registration ---', function() {
     })
 
 
-    it('should create application user as an object', function(done) {
+    it('should be able to create application user as an object', function(done) {
       // var roleId
       var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
       var appUserName = R.bltRandom(8);
@@ -226,7 +226,7 @@ describe('Application users registration ---', function() {
     });
 
     
-    it('should get all application user objects', function(done) {
+    it('should be able to get all application user objects present', function(done) {
 
       factories.create('get_app_user_objects', authtoken, api_key)
         .expect(200)
@@ -281,7 +281,7 @@ describe('Application users registration ---', function() {
     });
 
     
-    it('should get single application user object', function(done) {
+    it('should be able to get single application user object', function(done) {
 
       factories.create('get_object_app_user', authtoken, api_key, appUser1.uid)
         .end(function(err, res) {
@@ -335,7 +335,7 @@ describe('Application users registration ---', function() {
     });
 
     
-    it('should update application user object', function(done) {
+    it('should be able to update application user object', function(done) {
 
       factories.create('update_object_app_user', authtoken, api_key, appUser1.uid, {
         "object": {
@@ -394,7 +394,7 @@ describe('Application users registration ---', function() {
     });
 
     
-    it('should search application users using query', function(done) {
+    it('should be able to search application users using query', function(done) {
 
       factories.create('get_app_user_objects', authtoken, api_key, '', { query: {"email": appUser.email } })
         .expect(200)
@@ -448,7 +448,7 @@ describe('Application users registration ---', function() {
     });
 
 
-    it('should delete application user object', function(done) {
+    it('should be able to delete application user object', function(done) {
 
       factories.create('delete_object_app_user', authtoken, api_key, appUser1.uid)
         .end(function(err, res) {
@@ -462,56 +462,16 @@ describe('Application users registration ---', function() {
     });
 
 
-    it.skip('should get application user objects count', function(done) {
+    it('should be able to get application user objects count', function(done) {
 
       factories.create('get_app_user_objects', authtoken, api_key, '', {
         "count": "true"
       })
       .expect(200)
       .end(function(err, res) {
-        console.log(res.body)
-        
-        // var object = R.last(res.body.objects)
+        // console.log(res.body)
+        res.body.objects.should.be.equal(2)  
 
-        // // Keys assertion
-        // Object.keys(object).should.to.be.deep.equal(['published', '__loc', 'username', 'email', 'first_name', 'last_name', 'device_type', 'tags', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', 'ACL', '_version'])
-
-        // // Data type assertion
-        // object.published.should.be.a('boolean')
-        // object.__loc.should.be.a('array')
-        // object.username.should.be.a('string')
-        // object.email.should.be.a('string')
-        // object.first_name.should.be.a('string')
-        // object.last_name.should.be.a('string')
-        // object.device_type.should.be.a('string')
-        // object.ACL.should.be.a('object')
-        // object.app_user_object_uid.should.be.a('string')
-        // object.created_by.should.be.a('string')
-        // object.updated_by.should.be.a('string')
-        // object.created_at.should.be.a('string')
-        // object.updated_at.should.be.a('string')
-        // object.uid.should.be.a('string')
-        // object._version.should.be.a('number')
-        // object.tags.should.be.a('array')
-
-        // // Value assertion
-        // object.published.should.be.equal(true)
-        // object.__loc.should.be.deep.equal(appUser.__loc)
-        // // object.__loc[0].should.be.equal(appUser.__loc[0])
-        // // object.__loc[1].should.be.equal(appUser.__loc[1])
-        // object.username.should.be.equal(appUser.username)
-        // object.email.should.be.equal(appUser.email)
-        // object.first_name.should.be.equal(appUser.first_name)
-        // object.last_name.should.be.equal(appUser.last_name)
-        // object.device_type.should.be.equal('ios')
-
-        // object.app_user_object_uid.should.be.equal('system')
-        // object.created_by.should.be.equal(userUID)
-        // object.updated_by.should.be.equal(object.created_by)
-        // object.created_at.should.be.equal(object.updated_at)
-
-        // object._version.should.be.equal(1)
-        // object.tags.should.be.deep.equal(['testuser', 'backend'])
 
         done(err)
 
@@ -519,10 +479,11 @@ describe('Application users registration ---', function() {
 
     });
 
+  
   });
 
 
-  describe('applications users registration', function() {
+  describe('App users registration', function() {
 
     var appUser2, appUser_authtoken
 
@@ -569,7 +530,7 @@ describe('Application users registration ---', function() {
 
     })
 
-    it('should register app user', function(done) {
+    it('should be able to register application users', function(done) {
 
       var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
       var appUserName = R.bltRandom(8);
@@ -584,56 +545,56 @@ describe('Application users registration ---', function() {
           "username": appUserName
         }
       })
-        .end(function(err, res) {
+      .end(function(err, res) {
 
-          var object = res.body.application_user
+        var object = res.body.application_user
 
-          res.body.notice.should.be.equal('Woot! You have successfully registered!')
+        res.body.notice.should.be.equal('Woot! You have successfully registered!')
 
-          // // Keys assertion
-          Object.keys(object).should.to.be.deep.equal(['email', 'first_name', 'last_name', 'username', 'app_user_object_uid', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'active', 'created_by', 'updated_by', 'tags'])
+        // // Keys assertion
+        Object.keys(object).should.to.be.deep.equal(['email', 'first_name', 'last_name', 'username', 'app_user_object_uid', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'active', 'created_by', 'updated_by', 'tags'])
 
-          // // Data type assertion
-          object.email.should.be.a('string')
-          object.first_name.should.be.a('string')
-          object.last_name.should.be.a('string')
-          object.username.should.be.a('string')
-          object.app_user_object_uid.should.be.a('string')
-          object.created_at.should.be.a('string')
-          object.updated_at.should.be.a('string')
-          object.uid.should.be.a('string')
-          object.published.should.be.a('boolean')
-          object.ACL.should.be.a('object')
-          object._version.should.be.a('number')
-          object.active.should.be.a('boolean')
-          object.tags.should.be.a('array')
+        // // Data type assertion
+        object.email.should.be.a('string')
+        object.first_name.should.be.a('string')
+        object.last_name.should.be.a('string')
+        object.username.should.be.a('string')
+        object.app_user_object_uid.should.be.a('string')
+        object.created_at.should.be.a('string')
+        object.updated_at.should.be.a('string')
+        object.uid.should.be.a('string')
+        object.published.should.be.a('boolean')
+        object.ACL.should.be.a('object')
+        object._version.should.be.a('number')
+        object.active.should.be.a('boolean')
+        object.tags.should.be.a('array')
 
-          // Value assertion
-          should.not.exist(object.updated_by)
-          should.not.exist(object.created_by)
-          should.not.exist(object.__loc)
+        // Value assertion
+        should.not.exist(object.updated_by)
+        should.not.exist(object.created_by)
+        should.not.exist(object.__loc)
 
-          object.published.should.be.equal(true)
+        object.published.should.be.equal(true)
 
-          object.email.should.be.equal(appUseremail)
-          object.first_name.should.be.equal('john')
-          object.last_name.should.be.equal('smith')
-          object.username.should.be.equal(appUserName)
-          object.active.should.be.equal(false)
-          object.app_user_object_uid.should.be.equal('system')
-          object.created_at.should.be.equal(object.updated_at)
+        object.email.should.be.equal(appUseremail)
+        object.first_name.should.be.equal('john')
+        object.last_name.should.be.equal('smith')
+        object.username.should.be.equal(appUserName)
+        object.active.should.be.equal(false)
+        object.app_user_object_uid.should.be.equal('system')
+        object.created_at.should.be.equal(object.updated_at)
 
 
-          object._version.should.be.equal(1)
-          object.tags.should.be.deep.equal([])
+        object._version.should.be.equal(1)
+        object.tags.should.be.deep.equal([])
 
-          done(err)
+        done(err)
 
-        })
+      })
 
     });
 
-    it('should update registered app user', function(done) {
+    it('should be able to update registered application user', function(done) {
 
       factories.create('update_register_app_user', appUser_authtoken, api_key, appUser2.uid, {
         "application_user": {
@@ -641,129 +602,129 @@ describe('Application users registration ---', function() {
           "last_name": "objectUpdate",
         }
       })
-        .end(function(err, res) {
+      .end(function(err, res) {
 
-          var object = res.body.application_user
+        var object = res.body.application_user
 
-          // Keys assertion
-          Object.keys(object).should.to.be.deep.equal(['published', '__loc', 'username', 'email', 'first_name', 'last_name', 'device_type', 'tags', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', 'ACL', '_version', 'last_login_at'])
+        // Keys assertion
+        Object.keys(object).should.to.be.deep.equal(['published', '__loc', 'username', 'email', 'first_name', 'last_name', 'device_type', 'tags', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', 'ACL', '_version', 'last_login_at'])
 
-          // Data type assertion
-          object.published.should.be.a('boolean')
-          object.__loc.should.be.a('array')
-          object.email.should.be.a('string')
-          object.first_name.should.be.a('string')
-          object.last_name.should.be.a('string')
-          object.username.should.be.a('string')
-          object.device_type.should.be.a('string')
-          object.tags.should.be.a('array')
-          object.app_user_object_uid.should.be.a('string')
-          object.created_by.should.be.a('string')
-          object.updated_by.should.be.a('string')
-          object.created_at.should.be.a('string')
-          object.updated_at.should.be.a('string')
-          object.uid.should.be.a('string')
-          object.ACL.should.be.a('object')
-          object._version.should.be.a('number')
-          object.last_login_at.should.be.a('string')
+        // Data type assertion
+        object.published.should.be.a('boolean')
+        object.__loc.should.be.a('array')
+        object.email.should.be.a('string')
+        object.first_name.should.be.a('string')
+        object.last_name.should.be.a('string')
+        object.username.should.be.a('string')
+        object.device_type.should.be.a('string')
+        object.tags.should.be.a('array')
+        object.app_user_object_uid.should.be.a('string')
+        object.created_by.should.be.a('string')
+        object.updated_by.should.be.a('string')
+        object.created_at.should.be.a('string')
+        object.updated_at.should.be.a('string')
+        object.uid.should.be.a('string')
+        object.ACL.should.be.a('object')
+        object._version.should.be.a('number')
+        object.last_login_at.should.be.a('string')
 
-          // value assertion
-          object.published.should.be.equal(true)
-          object.__loc.should.be.deep.equal([72.79246119999993, 19.4563596])
-          object.email.should.be.equal(appUser2.email)
-          object.first_name.should.be.equal('objectUpdate')
-          object.last_name.should.be.equal('objectUpdate')
-          object.username.should.be.equal(appUser2.username)
-          object.device_type.should.be.equal('ios')
-          object.tags.should.be.deep.equal(["testuser", "backend"])
-          object.app_user_object_uid.should.be.equal('system')
-          object.created_by.should.be.equal(userUID)
-          object.updated_by.should.be.equal(userUID)
-          object.created_at.should.be.not.equal(object.updated_at)
-          object.uid.should.be.equal(appUser2.uid)
-          object.ACL.can[0].should.be.equal('update')
-          object.ACL.can[1].should.be.equal('delete')
+        // value assertion
+        object.published.should.be.equal(true)
+        object.__loc.should.be.deep.equal([72.79246119999993, 19.4563596])
+        object.email.should.be.equal(appUser2.email)
+        object.first_name.should.be.equal('objectUpdate')
+        object.last_name.should.be.equal('objectUpdate')
+        object.username.should.be.equal(appUser2.username)
+        object.device_type.should.be.equal('ios')
+        object.tags.should.be.deep.equal(["testuser", "backend"])
+        object.app_user_object_uid.should.be.equal('system')
+        object.created_by.should.be.equal(userUID)
+        object.updated_by.should.be.equal(userUID)
+        object.created_at.should.be.not.equal(object.updated_at)
+        object.uid.should.be.equal(appUser2.uid)
+        object.ACL.can[0].should.be.equal('update')
+        object.ACL.can[1].should.be.equal('delete')
 
-          object._version.should.be.equal(3)
-          // object.last_login_at.should.be.equal('string')
+        object._version.should.be.equal(3)
+        // object.last_login_at.should.be.equal('string')
 
-          done(err)
+        done(err)
 
-        })
+      })
 
     });
 
-    it('should get registered app user', function(done) {
+    it('should be able to get registered application user', function(done) {
 
       factories.create('get_register_app_user', appUser_authtoken, api_key, appUser2.uid)
-        .end(function(err, res) {
+      .end(function(err, res) {
 
-          var object = res.body.application_user
+        var object = res.body.application_user
 
-          // Keys assertion
-          Object.keys(object).should.to.be.deep.equal(['published', '__loc', 'username', 'email', 'first_name', 'last_name', 'device_type', 'tags', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', 'ACL', '_version', 'last_login_at'])
+        // Keys assertion
+        Object.keys(object).should.to.be.deep.equal(['published', '__loc', 'username', 'email', 'first_name', 'last_name', 'device_type', 'tags', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', 'ACL', '_version', 'last_login_at'])
 
-          // Data type assertion
-          object.published.should.be.a('boolean')
-          object.__loc.should.be.a('array')
-          object.email.should.be.a('string')
-          object.first_name.should.be.a('string')
-          object.last_name.should.be.a('string')
-          object.username.should.be.a('string')
-          object.device_type.should.be.a('string')
-          object.tags.should.be.a('array')
-          object.app_user_object_uid.should.be.a('string')
-          object.created_by.should.be.a('string')
-          object.updated_by.should.be.a('string')
-          object.created_at.should.be.a('string')
-          object.updated_at.should.be.a('string')
-          object.uid.should.be.a('string')
-          object.ACL.should.be.a('object')
-          object._version.should.be.a('number')
-          object.last_login_at.should.be.a('string')
+        // Data type assertion
+        object.published.should.be.a('boolean')
+        object.__loc.should.be.a('array')
+        object.email.should.be.a('string')
+        object.first_name.should.be.a('string')
+        object.last_name.should.be.a('string')
+        object.username.should.be.a('string')
+        object.device_type.should.be.a('string')
+        object.tags.should.be.a('array')
+        object.app_user_object_uid.should.be.a('string')
+        object.created_by.should.be.a('string')
+        object.updated_by.should.be.a('string')
+        object.created_at.should.be.a('string')
+        object.updated_at.should.be.a('string')
+        object.uid.should.be.a('string')
+        object.ACL.should.be.a('object')
+        object._version.should.be.a('number')
+        object.last_login_at.should.be.a('string')
 
-          // value assertion
-          object.published.should.be.equal(true)
-          object.__loc.should.be.deep.equal([72.79246119999993, 19.4563596])
-          object.email.should.be.equal(appUser2.email)
-          object.first_name.should.be.equal('objectUpdate')
-          object.last_name.should.be.equal('objectUpdate')
-          object.username.should.be.equal(appUser2.username)
-          object.device_type.should.be.equal('ios')
-          object.tags.should.be.deep.equal(["testuser", "backend"])
-          object.app_user_object_uid.should.be.equal('system')
-          object.created_by.should.be.equal(userUID)
-          object.updated_by.should.be.equal(userUID)
-          object.created_at.should.be.not.equal(object.updated_at)
-          object.uid.should.be.equal(appUser2.uid)
-          object.ACL.can[0].should.be.equal('update')
-          object.ACL.can[1].should.be.equal('delete')
+        // value assertion
+        object.published.should.be.equal(true)
+        object.__loc.should.be.deep.equal([72.79246119999993, 19.4563596])
+        object.email.should.be.equal(appUser2.email)
+        object.first_name.should.be.equal('objectUpdate')
+        object.last_name.should.be.equal('objectUpdate')
+        object.username.should.be.equal(appUser2.username)
+        object.device_type.should.be.equal('ios')
+        object.tags.should.be.deep.equal(["testuser", "backend"])
+        object.app_user_object_uid.should.be.equal('system')
+        object.created_by.should.be.equal(userUID)
+        object.updated_by.should.be.equal(userUID)
+        object.created_at.should.be.not.equal(object.updated_at)
+        object.uid.should.be.equal(appUser2.uid)
+        object.ACL.can[0].should.be.equal('update')
+        object.ACL.can[1].should.be.equal('delete')
 
-          object._version.should.be.equal(3)
-          // object.last_login_at.should.be.equal('string')
+        object._version.should.be.equal(3)
+        // object.last_login_at.should.be.equal('string')
 
-          done(err)
+        done(err)
 
-        })
+      })
 
     });
 
-    it('should deactivate an existing application user', function(done) {
+    it('should be able to deactivate an existing application user', function(done) {
 
       factories.create('delete_register_app_user', appUser_authtoken, api_key, appUser2.uid)
-        .end(function(err, res) {
-          res.body.notice.should.be.equal('Woot! Object deleted successfully.')
+      .end(function(err, res) {
+        res.body.notice.should.be.equal('Woot! Object deleted successfully.')
 
-          done(err)
+        done(err)
 
-        })
+      })
 
     });
 
   });
 
 
-  describe('applications user login/logout', function() {
+  describe('App user login/logout', function() {
 
     appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
     appUserName = R.bltRandom(8);
@@ -801,7 +762,7 @@ describe('Application users registration ---', function() {
 
     })
 
-    it('should provide error for invalid application user login', function(done) {
+    it('should provide error message for invalid application user login operation', function(done) {
 
       factories.create('login_app_user', api_key, {
         "application_user": {
@@ -825,7 +786,7 @@ describe('Application users registration ---', function() {
 
     });
 
-    it('should login application user', function(done) {
+    it('should be able to login users registered for an application', function(done) {
 
       factories.create('login_app_user', api_key, {
         "application_user": {
@@ -886,7 +847,7 @@ describe('Application users registration ---', function() {
 
     });
 
-    it('should provide error for invalid application user logout', function(done) {
+    it('should provide error message for invalid application user logout operation', function(done) {
 
       factories.create('logout_app_user', "userAuthtoken", api_key)
         .end(function(err, res) {
@@ -897,7 +858,7 @@ describe('Application users registration ---', function() {
 
     });
 
-    it('should logout application user', function(done) {
+    it('should be able to logout application user from an apllication', function(done) {
 
       R.Promisify(factories.create('login_app_user', api_key, {
         "application_user": {
@@ -925,7 +886,7 @@ describe('Application users registration ---', function() {
   });
 
 
-  describe('Application user token/uid', function() {
+  describe('App user token/uid', function() {
 
     var appUser4, userAuthtoken1
     this.timeout(25000)
@@ -976,7 +937,7 @@ describe('Application users registration ---', function() {
     })
 
     
-    it('should get current login application user', function(done) {
+    it('should be able to get current logged in application user', function(done) {
       this.timeout(30000)
       
       R.Promisify(factories.create('get_current_app_user', userAuthtoken1, api_key))
@@ -1037,7 +998,7 @@ describe('Application users registration ---', function() {
     });
 
     
-    it('should retrieve application user uid', function(done) {
+    it('should be able to retrieve application user uid', function(done) {
       
       R.Promisify(factories.create('app_user_retrieve_user_uid', api_key, {
         "application_user": {
@@ -1056,7 +1017,7 @@ describe('Application users registration ---', function() {
     });
 
 
-    it('Get an application user token by using application master key', function(done) {
+    it('should be able to an application user token by using an application`s master key', function(done) {
       
       R.Promisify(factories.create('app_user_token', master_key, api_key, appUser4.uid))
       .then(function(res) {
@@ -1070,7 +1031,7 @@ describe('Application users registration ---', function() {
   });
 
 
-  describe('Application user activation', function() {
+  describe('App user activations', function() {
     
 
     var appUser5, userAuthtoken1, token
@@ -1115,18 +1076,19 @@ describe('Application users registration ---', function() {
 
     })
 
-    it('Activate the user account', function(done) {
+    it('should be able to activate app user`s account', function(done) {
       R.Promisify(factories.create('activate_app_user', api_key, appUser5.uid, token))
       .then(function(res) {
         res.body.notice.should.be.equal('Woot! Account activated successfully!')
         done()
       })   
+    
     });   
   
   })  
 
 
-  describe('Application user request', function() {
+  describe('App user requests', function() {
     
 
     var appUser6, userAuthtoken1, token
@@ -1169,7 +1131,7 @@ describe('Application users registration ---', function() {
 
     })
     
-    it('should request to reset the password', function(done) {
+    it('should be able to request reset password, for an application', function(done) {
       R.Promisify(factories.create('req_forgot_password', api_key, {
         "application_user": {
             "email": appUser6.email
@@ -1189,7 +1151,7 @@ describe('Application users registration ---', function() {
   })
 
 
-  describe('Application user forgot password', function() {
+  describe('App user forgot password', function() {
     
 
     var appUser7, userAuthtoken1, token
@@ -1234,7 +1196,7 @@ describe('Application users registration ---', function() {
 
     })
 
-    it('should reset the password using the token', function(done) {
+    it('should be able to reset password using provided token', function(done) {
       
       R.Promisify(factories.create('reset_password_app_user', api_key, {
         "application_user": {
@@ -1257,7 +1219,7 @@ describe('Application users registration ---', function() {
   });
 
 
-  describe('Application user validate_token', function() {
+  describe('App user validate_token', function() {
     
 
     var appUser8, userAuthtoken1, token
@@ -1302,7 +1264,7 @@ describe('Application users registration ---', function() {
 
     })
 
-    it('should Check whether reset password token is valid or not.', function(done) {
+    it('should be able to check whether reset password token is valid or not', function(done) {
       
       R.Promisify(factories.create('validate_token_app_user', api_key, { 'application_user[reset_password_token]': token }))
       .then(function(res) {

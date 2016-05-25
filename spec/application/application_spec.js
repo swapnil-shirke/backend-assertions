@@ -1,10 +1,10 @@
 describe('Applications ---', function() {
+
   var authtoken, userUID
   var api_key
   var username
   var email
   var appname
-
 
 
   before(function(done){
@@ -33,6 +33,7 @@ describe('Applications ---', function() {
   
   })
 
+
   after(function(done) {
     factories.create('Delete_application', authtoken, api_key)
       .end(function(err, res1) {
@@ -43,29 +44,75 @@ describe('Applications ---', function() {
   })
 
 
+
+
+
   describe('Get restricted uids', function() {
-    //pendding
-    it('should get list of all restricted uids', function(done) {
+    
+    it('should be able to get list of all restricted uids for an application', function(done) {
       R.Promisify(api.get(config.endpoints.restricted_uids)
       .set('web_ui_api_key', config.web_ui_api_key)
       .expect(200))
       .then(function(res) {
-        // Keys assertion
-        var keys = res.body.restricted
-
-        //keys.should.be.equal(['published','uid','created_at','deleted_at','updated_at','tags_array','klass_id','applikation_id','*_ids','id','_id','ACL','SYS_ACL','DEFAULT_ACL','app_user_object_uid','built_io_upload','__loc','tags','_owner','_version','toJSON','save','update','domain','shard_account','shard_app','shard_random','hook','__indexes','__meta','created_by','updated_by','inbuilt_class','tenant_id','isSystemUser','isApplicationUser','isNew','_shouldLean','_shouldFilter','options','_version','__v'])
-        keys.length.should.be.equal(42)
+        res.body.should.be.deep.equal({
+          "restricted": [
+            "published",
+            "uid",
+            "created_at",
+            "deleted_at",
+            "updated_at",
+            "tags_array",
+            "klass_id",
+            "applikation_id",
+            "*_ids",
+            "id",
+            "_id",
+            "ACL",
+            "SYS_ACL",
+            "DEFAULT_ACL",
+            "app_user_object_uid",
+            "built_io_upload",
+            "__loc",
+            "tags",
+            "_owner",
+            "_version",
+            "toJSON",
+            "save",
+            "update",
+            "domain",
+            "shard_account",
+            "shard_app",
+            "shard_random",
+            "hook",
+            "__indexes",
+            "__meta",
+            "created_by",
+            "updated_by",
+            "inbuilt_class",
+            "tenant_id",
+            "isSystemUser",
+            "isApplicationUser",
+            "isNew",
+            "_shouldLean",
+            "_shouldFilter",
+            "options",
+            "_version",
+            "__v"
+          ]
+        })
+        
         done()
       });
     
     });
 
+
   })
 
 
-  describe('Applications', function() {
+  describe('App creation', function() {
 
-    it('should create an application', function(done) {
+    it('should be able to create an application as a system user', function(done) {
 
       var appName = "Post App"
 
@@ -115,9 +162,9 @@ describe('Applications ---', function() {
   });
 
 
-  describe('Get all applications', function() {
+  describe('Get an applications', function() {
 
-    it('should get list of applications', function(done) {
+    it('should be able to get a list of an applications', function(done) {
       factories.create('Get_all_applications', authtoken, {
           "_method": "get",
           "query": {
@@ -164,7 +211,7 @@ describe('Applications ---', function() {
     })
 
 
-    it('should provide applications count in response', function(done) {
+    it('should be able to provide an applications count in response', function(done) {
       factories.create('Get_all_applications', authtoken, {
           "_method": "get",
           "count": true
@@ -181,7 +228,7 @@ describe('Applications ---', function() {
     });
 
 
-    it('should Get application and include collaborators in response', function(done) {
+    it('should be able to get an applications including collaborators info in response', function(done) {
       this.timeout(25000)
       factories.create('login_system_user', config.user2)
         .end(function(err, res) {
@@ -271,7 +318,7 @@ describe('Applications ---', function() {
     });
     
 
-    it('should Get application and includ application variables in response.', function(done) {
+    it('should be able to get an application including application variables in response.', function(done) {
       
       factories.create('Update_app_settings', authtoken, api_key, {
           "app_settings": {
@@ -310,7 +357,8 @@ describe('Applications ---', function() {
 
   })
 
-  describe('Get all application skip/limit', function() {
+
+  describe('Get an applications skip/limit', function() {
     
     var app1, app2, app3
 
@@ -412,26 +460,147 @@ describe('Applications ---', function() {
 
   })
 
-  // assertion is pendding for valid_field_types
-  describe('Get valid field types', function() {
-    //pendding
-    it('should Get the field datatypes supported and the various options for these fields', function(done) {
+  
+  describe('Get valid field types for an apllication', function() {
+    
+    it('should be able to get field datatypes supported and the various options for these fields', function(done) {
       api.get(config.endpoints.applications + config.endpoints.valid_field_types)
         .set('web_ui_api_key', config.web_ui_api_key)
         .set('authtoken', authtoken)
         .set('application_api_key', api_key)
         .expect(200)
         .end(function(err, res) {
-
-          //console.log("=========", res.body)
+          res.body.should.be.deep.equal({
+            "field_types": [
+              {
+                "field_type": "text",
+                "label": "Text",
+                "allow_length_validations": true,
+                "allow_regex": true,
+                "multiple": true,
+                "mandatory": true,
+                "unique": true,
+                "allow_field_metadata": true,
+                "multiline": true,
+                "allow_rich_text": true,
+                "explaination": "Using this datatype we can enter string literals for the field. Additionaly you can also assign blob data."
+              },
+              {
+                "field_type": "isodate",
+                "label": "ISODate",
+                "allow_length_validations": false,
+                "allow_regex": false,
+                "multiple": true,
+                "mandatory": true,
+                "unique": true,
+                "allow_field_metadata": true,
+                "multiline": false,
+                "allow_rich_text": false,
+                "explaination": "Using this datatype you can assign either date, time or datetime values for the particular field."
+              },
+              {
+                "field_type": "file",
+                "label": "File",
+                "allow_length_validations": false,
+                "allow_regex": false,
+                "multiple": true,
+                "mandatory": true,
+                "unique": false,
+                "allow_field_metadata": true,
+                "multiline": false,
+                "allow_rich_text": false,
+                "explaination": "When you upload any asset in your built.io application, you can apply that upload's UID to this field. This will form a link between that asset and the object."
+              },
+              {
+                "field_type": "boolean",
+                "label": "Boolean",
+                "allow_length_validations": false,
+                "allow_regex": false,
+                "multiple": false,
+                "mandatory": false,
+                "unique": false,
+                "allow_field_metadata": true,
+                "multiline": false,
+                "allow_rich_text": false,
+                "explaination": "Use this datatype when you would like to add fields that can act as a switch for you. For Example: In an Invoice class, there can be a boolean field called, 'paid'"
+              },
+              {
+                "field_type": "reference",
+                "label": "Reference",
+                "allow_length_validations": false,
+                "allow_regex": false,
+                "multiple": false,
+                "mandatory": true,
+                "unique": false,
+                "allow_field_metadata": true,
+                "multiline": false,
+                "allow_rich_text": false,
+                "explaination": "You can refer to objects of other classes in your application, when you use this field."
+              },
+              {
+                "field_type": "group",
+                "label": "Group",
+                "allow_length_validations": false,
+                "allow_regex": false,
+                "multiple": true,
+                "mandatory": true,
+                "unique": false,
+                "allow_field_metadata": true,
+                "multiline": false,
+                "allow_rich_text": false,
+                "explaination": "Using this field, you can group other fields into this one. An example usage can be, an address field, which is a composite of streeet address, city, state."
+              },
+              {
+                "field_type": "link",
+                "label": "Link",
+                "allow_length_validations": false,
+                "allow_regex": false,
+                "multiple": true,
+                "mandatory": true,
+                "unique": true,
+                "allow_field_metadata": true,
+                "multiline": false,
+                "allow_rich_text": false,
+                "explaination": "Using this field you can save hyperlinks into your objects. The link field itself is composite of two fields, link title and link href."
+              },
+              {
+                "field_type": "number",
+                "label": "Number",
+                "allow_length_validations": true,
+                "allow_regex": false,
+                "multiple": true,
+                "mandatory": true,
+                "unique": true,
+                "allow_field_metadata": true,
+                "multiline": false,
+                "allow_rich_text": false,
+                "explaination": "This datatype can be used to store numerical values."
+              },
+              {
+                "field_type": "mixed",
+                "label": "Mixed",
+                "allow_length_validations": false,
+                "allow_regex": false,
+                "multiple": false,
+                "mandatory": false,
+                "unique": false,
+                "allow_field_metadata": true,
+                "multiline": false,
+                "allow_rich_text": false,
+                "explaination": "This datatype helps you save a key-value store in your object."
+              }
+            ]
+          })
 
           done(err)
         })
+    
     })
 
+  
   })
 
-  describe('Get single application', function() {
+  describe('Get app', function() {
 
     var authtoken1
     
@@ -458,7 +627,8 @@ describe('Applications ---', function() {
     
     })
 
-    it('should get application as an owner', function(done) {
+
+    it('should be able to get application as an owner', function(done) {
       factories.create('Create_application', authtoken)
         .end(function(err, res) {
           var app = res.body.application
@@ -505,7 +675,8 @@ describe('Applications ---', function() {
     
     });
 
-    it('should get application as a collaborator(without master_key)', function(done) {
+
+    it('should be able to get application as a collaborator without master_key in response', function(done) {
       factories.create('Get_application', authtoken1, api_key)
         .end(function(err, res) {
           
@@ -545,15 +716,17 @@ describe('Applications ---', function() {
     
     });
 
+
   })
 
-  describe('Update application', function() {
+  describe('Update app', function() {
 
-    it('should update application', function(done) {
+    it.skip('should be able to update created application', function(done) {
       factories.create('Update_application', authtoken, api_key, {
           "name": "updated"
         })
         .end(function(err, res) {
+          R.pretty(res.body)
           var application = res.body.application
 
           // Keys assertion
@@ -568,12 +741,13 @@ describe('Applications ---', function() {
           application.owner_uid.should.be.a('string')
           application.user_uids.should.be.a('array')
           application.SYS_ACL.should.be.a('object')
+          // application.user_uids[0].length.should.be.a('string')
 
+          console.log("==", application.user_uids)
           application.uid.length.should.be.equal(19)
           application.api_key.length.should.be.equal(19)
           application.master_key.length.should.be.equal(19)
           application.owner_uid.length.should.be.equal(27)
-          application.user_uids.length.should.be.equal(2)
 
           // Value assertion
           res.body.notice.should.be.equal('Awesome! Application updated successfully.')
@@ -617,11 +791,13 @@ describe('Applications ---', function() {
     
     });
 
+  
   })
 
-  describe('Delete application', function() {
+  
+  describe('Delete app', function() {
 
-    it('should delete application', function(done) {
+    it('should be able to delete careated application', function(done) {
 
       var appName = "Delete App"
 
@@ -669,11 +845,13 @@ describe('Applications ---', function() {
     
     });
 
+  
   })
 
-  describe('Reset master key', function() {
+  
+  describe('Reset app master key', function() {
 
-    it('should reset app master key', function(done) {
+    it('should be able to reset app master key as a owner', function(done) {
       api.post(config.endpoints.applications + '/' + api_key + config.endpoints.reset_master_key)
         .set('web_ui_api_key', config.web_ui_api_key)
         .set('authtoken', authtoken)
@@ -696,11 +874,13 @@ describe('Applications ---', function() {
     
     });
 
+  
   })
 
-  describe('Application settings - ', function() {
+  
+  describe('App settings', function() {
 
-    it('should get application settings', function(done) {
+    it('should be able to get application settings', function(done) {
       factories.create('Get_app_settings', authtoken, api_key)
         .end(function(err, res) {
           var settings = res.body.app_settings
@@ -803,7 +983,7 @@ describe('Applications ---', function() {
     
     });
 
-    it('should update application settings', function(done) {
+    it('should be able to update application settings', function(done) {
       factories.create('Update_app_settings', authtoken, api_key, {
           "app_settings": {
             "application_variables": {
@@ -943,7 +1123,7 @@ describe('Applications ---', function() {
     
     });
 
-    it('should reset application settings', function(done) {
+    it('should be able to reset application settings', function(done) {
       factories.create('Update_app_settings', authtoken, api_key, {
           "app_settings": {
             "activation_template": {
@@ -1088,12 +1268,14 @@ describe('Applications ---', function() {
     
     });
 
+  
   })
 
 
   describe('Invite and unaccepted_invitations', function() {
 
-    it('should invite collaborators', function(done) {
+    
+    it('should be able to invite collaborators for an application', function(done) {
       factories.create('invite_collaborator', authtoken, api_key, {
           "emails": [
             "test1user@mailinator.com",
@@ -1110,7 +1292,8 @@ describe('Applications ---', function() {
     
     });
 
-    it('should get unaccepted invitations', function(done) {
+    
+    it('should be able to get unaccepted invitations for an application', function(done) {
 
       api.get(config.endpoints.applications + "/" + api_key + config.endpoints.unaccepted_invitations)
         .set('web_ui_api_key', config.web_ui_api_key)
@@ -1131,11 +1314,12 @@ describe('Applications ---', function() {
     
     });
 
+  
   })
 
-  describe('Application unshare owner/collaborator', function() {
+  describe('Application unshare', function() {
 
-    it('should unshare application', function(done) {
+    it('should be able to unshare application from collaborator', function(done) {
 
       factories.create('login_system_user', config.user2)
         .end(function(err, res) {
@@ -1164,7 +1348,7 @@ describe('Applications ---', function() {
     
     });
 
-    it('should unshare application collaborator', function(done) {
+    it('should be able to unshare application collaborator as a collaborator', function(done) {
 
       factories.create('login_system_user', config.user2)
         .end(function(err, res) {
@@ -1195,7 +1379,7 @@ describe('Applications ---', function() {
 
   describe('Transfer/Accept Ownership', function() {
 
-    it('should transfer app ownership', function(done) {
+    it('should be able to transfer app ownership to registerd systyem users', function(done) {
       factories.create('Get_application', authtoken, api_key)
         .end(function(err, res1) {
 
@@ -1217,7 +1401,7 @@ describe('Applications ---', function() {
     
     })
 
-    it.skip('should accept application ownership', function(done) {
+    it.skip('should be able to accept application ownership', function(done) {
 
     });
 

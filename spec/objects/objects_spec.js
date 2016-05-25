@@ -684,7 +684,7 @@ describe('Testing objects', function() {
 		})
 
 
-		describe('PUSH-PULL on group(array) field', function() {
+		describe('PUSH-PULL', function() {
 
 			
 			it('should give error message for -ve index key', function(done) {

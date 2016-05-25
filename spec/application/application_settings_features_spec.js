@@ -1,6 +1,8 @@
-describe('General settings ---', function() {
+describe.only('General app settings ---', function() {
+  
   var sys_user1
   var app1
+
 
 
   before(function(done) {
@@ -90,6 +92,7 @@ describe('General settings ---', function() {
     var filename2 = 'jpg_1.JPG'
     var filename3 = 'json_1.json'
 
+    
     before(function(done) {
       R.Promisify(factories.create('Update_app_settings', sys_user1.authtoken, app1.api_key, {
         "app_settings": {
@@ -106,11 +109,11 @@ describe('General settings ---', function() {
       .catch(function(err) {
         console.log(err)
       })
+    
     })
 
 
-
-    it('should restrict whitelisted files only', function(done) {
+    it('should be able to restricted whitelisted files only', function(done) {
       R.Promisify(factories.create('create_upload', appUser1.authtoken, app1.api_key, filename1))
         .then(function(res) {
           res.body.notice.should.be.equal('Woot! File created successfully.')
@@ -158,6 +161,7 @@ describe('General settings ---', function() {
     var filename3 = 'json_1.json'
     var filename4 = 'pdf_1.pdf'
 
+    
     before(function(done) {
       R.Promisify(factories.create('Update_app_settings', sys_user1.authtoken, app1.api_key, {
         "app_settings": {
@@ -174,11 +178,12 @@ describe('General settings ---', function() {
       .catch(function(err) {
         console.log(err)
       })
+    
     })
 
 
 
-    it('should restrict blackted files only', function(done) {
+    it('should be able to restrict blackted files only', function(done) {
       R.Promisify(factories.create('create_upload', appUser1.authtoken, app1.api_key, filename1))
         .then(function(res) {
           res.body.should.be.deep.equal({
@@ -262,7 +267,8 @@ describe('General settings ---', function() {
 
 
 
-    it('should restrict whitelisted files only', function(done) {
+    it('should be able to restrict whitelisted files only on update upload object', function(done) {
+      
       R.Promisify(factories.create('create_upload', appUser1.authtoken, app1.api_key, filename1))
         .then(function(res) {
           res.body.notice.should.be.equal('Woot! File created successfully.')
@@ -299,11 +305,13 @@ describe('General settings ---', function() {
 
   describe('uploads disable restrictions', function() {
 
+
     var filename1 = 'png_1.png'
     var filename2 = 'jpg_1.JPG'
     var filename3 = 'json_1.json'
 
     var userFile 
+
 
     before(function(done) {
       R.Promisify(factories.create('Update_app_settings', sys_user1.authtoken, app1.api_key, {
@@ -321,11 +329,12 @@ describe('General settings ---', function() {
       .catch(function(err) {
         console.log(err)
       })
+    
     })
 
 
-
-    it('should disable restrictions on whitelisted files', function(done) {
+    it('should be able to disable restrictions on whitelisted files', function(done) {
+      
       R.Promisify(factories.create('create_upload', appUser1.authtoken, app1.api_key, filename1))
         .then(function(res) {
           res.body.notice.should.be.equal('Woot! File created successfully.')
@@ -345,9 +354,8 @@ describe('General settings ---', function() {
           console.log(err)
         })
 
-
-
     });
+
 
 
   });
@@ -379,7 +387,8 @@ describe('General settings ---', function() {
     })
 
 
-    it('should restrict whitelisted files only', function(done) {
+    it('should be able to restricted whitelisted files only', function(done) {
+      
       R.Promisify(factories.create('update_register_app_user', appUser2.authtoken, app1.api_key, appUser1.uid, {
           "application_user": {
             "username": "superman",
@@ -429,7 +438,7 @@ describe('General settings ---', function() {
     })
 
 
-    it('should restrict whitelisted files only', function(done) {
+    it('should be able to restrict whitelisted files only', function(done) {
       R.Promisify(factories.create('update_register_app_user', appUser1.authtoken, app1.api_key, appUser1.uid, {
           "application_user": {
             "first_name": "superman",
@@ -449,6 +458,7 @@ describe('General settings ---', function() {
           console.log(err)
         })
 
+    
     });
 
 
@@ -477,7 +487,7 @@ describe('General settings ---', function() {
     })
 
 
-    it('should restrict whitelisted files only', function(done) {
+    it('should be able to restrict whitelisted files only', function(done) {
       R.Promisify(factories.create('update_register_app_user', appUser2.authtoken, app1.api_key, appUser1.uid, {
           "application_user": {
             "first_name": "superman",
@@ -505,7 +515,7 @@ describe('General settings ---', function() {
   });
 
   
-  describe('users restriced profile ', function() {
+  describe('users restricted profile ', function() {
     
     before(function(done) {
       
@@ -528,7 +538,7 @@ describe('General settings ---', function() {
     })
 
 
-    it('should be update by system user', function(done) {
+    it('should be update by only system user', function(done) {
       this.timeout(30000)
       R.Promisify(factories.create('update_object_app_user', sys_user1.authtoken, app1.api_key, appUser1.uid, {
           "object": {
@@ -582,7 +592,7 @@ describe('General settings ---', function() {
     })
     
 
-    it('should disable traditional login', function(done) {
+    it('should be able to disable traditional login', function(done) {
       R.Promisify(factories.create('login_app_user', app1.api_key, {
         "application_user": {
           "email": user2.email,
@@ -611,7 +621,7 @@ describe('General settings ---', function() {
     });
 
 
-    it('should disable Google login', function(done) {
+    it('should be able to disable Google login', function(done) {
       R.Promisify(factories.create('register_app_user', app1.api_key, {
         "application_user": {
           "auth_data": {
@@ -643,7 +653,7 @@ describe('General settings ---', function() {
     });
 
 
-    it('should disable facebook login', function(done) {
+    it('should be able to disable facebook login', function(done) {
       R.Promisify(factories.create('register_app_user', app1.api_key, {
         "application_user": {
           "auth_data": {
@@ -675,7 +685,7 @@ describe('General settings ---', function() {
     });
 
 
-    it('should disable twitter login', function(done) {
+    it('should be able to disable twitter login', function(done) {
       R.Promisify(factories.create('register_app_user', app1.api_key, {
       "application_user": {
         "auth_data": {
