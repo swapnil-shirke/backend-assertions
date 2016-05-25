@@ -29,7 +29,6 @@ describe('Objects metadata --- ', function() {
 				appname    = res.body.application.name;
 			})
 			.then(function() {
-
 				return R.Promisify(factories.create('Create_class', authtoken, api_key, {
 					"class": {
 						"title": "supertest class",
@@ -50,7 +49,6 @@ describe('Objects metadata --- ', function() {
 				classUid = res.body.class.uid
 			})
 			.then(function(res) {
-
 				return R.Promisify(factories.create('Create_object', authtoken, api_key, classUid, {
 					"object": {
 						"name": "supertest"
@@ -59,11 +57,12 @@ describe('Objects metadata --- ', function() {
 			})
 			.then(function(res) {
 				objectUid = res.body.object.uid
-
+			})
+			.then(function(res) {
 				done()
 			})
 			.catch(function(err) {
-
+				console.log(err)
 			})
 
 	})
@@ -81,9 +80,9 @@ describe('Objects metadata --- ', function() {
 
 
 
-	describe('Create Object with metadata (POST call)', function() {
+	describe('Create metadata (POST call)', function() {
 
-		it('should ignore metadata field while creating object', function(done) {
+		it('should be able to ignore metadata field while creating object', function(done) {
 			factories.create('Create_object', authtoken, api_key, classUid, {
 					"object": {
 						"name": "metadata object",
@@ -99,6 +98,7 @@ describe('Objects metadata --- ', function() {
 				})
 				.expect(201)
 				.end(function(err, res) {
+					// R.pretty(res.body)
 					var object = res.body.object
 
 					res.body.notice.should.be.equal('Woot! Object created successfully.')
@@ -111,8 +111,8 @@ describe('Objects metadata --- ', function() {
 
 		});
 
-		// bug
-		it.skip('should provide error message for _metadata field while creating object', function(done) {
+		// bug(no error message provided, it creates object without metadata) 
+		it.skip('should be able to provide error message for _metadata field while creating object', function(done) {
 			factories.create('Create_object', authtoken, api_key, classUid, {
 					"object": {
 						"name": "_metadata object",
@@ -129,8 +129,8 @@ describe('Objects metadata --- ', function() {
 				.expect(422)
 				.end(function(err, res) {
 					console.log(res.body)
-					res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
-					res.body.error_code.should.be.equal(119)
+					// res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
+					// res.body.error_code.should.be.equal(119)
 
 					done(err)
 				})
@@ -142,7 +142,7 @@ describe('Objects metadata --- ', function() {
 
 	describe('Update object with metadata (PUT call)', function() {
 		// bug
-		it('should ignore metadata while updating object', function(done) {
+		it('should be able to ignore metadata field while updating object', function(done) {
 			factories.create('update_object', authtoken, api_key, classUid, objectUid, {
 					"object": {
 						"name": "supertest",
@@ -166,7 +166,7 @@ describe('Objects metadata --- ', function() {
 
 		});
 
-		it.skip('should provide error message for _metadata field while updating object', function(done) {
+		it.skip('should be able to provide error message for _metadata field while updating object', function(done) {
 			factories.create('update_object', authtoken, api_key, classUid, objectUid, {
 					"object": {
 						"name": "isupertest",

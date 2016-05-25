@@ -1,4 +1,4 @@
-describe.only('General app settings ---', function() {
+describe('General app settings ---', function() {
   
   var sys_user1
   var app1

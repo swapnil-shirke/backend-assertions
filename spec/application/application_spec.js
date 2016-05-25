@@ -1,10 +1,11 @@
-describe('Applications ---', function() {
+describe.only('Applications ---', function() {
 
   var authtoken, userUID
   var api_key
   var username
   var email
   var appname
+
 
 
   before(function(done){
@@ -112,6 +113,7 @@ describe('Applications ---', function() {
 
   describe('App creation', function() {
 
+    
     it('should be able to create an application as a system user', function(done) {
 
       var appName = "Post App"
@@ -119,6 +121,7 @@ describe('Applications ---', function() {
       factories.create('Create_application', authtoken, {
           "name": appName
       })
+      .expect(201)
       .end(function(err, res) {
         var application = res.body.application
 
@@ -159,12 +162,97 @@ describe('Applications ---', function() {
     });
 
 
+    it('should provide error message for invalid authtoken while creating application', function(done) {
+
+      var appName = "Post App"
+
+      factories.create('Create_application', "asdasd", {
+          "name": appName
+      })
+      .expect(401)
+      .end(function(err, res) {
+        res.body.should.be.deep.equal({
+          "error_message": "Hey! You're not allowed in here unless you're logged in.",
+          "error_code": 105,
+          "errors": {}
+        })
+         done(err)
+      })
+    
+    });
+
+
+
+
+  
   });
 
 
-  describe('Get an applications', function() {
+  describe('Get applications', function() {
 
-    it('should be able to get a list of an applications', function(done) {
+    
+    it('should be able to get all applications', function(done) {
+      factories.create('Get_all_applications', authtoken, {
+          "_method": "get"
+        })
+        .end(function(err, res) {
+          
+          res.body.applications.length.should.be.equal(1)
+
+
+          var application = res.body.applications[0]
+
+          // Keys assertion
+          Object.keys(application).should.to.be.deep.equal(['created_at', 'updated_at', 'uid', 'name', 'api_key', 'owner_uid', 'user_uids', 'master_key', 'SYS_ACL'])
+
+          // Data type assertion
+          application.created_at.should.be.a('string')
+          application.updated_at.should.be.a('string')
+          application.uid.should.be.a('string')
+          application.name.should.be.a('string')
+          application.api_key.should.be.a('string')
+          application.owner_uid.should.be.a('string')
+          application.user_uids.should.be.a('array')
+          application.SYS_ACL.should.be.a('object')
+
+          application.uid.length.should.be.equal(19)
+          application.api_key.length.should.be.equal(19)
+          application.master_key.length.should.be.equal(19)
+          application.owner_uid.length.should.be.equal(27)
+          application.user_uids.length.should.be.equal(1)
+
+          // Value assertion
+          application.api_key.should.be.equal(api_key)
+
+          application.created_at.should.be.equal(application.updated_at)
+          application.owner_uid.should.be.equal(userUID)
+          application.owner_uid.should.be.equal(application.user_uids[0])
+
+
+
+          done(err)
+        })
+    
+    })
+
+
+    it('should be able to get count of applications created', function(done) {
+      factories.create('Get_all_applications', authtoken, {
+          "_method": "get",
+          "count": true
+        })
+        .end(function(err, res) {
+          // R.pretty(res.body)
+          Object.keys(res.body).should.to.be.deep.equal(['applications'])
+          res.body.applications.should.be.equal(1)
+          
+          done(err)
+        })
+    
+    })
+
+
+    it('should be able to get an application using query', function(done) {
       factories.create('Get_all_applications', authtoken, {
           "_method": "get",
           "query": {
@@ -340,12 +428,12 @@ describe('Applications ---', function() {
               
               // Keys assertion
               Object.keys(application).should.to.be.deep.equal(['created_at', 'updated_at', 'uid', 'name', 'api_key', 'owner_uid', 'user_uids', 'master_key', 'SYS_ACL', 'application_variables'])
-              // Object.keys(application.application_variables).should.to.be.deep.equal(['test_tool'])
+              Object.keys(application.application_variables).should.to.be.deep.equal(['test_tool'])
               
                 // Data type assertion
               application.application_variables.should.be.a('object')
               
-              // application.application_variables.test_tool.should.be.equal('supertest')
+              application.application_variables.test_tool.should.be.equal('supertest')
 
 
               done(err)
@@ -426,36 +514,55 @@ describe('Applications ---', function() {
     })
 
 
-    it('should skip applications', function(done) {
+    
+    it('should be able to skip number of applications while getting all apps', function(done) {
       factories.create('Get_all_applications', authtoken, {
           "_method": "get",
-          "skip": "10"
+          "skip": 3
         })
         .end(function(err, res) {
-          // res.body.applications.length.should.be.equal(2)
+          // R.pretty(res.body)
+          res.body.applications.length.should.be.equal(1)
           var application = res.body.applications
-            
 
           done(err)
         })
 
     });
 
-    it('should limit applications', function(done) {
+    
+    it('should be able to limit number of applications while getting all apps', function(done) {
       this.timeout(20000)
       factories.create('Get_all_applications', authtoken, {
           "_method": "get",
-          "limit": "1"
+          "limit": "2"
         })
         .end(function(err, res) {
-          // res.body.applications.length.should.be.equal(2)
-          
+          res.body.applications.length.should.be.equal(2)
           
           done(err)
 
         })
 
     });
+
+    
+    it.skip('should provide error message for -ve skip/limit values while getting all apps', function(done) {
+      factories.create('Get_all_applications', authtoken, {
+          "_method": "get",
+          "skip": -2,
+          "limit": -2
+        })
+        .end(function(err, res) {
+          R.pretty(res.body)
+          // res.body.applications.length.should.be.equal(2)
+          
+
+          done(err)
+        })
+
+    });
+
 
 
   })
@@ -600,6 +707,7 @@ describe('Applications ---', function() {
   
   })
 
+
   describe('Get app', function() {
 
     var authtoken1
@@ -719,6 +827,7 @@ describe('Applications ---', function() {
 
   })
 
+
   describe('Update app', function() {
 
     it.skip('should be able to update created application', function(done) {
@@ -795,6 +904,7 @@ describe('Applications ---', function() {
   })
 
   
+
   describe('Delete app', function() {
 
     it('should be able to delete careated application', function(done) {
@@ -849,6 +959,7 @@ describe('Applications ---', function() {
   })
 
   
+
   describe('Reset app master key', function() {
 
     it('should be able to reset app master key as a owner', function(done) {
@@ -878,6 +989,7 @@ describe('Applications ---', function() {
   })
 
   
+
   describe('App settings', function() {
 
     it('should be able to get application settings', function(done) {
@@ -1272,6 +1384,7 @@ describe('Applications ---', function() {
   })
 
 
+
   describe('Invite and unaccepted_invitations', function() {
 
     
@@ -1317,9 +1430,11 @@ describe('Applications ---', function() {
   
   })
 
-  describe('Application unshare', function() {
 
-    it('should be able to unshare application from collaborator', function(done) {
+
+  describe('App unshare', function() {
+
+    it('should be able to unshare application from collaborator as a system user', function(done) {
 
       factories.create('login_system_user', config.user2)
         .end(function(err, res) {
@@ -1348,7 +1463,8 @@ describe('Applications ---', function() {
     
     });
 
-    it('should be able to unshare application collaborator as a collaborator', function(done) {
+    
+    it('should be able to unshare collaborator application as a collaborator', function(done) {
 
       factories.create('login_system_user', config.user2)
         .end(function(err, res) {
@@ -1375,11 +1491,87 @@ describe('Applications ---', function() {
     
     });
 
+
+    it('should provide error message when collaborators email is invalid', function(done) {
+
+      factories.create('login_system_user', config.user2)
+        .end(function(err, res) {
+
+          factories.create('invite_collaborator', authtoken, api_key, {
+              "emails": [
+                "swapnil@mailinator.com"
+              ]
+            })
+            .end(function(err, res1) {
+
+              factories.create('unshare_application', res.body.user.authtoken, api_key)
+                .expect(422)
+                .end(function(err, res3) {
+                  var response = res3.body
+                  
+                  response.should.to.be.deep.equal({
+                    "error_message": "Bummer. Access denied. You need to be a collaborator before accessing this app.",
+                    "error_code": 133,
+                    "errors": {}
+                  })
+
+                  done(err)
+                })
+            })
+
+        })
+    
+    });
+
+
+    it('should provide error message when user is not a collaborator for given application', function(done) {
+
+      factories.create('login_system_user', config.user2)
+        .end(function(err, res) {
+
+          factories.create('invite_collaborator', authtoken, api_key, {
+              "emails": [
+                res.body.user.email
+              ]
+            })
+            .end(function(err, res1) {
+
+              factories.create('unshare_application', res.body.user.authtoken, api_key)
+                .expect(200)
+                .end(function(err, res2) {
+                  var response = res2.body
+
+                  response.notice.should.to.be.equal('The application has been successfully unshared.')
+
+                  factories.create('unshare_application', res.body.user.authtoken, api_key)
+                  .end(function(err, res) {
+                    // R.pretty(res.body)
+                    res.body.should.be.deep.equal({
+                      "error_message": "Bummer. Access denied. You need to be a collaborator before accessing this app.",
+                      "error_code": 133,
+                      "errors": {}
+                    })
+
+                    done(err)
+                  })
+                })
+            })
+
+        })
+    
+    });
+
+
+
   })
 
-  describe('Transfer/Accept Ownership', function() {
+  
 
-    it('should be able to transfer app ownership to registerd systyem users', function(done) {
+  describe('App Transfer/Accept Ownership', function() {
+
+    var email = config.user2.email
+    
+    it('should be able to transfer app ownership to registered system users', function(done) {
       factories.create('Get_application', authtoken, api_key)
         .end(function(err, res1) {
 
@@ -1388,12 +1580,12 @@ describe('Applications ---', function() {
             .set('authtoken', authtoken)
             .set('application_api_key', api_key)
             .send({
-              "transfer_to": "supertest2@mailinator.com"
+              "transfer_to": email
             })
             .expect(200)
             .end(function(err, res) {
-
-              res.body.notice.should.be.equal('An email has been sent to supertest2@mailinator.com about transferring ownership of \'' + res1.body.application.name + '\'. The ownership will be transferred after the other user accepts ownership.')
+              // R.pretty(res.body)
+              res.body.notice.should.be.equal('An email has been sent to '+ config.user2.email +' about transferring ownership of \'' + res1.body.application.name + '\'. The ownership will be transferred after the other user accepts ownership.')
 
               done(err)
             })
@@ -1401,10 +1593,39 @@ describe('Applications ---', function() {
     
     })
 
+    
+    it('should give error for transfer app ownership to non-registered system users', function(done) {
+      factories.create('Get_application', authtoken, api_key)
+        .end(function(err, res1) {
+
+          api.post(config.endpoints.applications + '/' + api_key + config.endpoints.transfer_ownership)
+            .set('web_ui_api_key', config.web_ui_api_key)
+            .set('authtoken', authtoken)
+            .set('application_api_key', api_key)
+            .send({
+              "transfer_to": "non_registered@mailinator.com"
+            })
+            .expect(422)
+            .end(function(err, res) {
+              // R.pretty(res.body)
+              res.body.should.be.deep.equal({
+                "error_message": "Sorry about that. non_registered@mailinator.com is not registered in Built.io Backend. Create an account first.",
+                "error_code": 179,
+                "errors": {}
+              })
+
+              done(err)
+            })
+        })
+    
+    })
+
+
     it.skip('should be able to accept application ownership', function(done) {
 
     });
 
+  
   });
 
 

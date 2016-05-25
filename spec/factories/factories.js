@@ -24,7 +24,6 @@
 			.send({
 				'application': data
 			})
-			.expect(201)
 	})
 
 
@@ -157,7 +156,7 @@
 			.set('authtoken', authtoken)
 			.set('application_api_key', api_key)
 			.send(body)
-			.expect(200)
+			// .expect(200)
 	})
 
 //---------------- system roles

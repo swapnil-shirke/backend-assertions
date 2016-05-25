@@ -896,7 +896,7 @@ describe('App users ---', function() {
       appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
       appUserName  = R.bltRandom(8);
       
-      this.timeout(25000)
+      this.timeout(35000)
       
       R.Promisify(factories.create('create_app_user_object', authtoken, api_key, {
         "object": {

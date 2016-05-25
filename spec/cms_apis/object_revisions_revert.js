@@ -6,6 +6,7 @@ describe('Objects revisions/revert --- ', function() {
 	var tenant_uid
 
 
+
 	before(function(done) {
 		this.timeout(15000)
 
@@ -70,6 +71,7 @@ describe('Objects revisions/revert --- ', function() {
 
 	})
 
+
 	beforeEach(function(done) {
 
 		R.Promisify(factories.create('Create_object', authtoken, api_key, classUid, {
@@ -85,6 +87,7 @@ describe('Objects revisions/revert --- ', function() {
 			})
 
 	})
+
 
 	after(function(done) {
 		factories.create('Delete_application', authtoken, api_key)
@@ -107,49 +110,49 @@ describe('Objects revisions/revert --- ', function() {
 				"_method": "get",
 				"include_created_by": true
 			})
-				.end(function(err, res) {
+			.end(function(err, res) {
 
-					var object = res.body.object
+				var object = res.body.object
 
-					// Keys assertion        
-					Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'tags'])
-					Object.keys(object.created_by).should.to.be.deep.equal(['uid', 'created_at', 'updated_at', 'email', 'username', 'plan_id'])
+				// Keys assertion        
+				Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'tags'])
+				Object.keys(object.created_by).should.to.be.deep.equal(['uid', 'created_at', 'updated_at', 'email', 'username', 'plan_id'])
 
-					// Data type assertion
-					object.name.should.be.a('string')
-					object.app_user_object_uid.should.be.a('string')
-					object.created_by.should.be.a('object')
-					object.updated_by.should.be.a('string')
-					object.created_at.should.be.a('string')
-					object.updated_at.should.be.a('string')
-					object.uid.should.be.a('string')
-					object.published.should.be.a('boolean')
-					object.ACL.should.be.a('object')
+				// Data type assertion
+				object.name.should.be.a('string')
+				object.app_user_object_uid.should.be.a('string')
+				object.created_by.should.be.a('object')
+				object.updated_by.should.be.a('string')
+				object.created_at.should.be.a('string')
+				object.updated_at.should.be.a('string')
+				object.uid.should.be.a('string')
+				object.published.should.be.a('boolean')
+				object.ACL.should.be.a('object')
 
-					object._version.should.be.a('number')
-					object.tags.should.be.a('array')
+				object._version.should.be.a('number')
+				object.tags.should.be.a('array')
 
-					// Value assertion
-					object.name.should.be.equal('supertest')
-					object.app_user_object_uid.should.be.equal('system')
+				// Value assertion
+				object.name.should.be.equal('supertest')
+				object.app_user_object_uid.should.be.equal('system')
 
-					object.created_by.uid.should.be.equal(userUID)
-					object.created_by.uid.should.be.equal(object.updated_by)
+				object.created_by.uid.should.be.equal(userUID)
+				object.created_by.uid.should.be.equal(object.updated_by)
 
-					object.created_by.email.should.be.equal(email)
-					object.created_by.username.should.be.equal(username)
+				object.created_by.email.should.be.equal(email)
+				object.created_by.username.should.be.equal(username)
 
-					object.updated_by.should.be.equal(userUID)
-					object.created_at.should.be.equal(object.updated_at)
-					object.updated_at.should.be.equal(object.created_at)
-					object.uid.should.be.equal(objectUid)
-					object.published.should.be.equal(true)
-					// object.ACL.should.be.equal({})
+				object.updated_by.should.be.equal(userUID)
+				object.created_at.should.be.equal(object.updated_at)
+				object.updated_at.should.be.equal(object.created_at)
+				object.uid.should.be.equal(objectUid)
+				object.published.should.be.equal(true)
+				// object.ACL.should.be.equal({})
 
-					object._version.should.be.equal(1)
-					// object.tags.should.be.equal([])				               
-					done()
-				});
+				object._version.should.be.equal(1)
+				// object.tags.should.be.equal([])				               
+				done()
+			});
 
 		});
 
@@ -431,7 +434,7 @@ describe('Objects revisions/revert --- ', function() {
 
 	describe('object revert', function() {
 		
-		it.skip('should revert object to specific version', function() {
+		it('should revert object to specific version', function(done) {
 
 			return R.Promisify(factories.create('update_object', authtoken_1, api_key, classUid, objectUid, {
 					"object": {
@@ -448,7 +451,7 @@ describe('Objects revisions/revert --- ', function() {
 				})
 				.then(function(res1) {
 
-					R.pretty(res1.body)
+					// R.pretty(res1.body)
 
 					var object = res1.body.object
 
@@ -464,7 +467,8 @@ describe('Objects revisions/revert --- ', function() {
 					object.updated_by.should.be.equal(userUID)
 					object.created_by.should.be.equal(userUID)
 					object.published.should.be.equal(true)
-					object._version.should.be.equal(1)
+					object._version.should.be.equal(3)
+					// new copy of object is getting created with new verison 
 					done()
 				});
 
