@@ -1,4 +1,4 @@
-describe('Testing objects', function() {
+describe('Objects ---', function() {
 
 	// var myclass, myclass1
 	var sys_user1, sys_user2
@@ -52,10 +52,13 @@ describe('Testing objects', function() {
 
 
 
+
+
 	describe('Get objects', function() {
 
-		var myclass
-		// create class and create mumtiple objects
+		var myclass, classZero
+		
+		// create classes and create mumtiple objects
 		before(function(done) {
 			this.timeout(25000)
 			R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
@@ -78,32 +81,60 @@ describe('Testing objects', function() {
 					}
 				}
 			}))
-				.then(function(res) {
-					myclass = res.body.class
-				})
-				.then(function(res) {
-					return factories.create('create_objects', 5, sys_user1.authtoken, app.api_key, myclass.uid, [{
-						name: '1'
-					}, {
-						name: '2'
-					}, {
-						name: '3'
-					}, {
-						name: '4'
-					}, {
-						name: '5'
-					}])
-				})
-				.then(function(res) {
-					done()
-				})
-				.catch(function(err) {
-					console.log(err)
-				})
+			.then(function(res) {
+				myclass = res.body.class
+			})
+			.then(function(res) {
+				return factories.create('create_objects', 5, sys_user1.authtoken, app.api_key, myclass.uid, [{
+					name: '1'
+				}, {
+					name: '2'
+				}, {
+					name: '3'
+				}, {
+					name: '4'
+				}, {
+					name: '5'
+				}])
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+					"class": {
+						"title": "classzero",
+						"uid": "classzero",
+						"maintain_revisions": true,
+						"schema": [{
+							"multiple": false,
+							"mandatory": true,
+							"display_name": "Name",
+							"uid": "name",
+							"data_type": "text"
+						}],
+						"DEFAULT_ACL": {
+							"others": {
+								"create": true,
+								"read": true
+							}
+						}
+					}
+				}))
+			})
+			.then(function(res) {
+				classZero = res.body.class
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+				console.log(err)
+			})
 
 		})
 
-		it('should get all objects', function(done) {
+
+
+
+		it('should be able to get all objects present for given class', function(done) {
 			R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, myclass.uid))
 				.then(function(res) {
 					objects = res.body.objects
@@ -114,7 +145,7 @@ describe('Testing objects', function() {
 		});
 
 
-		it('should get all objects and limit 1', function(done) {
+		it('should be able to get all objects and limit it to 1', function(done) {
 			R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, myclass.uid, {
 				"limit": 1
 			}))
@@ -127,7 +158,7 @@ describe('Testing objects', function() {
 		});
 
 
-		it('should get all objects and skip 2', function(done) {
+		it('should get be able to all objects and skip it to 2', function(done) {
 			R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, myclass.uid, {
 				"skip": 2
 			}))
@@ -140,7 +171,7 @@ describe('Testing objects', function() {
 		});
 
 
-		it('should get all objects skip 2 / limit 1 ', function(done) {
+		it('should be able to get all objects skip 2 / limit 1 ', function(done) {
 			R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, myclass.uid, {
 				"skip": 2,
 				"limit": 1
@@ -154,7 +185,7 @@ describe('Testing objects', function() {
 		});
 
 
-		it('should get only objects count', function(done) {
+		it('should be able to get only object`s count in response', function(done) {
 			R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, myclass.uid, {
 				"count": "true"
 			}))
@@ -167,7 +198,7 @@ describe('Testing objects', function() {
 		});
 
 
-		it('should get all objects including schema', function(done) {
+		it('should be able to get all objects and include schema for given class', function(done) {
 			R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, myclass.uid, {
 				"include_schema": "false"
 			}))
@@ -183,7 +214,7 @@ describe('Testing objects', function() {
 		});
 
 
-		it('should get objects and include count', function(done) {
+		it('should be able to get all objects and include count in response', function(done) {
 			R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, myclass.uid, {
 				"include_count": "true"
 			}))
@@ -200,7 +231,24 @@ describe('Testing objects', function() {
 		});
 
 
-		it('should get objects in ascending order', function(done) {
+		it.skip('should be able to get zero objects and include count as a "0"', function(done) {
+			R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, classZero.uid, {
+				"include_count": "true"
+			}))
+			.then(function(res) {
+				res.body.should.be.deep.equal([{
+				  "objects": [],
+				  "count": 0
+				}])
+			})
+			.then(function(res) {
+				done()
+			})
+
+		});
+
+
+		it('should be able to get all objects in ascending order', function(done) {
 			R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, myclass.uid, {
 				"asc": "name"
 			}))
@@ -221,7 +269,7 @@ describe('Testing objects', function() {
 		});
 
 
-		it('should get objects in descending order', function(done) {
+		it('should be able to get all objects in descending order', function(done) {
 			R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, myclass.uid, {
 				"desc": "name"
 			}))
@@ -252,7 +300,7 @@ describe('Testing objects', function() {
 
 		// create class and create mumtiple objects
 		before(function(done) {
-			this.timeout(25000)
+			this.timeout(45000)
 			R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
 				"class": {
 					"title": "supertest class2",
@@ -313,7 +361,7 @@ describe('Testing objects', function() {
 		})
 
 
-		it('should get all objects using delta ALL query', function(done) {
+		it('should be able to get all objects using (ALL) delta query', function(done) {
 
 			var date = object3.created_at.substr(0, 19)
 
@@ -322,51 +370,51 @@ describe('Testing objects', function() {
 					"ALL": date
 				}
 			}))
-				.then(function(res) {
+			.then(function(res) {
 
-					// key assertion
-					Object.keys(res.body.objects).should.to.be.deep.equal(['created_at', 'updated_at', 'deleted_at'])
+				// key assertion
+				Object.keys(res.body.objects).should.to.be.deep.equal(['created_at', 'updated_at', 'deleted_at'])
 
-					createdAt = res.body.objects.created_at
-					updatedAt = res.body.objects.updated_at
-					deletedAt = res.body.objects.deleted_at
+				createdAt = res.body.objects.created_at
+				updatedAt = res.body.objects.updated_at
+				deletedAt = res.body.objects.deleted_at
 
-					res.body.objects.should.be.a('object')
+				res.body.objects.should.be.a('object')
 
-					createdAt.should.be.a('array')
-					updatedAt.should.be.a('array')
-					deletedAt.should.be.a('array')
+				createdAt.should.be.a('array')
+				updatedAt.should.be.a('array')
+				deletedAt.should.be.a('array')
 
-					createdAt.length.should.be.equal(2)
-					updatedAt.length.should.be.equal(2)
-					deletedAt.length.should.be.equal(1)
+				createdAt.length.should.be.equal(2)
+				updatedAt.length.should.be.equal(2)
+				deletedAt.length.should.be.equal(1)
 
-					// value assertion
+				// value assertion
 
-					createdAt[0].uid.should.be.equal(object2.uid)
-					createdAt[1].uid.should.be.equal(object1.uid)
+				createdAt[0].uid.should.be.equal(object2.uid)
+				createdAt[1].uid.should.be.equal(object1.uid)
 
-					updatedAt[0].uid.should.be.equal(object2.uid)
-					updatedAt[1].uid.should.be.equal(object1.uid)
+				updatedAt[0].uid.should.be.equal(object2.uid)
+				updatedAt[1].uid.should.be.equal(object1.uid)
 
-					deletedAt[0].uid.should.be.equal(object3.uid)
+				deletedAt[0].uid.should.be.equal(object3.uid)
 
-					createdAt[0].name.should.be.equal('updated')
-					createdAt[1].name.should.be.equal(object1.name)
+				createdAt[0].name.should.be.equal('updated')
+				createdAt[1].name.should.be.equal(object1.name)
 
-					updatedAt[0].name.should.be.equal('updated')
-					updatedAt[1].name.should.be.equal(object1.name)
+				updatedAt[0].name.should.be.equal('updated')
+				updatedAt[1].name.should.be.equal(object1.name)
 
-					deletedAt[0].name.should.be.equal(object3.name)
+				deletedAt[0].name.should.be.equal(object3.name)
 
 
-					done()
-				})
+				done()
+			})
 
 		});
 
 
-		it('should get all objects by created_at delta query', function(done) {
+		it('should be able to get all objects by (created_at) delta query', function(done) {
 
 			var date = object3.created_at.substr(0, 19)
 
@@ -375,27 +423,27 @@ describe('Testing objects', function() {
 					"created_at": object3.created_at.substr(0, 19)
 				}
 			}))
-				.then(function(res) {
-					// key assertion 
-					Object.keys(res.body.objects).should.to.be.deep.equal(['created_at'])
+			.then(function(res) {
+				// key assertion 
+				Object.keys(res.body.objects).should.to.be.deep.equal(['created_at'])
 
-					createdAt = res.body.objects.created_at
+				createdAt = res.body.objects.created_at
 
-					createdAt.should.be.a('array')
-					createdAt.length.should.be.equal(2)
+				createdAt.should.be.a('array')
+				createdAt.length.should.be.equal(2)
 
-					createdAt[0].uid.should.be.equal(object2.uid)
-					createdAt[1].uid.should.be.equal(object1.uid)
+				createdAt[0].uid.should.be.equal(object2.uid)
+				createdAt[1].uid.should.be.equal(object1.uid)
 
-					createdAt[0].name.should.be.equal('updated')
-					createdAt[1].name.should.be.equal(object1.name)
-					done()
-				})
+				createdAt[0].name.should.be.equal('updated')
+				createdAt[1].name.should.be.equal(object1.name)
+				done()
+			})
 
 		});
 
 
-		it('should get all objects by updated_at delta query', function(done) {
+		it('should be able to get all objects by (updated_at) delta query', function(done) {
 
 			var date = object3.created_at.substr(0, 19)
 
@@ -424,7 +472,7 @@ describe('Testing objects', function() {
 		});
 
 
-		it('should get all objects by delete_at delta query', function(done) {
+		it('should be able to get all objects by delete_at delta query', function(done) {
 
 			var date = object3.created_at.substr(0, 19)
 
@@ -504,7 +552,7 @@ describe('Testing objects', function() {
 		})
 
 
-		it('should get single object', function(done) {
+		it('should be able to get single object present', function(done) {
 
 			R.Promisify(factories.create('get_object', sys_user1.authtoken, app.api_key, myclass3.uid, object1.uid))
 				.then(function(res) {
@@ -518,7 +566,7 @@ describe('Testing objects', function() {
 		});
 
 
-		it('should update object', function(done) {
+		it('should be able to update object present', function(done) {
 
 			R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, myclass3.uid, object1.uid, {
 				"object": {
@@ -536,16 +584,50 @@ describe('Testing objects', function() {
 		});
 
 
-		it('should delete object', function(done) {
+		it('should provide an error message for invalid object uid', function(done) {
+
+			R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, myclass3.uid, "swapnil", {
+				"object": {
+					"name": "updated"
+				}
+			}))
+			.then(function(res) {
+				res.body.should.be.deep.equal({
+				  "error_message": "Bummer. The requested object doesn't exist.",
+				  "error_code": 141,
+				  "errors": {
+				    "uid": [
+				      "is invalid"
+				    ]
+				  }
+				})
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+				console.log(err)
+			})
+
+
+		});
+
+
+		it('should be able to delete object present', function(done) {
 
 			R.Promisify(factories.create('delete_object', sys_user1.authtoken, app.api_key, myclass3.uid, object1.uid))
 				.then(function(res) {
-					// object = res.body.object
 
 					res.body.notice.should.be.equal('Woot! Object deleted successfully.')
-
+					
+				})
+				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
+
 
 		});
 
@@ -687,7 +769,7 @@ describe('Testing objects', function() {
 		describe('PUSH-PULL', function() {
 
 			
-			it('should give error message for -ve index key', function(done) {
+			it('should provide an error message for -ve index key', function(done) {
 				
 				var objUid = object.uid 
 	 			
@@ -806,7 +888,7 @@ describe('Testing objects', function() {
 			});
 
 
-			it('should give error for field validation for PUSH operation', function(done) {
+			it('should provide an error message for field datatype validation for PUSH operation', function(done) {
 				
 				var objUid = object.uid 
 	 			
@@ -892,7 +974,7 @@ describe('Testing objects', function() {
 
 			});
 
-			it.skip('should provide error message when "data" key is not present', function(done) {
+			it.skip('should provide an error message when "data" key is not present', function(done) {
 				
 				var objUid = object.uid 
 	 			
@@ -906,7 +988,7 @@ describe('Testing objects', function() {
 					}
 				}))
 				.then(function(res) {
-					R.pretty(res.body)
+					// R.pretty(res.body)
 					// res.body.notice.should.be.equal('Woot! Object created successfully.')
 					// object = res.body.object.roundone.hits[0]
 					// object.should.be.equal(555)
@@ -933,7 +1015,7 @@ describe('Testing objects', function() {
 					}
 				}))
 				.then(function(res) {
-					R.pretty(res.body)
+					// R.pretty(res.body)
 					// res.body.notice.should.be.equal('Woot! Object created successfully.')
 					// object = res.body.object.roundone.hits[0]
 					// object.should.be.equal(555)
@@ -977,7 +1059,7 @@ describe('Testing objects', function() {
 					}))	
 	 			})
 				.then(function(res) {
-					R.pretty(res.body)
+					// R.pretty(res.body)
 					res.body.notice.should.be.equal('Woot! Object updated successfully.')
 					object = res.body.object
 					object.roundone.hits.should.be.deep.equal([101, 102, 103, 104])
@@ -1030,7 +1112,7 @@ describe('Testing objects', function() {
 			});
 
 
-			it('should provide error message for data key for PULL operation', function(done) {
+			it('should provide an error message for data key for PULL operation', function(done) {
 				
 				var objUid = object.uid 
 	 			
@@ -1044,12 +1126,13 @@ describe('Testing objects', function() {
 					}
 				}))
 				.then(function(res) {
+					// R.pretty(res.body)
 					res.body.should.be.deep.equal({
 					  "error_message": "Bummer. Object update failed. Please enter valid data.",
 					  "error_code": 121,
 					  "errors": {
 					    "roundone.hits": [
-					      "has a invalid array operation."
+					      "has an invalid array operation."
 					    ]
 					  }
 					})
@@ -1062,7 +1145,7 @@ describe('Testing objects', function() {
 			});
 
 
-			it('should be able to PULL value(object property) from array while updating object', function(done) {
+			it('should provide an error message if index specified for PULL operation ', function(done) {
 				
 				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
 					"object": {
@@ -1073,7 +1156,6 @@ describe('Testing objects', function() {
 					}
 				}))
 	 			.then(function(res) {
-	 				console.log(res.body)
 	 				objUid = res.body.object.uid
 	 			})
 				.then(function(res) {
@@ -1082,7 +1164,7 @@ describe('Testing objects', function() {
 							"roundone": {
 								"hits": {
 									"PULL": {
-										"data": 405
+										"index": 2
 									}
 								}
 							}
@@ -1090,8 +1172,16 @@ describe('Testing objects', function() {
 					}))
 				})
 				.then(function(res) {
-					object = R.last(res.body.object.roundone.hits)
-					object.should.not.equal(405)
+					// R.pretty(res.body)
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object update failed. Please enter valid data.",
+					  "error_code": 121,
+					  "errors": {
+					    "roundone.hits": [
+					      "has an invalid array operation."
+					    ]
+					  }
+					})
 				})
 				.then(function(res) {
 					done()
@@ -1247,7 +1337,7 @@ describe('Testing objects', function() {
 
 
 			
-			it.skip('should give error message for -ve index in UPDATE operation', function(done) {
+			it.skip('should provide an error message for -ve index in UPDATE operation', function(done) {
 				
 	 			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
 					"object": {
@@ -1275,7 +1365,7 @@ describe('Testing objects', function() {
 					}))
 				})
 				.then(function(res) {
-					R.pretty(res.body)
+					// R.pretty(res.body)
 					// res.body.should.be.deep.equal({
 					//   "error_message": "Bummer. Object update failed. Please enter valid data.",
 					//   "error_code": 121,
@@ -1289,12 +1379,15 @@ describe('Testing objects', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 
 			});			
 
 			
-			it.skip('should UPDATE the value(object property) at provided index', function(done) {
+			it.skip('should be able to update the given value(object property) at provided index', function(done) {
 				
 	 			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
 					"object": {
@@ -1322,7 +1415,7 @@ describe('Testing objects', function() {
 					}))
 				})
 				.then(function(res) {
-					R.pretty(res.body)
+					// R.pretty(res.body)
 					// res.body.should.be.deep.equal({
 					//   "error_message": "Bummer. Object update failed. Please enter valid data.",
 					//   "error_code": 121,
@@ -1336,22 +1429,26 @@ describe('Testing objects', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 
 			});
 
 			
-			it('should UPDATE then value(dot property) at provided index', function(done) {
-				
+			it('should be able to update then value(dot property) at provided index', function(done) {
+				this.timeout(40000)
 	 			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
 					"object": {
 						"roundone": {
 							"hits": ["501", "502", "503", "504", "505"],
-							"name": "supertest2"
+							"name": "supertest22"
 						}
 					}
 				}))
 				.then(function(res) {
+	 				// R.pretty(res.body)
 	 				objUid = res.body.object.uid
 	 			})
 				.then(function(res) {
@@ -1374,12 +1471,15 @@ describe('Testing objects', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 
 			});
 
 
-			it.skip('should should provide error message for multiple values(object property) PUSH on same object', function(done) {
+			it.skip('should provide an error message for multiple values(object property) PUSH on same object', function(done) {
 				
 				var objUid = object1.uid
 
@@ -1415,13 +1515,16 @@ describe('Testing objects', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 
 			});
 
-
-			it('should should provide error message for multiple values(dot property) PUSH on same object', function(done) {
-				
+			
+			it('should provide an error message for multiple values(dot property) PUSH on same object', function(done) {
+				this.timeout(25000)
 				var objUid = object1.uid
 
 	 			R.Promisify(factories.create('update_object', appUser1.authtoken, app.api_key, myclass8.uid, objUid, {
@@ -1451,13 +1554,15 @@ describe('Testing objects', function() {
 					}
 				}))
 				.then(function(res) {
-					R.pretty(res.body)
-					// res.body.notice.should.be.equal('Woot! Object updated successfully.')
-					// object = res.body.object
-					// object.roundone.hits[0].should.be.equal(666)
+					res.body.notice.should.be.equal('Woot! Object updated successfully.')
+					object = res.body.object.group[0]
+					object.marks[4].should.be.equal(99)
 				})
 				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 			
 
@@ -1582,7 +1687,7 @@ describe('Testing objects', function() {
 			})
 
 
-			it('should provide error message for array when index is not specifyed for field to ADD/SUB', function(done) {
+			it('should provide an error message for array field when index is not specifyed for field to ADD/SUB', function(done) {
 				
 				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
 					"object": {
@@ -1608,11 +1713,14 @@ describe('Testing objects', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 			});
 
 
-			it('should able to ADD given number in present field in an array', function(done) {
+			it('should be able to ADD provided number in present field in an array', function(done) {
 				
 				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
 					"object": {
@@ -1630,11 +1738,14 @@ describe('Testing objects', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 			});
 
 
-			it('should able to SUB given number in present field in an array', function(done) {
+			it('should be able to SUB given number in present field in an array', function(done) {
 				
 				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
 					"object": {
@@ -1651,11 +1762,14 @@ describe('Testing objects', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 			});
 
 
-			it.skip('should provide error for null field ADD/sub operation', function(done) {
+			it.skip('should provide an error message for null field ADD/sub operation', function(done) {
 				
 				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
 					"object": {
@@ -1688,11 +1802,14 @@ describe('Testing objects', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 			});
 
 
-			it('should able to ADD given number to number field present inside the group', function(done) {
+			it('should be able to ADD given number to number field present inside the group', function(done) {
 				
 				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
 					"object": {
@@ -1710,11 +1827,14 @@ describe('Testing objects', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 			});
 
 
-			it('should able to SUB given number to number field present inside the group', function(done) {
+			it('should be able to SUB given number to number field present inside the group', function(done) {
 				
 				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
 						"object": {
@@ -1731,12 +1851,15 @@ describe('Testing objects', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 			});
 
 
-			it('should provide error message for incorrect group field', function(done) {
-				
+			it('should provide an error message for incorrect group field', function(done) {
+				this.timeout(35000)
 				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
 					"object": {
 						"group_cash.remove_cash.0": {
@@ -1745,12 +1868,13 @@ describe('Testing objects', function() {
 					}
 				}))
 				.then(function(res) {
+					// R.pretty(res.body)
 					res.body.should.be.deep.equal({
 					  "error_message": "Bummer. Object update failed. Please enter valid data.",
 					  "error_code": 121,
 					  "errors": {
 					    "parameters": [
-					      "has a invalid array operation."
+					      "has an invalid array operation."
 					    ]
 					  }
 					})
@@ -1758,11 +1882,14 @@ describe('Testing objects', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 			});
 
 
-			it('should able to ADD given number to number field present inside the group', function(done) {
+			it('should be able to ADD given number to number field present inside the group', function(done) {
 				
 				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
 					"object": {
@@ -1784,6 +1911,9 @@ describe('Testing objects', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 			});
 
@@ -1794,7 +1924,7 @@ describe('Testing objects', function() {
 
 		describe('UPSERT', function() {
 
-			var classInfo
+			var classInfo, classRef
 
 			before(function(done) {
 				this.timeout(35000)
@@ -1881,7 +2011,7 @@ describe('Testing objects', function() {
 					classInfo = res.body.class
 				})
 				.then(function(res) {
-					return factories.create('create_objects', 4, appUser1.authtoken, app.api_key, classInfo.uid, [{
+					return factories.create('create_objects', 6, appUser1.authtoken, app.api_key, classInfo.uid, [{
 						"name": "sam",
 						"age": "20",
 						"address": {
@@ -1909,6 +2039,20 @@ describe('Testing objects', function() {
 							"city": "sardar",
 							"state": "PU"
 						}
+					}, {
+						"name": "peter",
+						"age": "32",
+						"address": {
+							"city": "dharmashala",
+							"state": "HM"
+						}
+					}, {
+						"name": "peter",
+						"age": "32",
+						"address": {
+							"city": "dharmashala",
+							"state": "HM"
+						}
 					}])
 				})
 				.then(function(res) {
@@ -1919,6 +2063,8 @@ describe('Testing objects', function() {
 					object2 = res.body.objects[1].uid
 					object3 = res.body.objects[2].uid
 					object4 = res.body.objects[3].uid
+					object5 = res.body.objects[4].uid
+					object6 = res.body.objects[5].uid
 				})
 				.then(function(res) {
 					return R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
@@ -1964,7 +2110,7 @@ describe('Testing objects', function() {
 					classRef = res.body.class
 				})
 				.then(function(res) {
-					return factories.create('create_objects', 4, appUser1.authtoken, app.api_key, classRef.uid, [{
+					return factories.create('create_objects', 5, appUser1.authtoken, app.api_key, classRef.uid, [{
 						"sub_name": "math",
 						"owner": [object1]
 					},
@@ -1979,6 +2125,10 @@ describe('Testing objects', function() {
 					{
 						"sub_name": "COM",
 						"owner": [object4]
+					},
+					{
+						"sub_name": "BIO",
+						"owner": [object5]
 					}])
 				})
 				.then(function(res) {
@@ -1995,7 +2145,7 @@ describe('Testing objects', function() {
 			})
 
 
-			it('should search and update object using UPSERT operation', function(done) {
+			it('should be able to search and update object using UPSERT operation', function(done) {
 				
 				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classInfo.uid, {
 				  "UPSERT": {
@@ -2025,11 +2175,14 @@ describe('Testing objects', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 			});
 
 			
-			it('should search and create new object if not found', function(done) {
+			it('should be able to search and create new object if not found', function(done) {
 				// console.log(classInfo.uid)
 				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classInfo.uid, {
 				  "UPSERT": {
@@ -2056,11 +2209,14 @@ describe('Testing objects', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 			});
 
 			
-			it('should able update reference object using UPSERT', function(done) {
+			it('should be able to update reference object using UPSERT operation', function(done) {
 				// console.log(classInfo.uid)
 				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classRef.uid, {
 			    "object": {
@@ -2085,22 +2241,22 @@ describe('Testing objects', function() {
 					}))
 				})
 				.then(function(res) {
-					R.pretty(res.body)
-				})
-				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 			
 			});
 
 			
-			it('should provide error message for duplicate field while UPSERT', function(done) {
+			it('should provide an error message for Multiple matching objects while UPSERT operation', function(done) {
 				// console.log(classInfo.uid)
 				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classRef.uid, {
 			    "object": {
 		        "owner": [{
 		          "UPSERT": {
-		              "name": "sam"
+		              "name": "peter"
 		          },
 		          "age": 55,
 		          "address.state": "KT",
@@ -2109,6 +2265,7 @@ describe('Testing objects', function() {
 			    }
 				}))
 				.then(function(res) {
+					// R.pretty(res.body)
 					res.body.should.be.deep.equal({
 					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
 					  "error_code": 119,
@@ -2122,11 +2279,12 @@ describe('Testing objects', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 			});	
 
-
-		
 
 
 		});
@@ -2361,7 +2519,7 @@ describe('Testing objects', function() {
 			})
 
 
-			it('should have only localy unique objects per system user', function(done) {
+			it('should be able to have only localy unique objects per system user', function(done) {
 				this.timeout(20000)
 
 				R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, classLocal.uid, {
@@ -2399,8 +2557,8 @@ describe('Testing objects', function() {
 			});
 
 
-			it('should have only localy unique objects per application user(tenant)', function(done) {
-				this.timeout(35000)
+			it('should be able to have only localy unique objects per application user(tenant)', function(done) {
+				this.timeout(45000)
 				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classLocal.uid, {
 					"object": {
 						"uniquness": "test1"
@@ -2448,7 +2606,7 @@ describe('Testing objects', function() {
 			});
 
 
-			it('should have only localy unique objects as per application user and system user', function(done) {
+			it('should be able to have only localy unique objects as per application user and system user', function(done) {
 				this.timeout(45000)
 				R.Promisify(factories.create('Create_object', '', app.api_key, classLocal.uid, {
 					"object": {
@@ -2525,7 +2683,7 @@ describe('Testing objects', function() {
 			});
 
 
-			it('should have only localy unique objects as per application user in tenant', function(done) {
+			it('should be able to have only localy unique objects as per application user in tenant', function(done) {
 				this.timeout(95000)
 				R.Promisify(factories.create('Create_object', appUser5.authtoken, app.api_key, classLocal.uid, {
 					"object": {
@@ -2567,13 +2725,49 @@ describe('Testing objects', function() {
 						done()
 					})
 					.catch(function(err) {
-						console.log(err.trace)
+						console.log(err)
 					})
 
 
 			});
 
 
+			it('should provide an error message for localy unique object present', function(done) {
+				
+				R.Promisify(factories.create('Create_object', appUser5.authtoken, app.api_key, classLocal.uid, {
+					"object": {
+						"uniquness": "test1"
+					}
+				}))
+				.then(function(res) {
+					return R.Promisify(factories.create('Create_object', appUser5.authtoken, app.api_key, classLocal.uid, {
+						"object": {
+							"uniquness": "test1"
+						}
+					}))
+				})
+				.then(function(res) {
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+					  "error_code": 119,
+					  "errors": {
+					    "uniquness": [
+					      "is not unique"
+					    ]
+					  }
+					})
+				})
+				.then(function(res) {
+					done()
+				})
+				.catch(function(err) {
+					console.log(err)
+				})
+
+
+			});
+
+		
 
 		});
 
@@ -2606,79 +2800,118 @@ describe('Testing objects', function() {
 						}]
 					}
 				}))
-					.then(function(res) {
-						classGlobal = res.body.class
-					})
-					.then(function(res) {
-						done()
-					})
-					.catch(function(err) {
-						console.log(err)
-					})
+				.then(function(res) {
+					classGlobal = res.body.class
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, classGlobal.uid, {
+						"object": {
+							"name": "swapnil"
+						}
+					}))
+				})
+				.then(function(res) {
+					objectG = res.body.object
+				})
+				.then(function(res) {
+					done()
+				})
+				.catch(function(err) {
+					console.log(err)
+				})
 
 			})
 
 
-			it('should have only globaly unique objects per user', function(done) {
+			it('should be able to have only globaly unique objects per user', function(done) {
 				this.timeout(35000)
 				R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, classGlobal.uid, {
 					"object": {
 						"name": "batman"
 					}
 				}))
-					.then(function(res) {
-						return R.Promisify(factories.create('Create_object', '', app.api_key, classGlobal.uid, {
-							"object": {
-								"name": "batman"
-							}
-						}))
+				.then(function(res) {
+					return R.Promisify(factories.create('Create_object', '', app.api_key, classGlobal.uid, {
+						"object": {
+							"name": "batman"
+						}
+					}))
+				})
+				.then(function(res) {
+					res.body.should.be.deep.equal({
+						"error_message": "Bummer. Object creation failed. Please enter valid data.",
+						"error_code": 119,
+						"errors": {
+							"name": [
+								"is not unique"
+							]
+						}
 					})
-					.then(function(res) {
-						res.body.should.be.deep.equal({
-							"error_message": "Bummer. Object creation failed. Please enter valid data.",
-							"error_code": 119,
-							"errors": {
-								"name": [
-									"is not unique"
-								]
-							}
-						})
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classGlobal.uid, {
+						"object": {
+							"name": "batman"
+						}
+					}, tenant1.uid))
+				})
+				.then(function(res) {
+					res.body.notice.should.equal('Woot! Object created successfully.')
+				})
+				.then(function(res) {
+					return R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classGlobal.uid, {
+						"object": {
+							"name": "batman"
+						}
+					}, tenant1.uid))
+				})
+				.then(function(res) {
+					res.body.should.be.deep.equal({
+						"error_message": "Bummer. Object creation failed. Please enter valid data.",
+						"error_code": 119,
+						"errors": {
+							"name": [
+								"is not unique"
+							]
+						}
 					})
-					.then(function(res) {
-						return R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classGlobal.uid, {
-							"object": {
-								"name": "batman"
-							}
-						}, tenant1.uid))
-					})
-					.then(function(res) {
-						res.body.notice.should.equal('Woot! Object created successfully.')
-					})
-					.then(function(res) {
-						return R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classGlobal.uid, {
-							"object": {
-								"name": "batman"
-							}
-						}, tenant1.uid))
-					})
-					.then(function(res) {
-						res.body.should.be.deep.equal({
-							"error_message": "Bummer. Object creation failed. Please enter valid data.",
-							"error_code": 119,
-							"errors": {
-								"name": [
-									"is not unique"
-								]
-							}
-						})
-					})
-					.then(function(res) {
-						done()
-					})
-					.catch(function(err) {
-						console.log(err)
-					})
+				})
+				.then(function(res) {
+					done()
+				})
+				.catch(function(err) {
+					console.log(err)
+				})
 
+			});
+
+
+			it('should provide an error message for global object already present', function(done) {
+				
+				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classGlobal.uid, {
+					"object": {
+						"name": "swapnil"
+					}
+				}))
+				.then(function(res) {
+					// R.pretty(res.body)
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+					  "error_code": 119,
+					  "errors": {
+					    "name": [
+					      "is not unique"
+					    ]
+					  }
+					})
+				})
+				.then(function(res) {
+					done()
+				})
+				.catch(function(err) {
+					console.log(err)
+				})
+			
 			});
 
 
@@ -2813,7 +3046,7 @@ describe('Testing objects', function() {
 						done()
 					})
 					.catch(function(err) {
-						console.log(err.trace)
+						console.log(err)
 					})
 
 			});
@@ -2879,13 +3112,13 @@ describe('Testing objects', function() {
 						done()
 					})
 					.catch(function(err) {
-						console.log(err.trace)
+						console.log(err)
 					})
 
 			});
 
 
-			it('should update class with other unique fields and create objects', function(done) {
+			it('should be able to update class with other unique fields and create objects', function(done) {
 				this.timeout(25000)
 				// grp Golbal fields local
 				R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
@@ -3336,7 +3569,7 @@ describe('Testing objects', function() {
 		})
 
 
-		it('should get application user object and check group fields', function(done) {
+		it('should be able to get application user object and check group fields present', function(done) {
 			R.Promisify(factories.create('get_app_user_objects', sys_user1.authtoken, app.api_key))
 				.then(function(res) {
 					object = res.body.objects[0]
@@ -3398,7 +3631,7 @@ describe('Testing objects', function() {
 		});
 
 
-		it('should update application user objects group fields ', function(done) {
+		it('should update application user objects group fields present ', function(done) {
 			R.Promisify(factories.create('update_object_app_user', sys_user1.authtoken, app.api_key, userObj.uid, {
 				"object": {
 					"group1": {

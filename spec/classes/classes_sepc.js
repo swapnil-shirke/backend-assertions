@@ -255,6 +255,35 @@ describe('classes ---', function() {
 		
 		});
 
+		it.only('should provide error message for -ve skip/limit value', function(done) {
+			
+			factories.create('Get_all_classes', authtoken, api_key, {
+					"_method": "get",
+					"skip": -3,
+					"limit": -1
+				})
+				.expect(200)
+				.end(function(err, res) {
+					R.pretty(res.body)
+					// var classes = res.body.classes
+
+					// classes.length.should.be.equal(1)
+
+					// // Keys assertion
+					// Object.keys(classes[0]).should.be.deep.equal(['created_at', 'updated_at', 'title', 'uid', 'inbuilt_class', 'schema', 'last_activity', 'maintain_revisions', 'abilities', 'DEFAULT_ACL', 'SYS_ACL'])
+
+					// // Data type assertion
+
+					// // Value assertion
+					// classes[0].uid.should.be.equal('built_io_upload')
+					// classes[0].title.should.be.equal('built.io Uploads')
+					// classes[0].inbuilt_class.should.be.equal(true)
+
+					done(err)
+				})
+		
+		});
+
 
 	})
 

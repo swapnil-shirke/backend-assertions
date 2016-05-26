@@ -1,4 +1,4 @@
-describe.only('Applications ---', function() {
+describe('Applications ---', function() {
 
   var authtoken, userUID
   var api_key
@@ -180,9 +180,6 @@ describe.only('Applications ---', function() {
       })
     
     });
-
-
-
 
   
   });
@@ -450,6 +447,7 @@ describe.only('Applications ---', function() {
     
     var app1, app2, app3
 
+    
     before(function(done) {
       
       this.timeout(20000)
@@ -962,6 +960,32 @@ describe.only('Applications ---', function() {
 
   describe('Reset app master key', function() {
 
+    var authtoken3
+    
+    before(function(done) {
+      // this.timeout(20000)
+      R.Promisify(factories.create('login_system_user', config.user2))
+      .then(function(res) {
+        authtoken3 = res.body.user.authtoken
+        return res
+      })
+      .then(function(res) {
+        return R.Promisify(factories.create('invite_collaborator', authtoken, api_key, {
+          "emails": [
+            res.body.user.email
+          ]
+        }))
+      })
+      .then(function(res) {
+        done()
+      })
+      .catch(function(err) {
+        console.log(err)
+      })
+    
+    })
+    
+
     it('should be able to reset app master key as a owner', function(done) {
       api.post(config.endpoints.applications + '/' + api_key + config.endpoints.reset_master_key)
         .set('web_ui_api_key', config.web_ui_api_key)
@@ -985,6 +1009,26 @@ describe.only('Applications ---', function() {
     
     });
 
+
+    it('should not be able to reset app master key as a collaborator', function(done) {
+      api.post(config.endpoints.applications + '/' + api_key + config.endpoints.reset_master_key)
+        .set('web_ui_api_key', config.web_ui_api_key)
+        .set('authtoken', authtoken3)
+        .set('application_api_key', api_key)
+        .expect(422)
+        .end(function(err, res) {
+          
+          res.body.should.be.deep.equal({
+            "error_message": "Bummer. Access denied. It seems you are not the owner of the app.",
+            "error_code": 133,
+            "errors": {}
+          })          
+
+          done(err)
+          
+        })
+    
+    });
   
   })
 
@@ -992,109 +1036,111 @@ describe.only('Applications ---', function() {
 
   describe('App settings', function() {
 
+    
     it('should be able to get application settings', function(done) {
       factories.create('Get_app_settings', authtoken, api_key)
-        .end(function(err, res) {
-          var settings = res.body.app_settings
-            // Keys assertion
-          Object.keys(settings).should.to.be.deep.equal(['application_variables', 'discrete_variables', 'login_schemes', 'upload_type_restriction', 'restricted_profile_update', 'hide_email', 'allow_client_notifications', 'active_user_threshold', 'auto_create_tenants', 'activation_template', 'welcome_template', 'forgot_password_template'])
+      .end(function(err, res) {
+        var settings = res.body.app_settings
+          // Keys assertion
+        Object.keys(settings).should.to.be.deep.equal(['application_variables', 'discrete_variables', 'login_schemes', 'upload_type_restriction', 'restricted_profile_update', 'hide_email', 'allow_client_notifications', 'active_user_threshold', 'auto_create_tenants', 'activation_template', 'welcome_template', 'forgot_password_template'])
 
-          Object.keys(settings.login_schemes).should.to.be.deep.equal(['google', 'facebook', 'twitter', 'tibbr', 'traditional', 'anyauth'])
-          Object.keys(settings.upload_type_restriction).should.to.be.deep.equal(['enabled', 'whitelist', 'list'])
-          Object.keys(settings.restricted_profile_update).should.to.be.deep.equal(['enabled', 'whitelist', 'keys'])
-          Object.keys(settings.activation_template).should.to.be.deep.equal(['reply_to', 'subject', 'template', 'use'])
-          Object.keys(settings.welcome_template).should.to.be.deep.equal(['reply_to', 'subject', 'template', 'use'])
-          Object.keys(settings.forgot_password_template).should.to.be.deep.equal(['reply_to', 'subject', 'template'])
-
-
-          // Data type assertion
-          settings.application_variables.should.be.a('object')
-          settings.discrete_variables.should.be.a('object')
-          settings.login_schemes.should.be.a('object')
-          settings.upload_type_restriction.should.be.a('object')
-          settings.restricted_profile_update.should.be.a('object')
-
-          settings.hide_email.should.be.a('boolean')
-          settings.allow_client_notifications.should.be.a('boolean')
-          settings.active_user_threshold.should.be.a('number')
-          settings.auto_create_tenants.should.be.a('boolean')
-
-          settings.activation_template.should.be.a('object')
-          settings.welcome_template.should.be.a('object')
-          settings.forgot_password_template.should.be.a('object')
-
-          settings.login_schemes.google.should.be.a('boolean')
-          settings.login_schemes.facebook.should.be.a('boolean')
-          settings.login_schemes.twitter.should.be.a('boolean')
-          settings.login_schemes.tibbr.should.be.a('boolean')
-          settings.login_schemes.traditional.should.be.a('boolean')
-          settings.login_schemes.anyauth.should.be.a('boolean')
-
-          settings.upload_type_restriction.enabled.should.be.a('boolean')
-          settings.upload_type_restriction.whitelist.should.be.a('boolean')
-          settings.upload_type_restriction.list.should.be.a('array')
-
-          settings.restricted_profile_update.enabled.should.be.a('boolean')
-          settings.restricted_profile_update.whitelist.should.be.a('boolean')
-          settings.restricted_profile_update.keys.should.be.a('array')
-
-          settings.activation_template.reply_to.should.be.a('string')
-          settings.activation_template.subject.should.be.a('string')
-          settings.activation_template.template.should.be.a('string')
-          settings.activation_template.use.should.be.a('boolean')
-
-          settings.welcome_template.reply_to.should.be.a('string')
-          settings.welcome_template.subject.should.be.a('string')
-          settings.welcome_template.template.should.be.a('string')
-          settings.welcome_template.use.should.be.a('boolean')
-
-          settings.forgot_password_template.reply_to.should.be.a('string')
-          settings.forgot_password_template.subject.should.be.a('string')
-          settings.forgot_password_template.template.should.be.a('string')
+        Object.keys(settings.login_schemes).should.to.be.deep.equal(['google', 'facebook', 'twitter', 'tibbr', 'traditional', 'anyauth'])
+        Object.keys(settings.upload_type_restriction).should.to.be.deep.equal(['enabled', 'whitelist', 'list'])
+        Object.keys(settings.restricted_profile_update).should.to.be.deep.equal(['enabled', 'whitelist', 'keys'])
+        Object.keys(settings.activation_template).should.to.be.deep.equal(['reply_to', 'subject', 'template', 'use'])
+        Object.keys(settings.welcome_template).should.to.be.deep.equal(['reply_to', 'subject', 'template', 'use'])
+        Object.keys(settings.forgot_password_template).should.to.be.deep.equal(['reply_to', 'subject', 'template'])
 
 
-          // Value assertion
-          settings.login_schemes.google.should.be.equal(true)
-          settings.login_schemes.facebook.should.be.equal(true)
-          settings.login_schemes.twitter.should.be.equal(true)
-          settings.login_schemes.tibbr.should.be.equal(true)
-          settings.login_schemes.traditional.should.be.equal(true)
-          settings.login_schemes.anyauth.should.be.equal(true)
+        // Data type assertion
+        settings.application_variables.should.be.a('object')
+        settings.discrete_variables.should.be.a('object')
+        settings.login_schemes.should.be.a('object')
+        settings.upload_type_restriction.should.be.a('object')
+        settings.restricted_profile_update.should.be.a('object')
 
-          settings.upload_type_restriction.enabled.should.be.equal(false)
-          settings.upload_type_restriction.whitelist.should.be.equal(true)
-          settings.upload_type_restriction.list.should.be.deep.equal([])
+        settings.hide_email.should.be.a('boolean')
+        settings.allow_client_notifications.should.be.a('boolean')
+        settings.active_user_threshold.should.be.a('number')
+        settings.auto_create_tenants.should.be.a('boolean')
 
-          settings.restricted_profile_update.enabled.should.be.equal(false)
-          settings.restricted_profile_update.whitelist.should.be.equal(true)
-          settings.restricted_profile_update.keys.should.be.deep.equal([])
+        settings.activation_template.should.be.a('object')
+        settings.welcome_template.should.be.a('object')
+        settings.forgot_password_template.should.be.a('object')
+
+        settings.login_schemes.google.should.be.a('boolean')
+        settings.login_schemes.facebook.should.be.a('boolean')
+        settings.login_schemes.twitter.should.be.a('boolean')
+        settings.login_schemes.tibbr.should.be.a('boolean')
+        settings.login_schemes.traditional.should.be.a('boolean')
+        settings.login_schemes.anyauth.should.be.a('boolean')
+
+        settings.upload_type_restriction.enabled.should.be.a('boolean')
+        settings.upload_type_restriction.whitelist.should.be.a('boolean')
+        settings.upload_type_restriction.list.should.be.a('array')
+
+        settings.restricted_profile_update.enabled.should.be.a('boolean')
+        settings.restricted_profile_update.whitelist.should.be.a('boolean')
+        settings.restricted_profile_update.keys.should.be.a('array')
+
+        settings.activation_template.reply_to.should.be.a('string')
+        settings.activation_template.subject.should.be.a('string')
+        settings.activation_template.template.should.be.a('string')
+        settings.activation_template.use.should.be.a('boolean')
+
+        settings.welcome_template.reply_to.should.be.a('string')
+        settings.welcome_template.subject.should.be.a('string')
+        settings.welcome_template.template.should.be.a('string')
+        settings.welcome_template.use.should.be.a('boolean')
+
+        settings.forgot_password_template.reply_to.should.be.a('string')
+        settings.forgot_password_template.subject.should.be.a('string')
+        settings.forgot_password_template.template.should.be.a('string')
 
 
-          settings.hide_email.should.be.equal(false)
-          settings.allow_client_notifications.should.be.equal(false)
-          settings.active_user_threshold.should.be.equal(15)
-          settings.auto_create_tenants.should.be.equal(false)
+        // Value assertion
+        settings.login_schemes.google.should.be.equal(true)
+        settings.login_schemes.facebook.should.be.equal(true)
+        settings.login_schemes.twitter.should.be.equal(true)
+        settings.login_schemes.tibbr.should.be.equal(true)
+        settings.login_schemes.traditional.should.be.equal(true)
+        settings.login_schemes.anyauth.should.be.equal(true)
+
+        settings.upload_type_restriction.enabled.should.be.equal(false)
+        settings.upload_type_restriction.whitelist.should.be.equal(true)
+        settings.upload_type_restriction.list.should.be.deep.equal([])
+
+        settings.restricted_profile_update.enabled.should.be.equal(false)
+        settings.restricted_profile_update.whitelist.should.be.equal(true)
+        settings.restricted_profile_update.keys.should.be.deep.equal([])
 
 
-          settings.activation_template.reply_to.should.be.equal('noreply@built.io')
-          settings.activation_template.subject.should.be.equal('Activate Your Account')
-          settings.activation_template.template.should.be.equal('<p>Hi!</p>\n\n<p>\n  Thank you for creating an account!\n</p>\n\n<p>\n  Please <a href="{{confirm_link}}">confirm</a> your account to continue.\n</p>\n\n<p>\nIf you have any problems, please feel free to contact us.\n</p>\n\n<br/>\n\n<p>\n  Cheers.\n</p>')
-          settings.activation_template.use.should.be.equal(true)
+        settings.hide_email.should.be.equal(false)
+        settings.allow_client_notifications.should.be.equal(false)
+        settings.active_user_threshold.should.be.equal(15)
+        settings.auto_create_tenants.should.be.equal(false)
 
-          settings.welcome_template.reply_to.should.be.equal('noreply@built.io')
-          settings.welcome_template.subject.should.be.equal('Welcome!')
-          settings.welcome_template.template.should.be.equal('<p>\n  Hi!\n</p>\n<p>\n  Welcome to {{app_name}}.\n  <br/>\n  <br/>\n  Your registration has been confirmed successfully.\n</p>\n\n<p>\n  Cheers\n</p>')
-          settings.welcome_template.use.should.be.equal(true)
 
-          settings.forgot_password_template.reply_to.should.be.equal('noreply@built.io')
-          settings.forgot_password_template.subject.should.be.equal('Reset Your Password')
-          settings.forgot_password_template.template.should.be.equal('<p>Hi!</p>\n\n<p>\n  You (or someone else) have requested to reset your password for {{app_name}}.\n</p>\n\n<p>\n  If you follow the link below you will be able to personally reset your password\n</p>\n\n<br />\n{{reset_password_link}}\n\n<p>Cheers</p>')
+        settings.activation_template.reply_to.should.be.equal('noreply@built.io')
+        settings.activation_template.subject.should.be.equal('Activate Your Account')
+        settings.activation_template.template.should.be.equal('<p>Hi!</p>\n\n<p>\n  Thank you for creating an account!\n</p>\n\n<p>\n  Please <a href="{{confirm_link}}">confirm</a> your account to continue.\n</p>\n\n<p>\nIf you have any problems, please feel free to contact us.\n</p>\n\n<br/>\n\n<p>\n  Cheers.\n</p>')
+        settings.activation_template.use.should.be.equal(true)
 
-          done(err)
-        })
+        settings.welcome_template.reply_to.should.be.equal('noreply@built.io')
+        settings.welcome_template.subject.should.be.equal('Welcome!')
+        settings.welcome_template.template.should.be.equal('<p>\n  Hi!\n</p>\n<p>\n  Welcome to {{app_name}}.\n  <br/>\n  <br/>\n  Your registration has been confirmed successfully.\n</p>\n\n<p>\n  Cheers\n</p>')
+        settings.welcome_template.use.should.be.equal(true)
+
+        settings.forgot_password_template.reply_to.should.be.equal('noreply@built.io')
+        settings.forgot_password_template.subject.should.be.equal('Reset Your Password')
+        settings.forgot_password_template.template.should.be.equal('<p>Hi!</p>\n\n<p>\n  You (or someone else) have requested to reset your password for {{app_name}}.\n</p>\n\n<p>\n  If you follow the link below you will be able to personally reset your password\n</p>\n\n<br />\n{{reset_password_link}}\n\n<p>Cheers</p>')
+
+        done(err)
+      })
     
     });
 
+    
     it('should be able to update application settings', function(done) {
       factories.create('Update_app_settings', authtoken, api_key, {
           "app_settings": {
@@ -1235,6 +1281,7 @@ describe.only('Applications ---', function() {
     
     });
 
+    
     it('should be able to reset application settings', function(done) {
       factories.create('Update_app_settings', authtoken, api_key, {
           "app_settings": {
@@ -1385,9 +1432,73 @@ describe.only('Applications ---', function() {
 
 
 
-  describe('Invite and unaccepted_invitations', function() {
+  describe('Collaborators invite and unaccepted_invitations', function() {
 
+
+    before(function(done) {
+      // this.timeout(20000)
+      R.Promisify(factories.create('login_system_user', config.user2))
+      .then(function(res) {
+        authtoken1 = res.body.user.authtoken
+        return res
+      })
+      .then(function(res) {
+        return R.Promisify(factories.create('invite_collaborator', authtoken, api_key, {
+          "emails": [
+            res.body.user.email
+          ]
+        }))
+      })
+      .then(function(res) {
+        done()
+      })
+      .catch(function(err) {
+        console.log(err)
+      })
     
+    })
+    
+
+
+    it('should be able to get all collaborators present in an application', function(done) {
+      
+      R.Promisify(factories.create('login_system_user', config.user2))
+      .then(function(res) {
+        collaborator = res.body.user
+        return res
+      })
+      .then(function(res) {
+        return R.Promisify(factories.create('invite_collaborator', authtoken, api_key, {
+          "emails": [
+            res.body.user.email
+          ]
+        }))
+      })
+      .then(function(res) {
+        return R.Promisify(factories.create('Get_collaborators', authtoken, api_key)) 
+      })
+      .then(function(res) {
+        
+        users = res.body.users
+
+        Object.keys(users[0]).should.to.be.deep.equal(['uid','created_at','updated_at','email','username','plan_id','roles'])
+        Object.keys(users[1]).should.to.be.deep.equal(['uid','created_at','updated_at','email','username','plan_id','is_owner','roles'])
+
+        users[0].email.should.be.equal(collaborator.email)
+        users[1].email.should.be.equal(email)
+        users[1].is_owner.should.be.equal(true)
+      })
+      .then(function(res) {
+        done()
+      })
+      .catch(function(err) {
+        console.log(err)
+      })
+    
+
+    });
+
+
     it('should be able to invite collaborators for an application', function(done) {
       factories.create('invite_collaborator', authtoken, api_key, {
           "emails": [
@@ -1434,6 +1545,7 @@ describe.only('Applications ---', function() {
 
   describe('App unshare', function() {
 
+    
     it('should be able to unshare application from collaborator as a system user', function(done) {
 
       factories.create('login_system_user', config.user2)

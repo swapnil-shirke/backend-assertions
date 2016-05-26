@@ -29,6 +29,7 @@
 	
 	collaboratorRole       : '/collaborators/roles', 
 	userPermissions        : '/collaborators/permissions',
+	collaborators          : '/collaborators',
 	system_roles_Bulk_acl  : '/system_roles/bulk_acl',
 	uploads                : '/uploads',
 	appUser_login          : '/application/users/login',

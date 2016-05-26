@@ -1,4 +1,4 @@
-describe('App user ---', function() {
+describe('App user roles ---', function() {
 
 	var sys_user, app
 	var roleUid, roleName
@@ -173,7 +173,7 @@ describe('App user ---', function() {
 
 
 		it('should provide error for invalid role field', function(done) {
-			
+			this.timeout(45000)
 			R.Promisify(factories.create('Create_app_user_role', appUser1.authtoken, app.api_key, {
 				"object": {
 					"published": true,

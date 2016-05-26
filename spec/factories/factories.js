@@ -13,6 +13,7 @@
 			.expect(200)
 	})
 
+	
 	factories.addFactory('Create_application', function(authtoken, data) {
 		data = data || {
 			name: 'new app'
@@ -101,6 +102,7 @@
 			.expect(201)
 	})
 
+	
 	factories.addFactory('reset_app_settings', function(authtoken, api_key, body) {
 
 		body = body || {
@@ -129,6 +131,7 @@
 			.expect(201)
 	})
 
+	
 	factories.addFactory('invite_collaborator', function(authtoken, api_key, body) {
 		// console.log(body)
 		body = body || {
@@ -158,6 +161,15 @@
 			.send(body)
 			// .expect(200)
 	})
+
+	
+	factories.addFactory('Get_collaborators', function(authtoken, api_key) {
+		return api.get(config.endpoints.applications + "/" + api_key + config.endpoints.collaborators)
+			.set('web_ui_api_key', config.web_ui_api_key)
+			.set('authtoken', authtoken)
+			.set('application_api_key', api_key)
+			.expect(200)
+	})	
 
 //---------------- system roles
 
