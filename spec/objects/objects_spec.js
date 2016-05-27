@@ -100,22 +100,39 @@ describe('Objects ---', function() {
 			.then(function(res) {
 				return R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
 					"class": {
-						"title": "classzero",
 						"uid": "classzero",
-						"maintain_revisions": true,
+						"title": "classZero",
 						"schema": [{
-							"multiple": false,
-							"mandatory": true,
-							"display_name": "Name",
-							"uid": "name",
-							"data_type": "text"
-						}],
-						"DEFAULT_ACL": {
-							"others": {
-								"create": true,
-								"read": true
+							"uid": "list",
+							"data_type": "text",
+							"display_name": "list",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": true,
+							"format": "",
+							"unique": null,
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
 							}
-						}
+						}, {
+							"uid": "count",
+							"data_type": "number",
+							"display_name": "count",
+							"mandatory": true,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"format": "",
+							"unique": null,
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							}
+						}]
 					}
 				}))
 			})
@@ -231,15 +248,15 @@ describe('Objects ---', function() {
 		});
 
 
-		it.skip('should be able to get zero objects and include count as a "0"', function(done) {
+		it('should be able to get zero objects and include count as a "0"', function(done) {
 			R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, classZero.uid, {
 				"include_count": "true"
 			}))
 			.then(function(res) {
-				res.body.should.be.deep.equal([{
+				res.body.should.be.deep.equal({
 				  "objects": [],
 				  "count": 0
-				}])
+				})
 			})
 			.then(function(res) {
 				done()

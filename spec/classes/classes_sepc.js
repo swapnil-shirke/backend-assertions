@@ -255,12 +255,11 @@ describe('classes ---', function() {
 		
 		});
 
-		it.only('should provide error message for -ve skip/limit value', function(done) {
+		it.skip('should provide error message for -ve skip/limit value', function(done) {
 			
 			factories.create('Get_all_classes', authtoken, api_key, {
 					"_method": "get",
-					"skip": -3,
-					"limit": -1
+					"skip": -3
 				})
 				.expect(200)
 				.end(function(err, res) {
@@ -359,6 +358,73 @@ describe('classes ---', function() {
 					// res.class.SYS_ACL.should.be.equal({})
 
 					// res.class.DEFAULT_ACL.length.should.be.equal('others')
+
+					done(err)
+				})
+		
+		});
+
+
+		it('should provide an error message for invalid json param', function(done) {
+
+			// var class_name = product_supertest;
+			// var class_uid  = product_supertest;
+
+			factories.create('Create_class', authtoken, api_key, {
+					"classes": {
+						"title": "class_name",
+						"uid": "class_uid",
+						"schema": [{
+							"multiple": false,
+							"mandatory": true,
+							"display_name": "Name",
+							"uid": "name",
+							"data_type": "text",
+							"unique": "local"
+						}]
+					}
+				})
+				// .expect(201)
+				.end(function(err, res) {
+					res.body.should.be.deep.equal({
+					  "error_message": "Please send your attributes wrapped in 'class'",
+					  "error_code": 141,
+					  "errors": {}
+					})
+
+					done(err)
+				})
+		
+		});
+
+
+		it('should provide an error message for invalid authtoken', function(done) {
+
+			// var class_name = product_supertest;
+			// var class_uid  = product_supertest;
+
+			factories.create('Create_class', '', api_key, {
+					"classes": {
+						"title": "class_name",
+						"uid": "class_uid",
+						"schema": [{
+							"multiple": false,
+							"mandatory": true,
+							"display_name": "Name",
+							"uid": "name",
+							"data_type": "text",
+							"unique": "local"
+						}]
+					}
+				})
+				// .expect(201)
+				.end(function(err, res) {
+					
+					res.body.should.be.deep.equal({
+					  "error_message": "Hey! You're not allowed in here unless you're logged in.",
+					  "error_code": 105,
+					  "errors": {}
+					})
 
 					done(err)
 				})
