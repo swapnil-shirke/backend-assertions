@@ -41,7 +41,7 @@ describe('classes ---', function() {
 	after(function(done) {
 		factories.create('Delete_application', authtoken, api_key)
 			.end(function(err, res1) {
-				console.log("application delete")
+				// console.log("application delete")
 				done(err)
 			})
 	
@@ -59,7 +59,7 @@ describe('classes ---', function() {
 				})
 				.expect(200)
 				.end(function(err, res) {
-					//console.log(res.body)
+					// R.pretty(res.body)
 
 					var app_user = res.body.classes[0]
 					var app_user_role = res.body.classes[1]
@@ -642,7 +642,7 @@ describe('classes ---', function() {
 						})
 						.expect(200)
 						.end(function(err, res2) {
-							
+							// R.pretty(res2.body)
 							var updatedClss = res2.body.class
 
 							Object.keys(updatedClss).should.be.deep.equal(['created_at', 'updated_at', 'title', 'uid', 'inbuilt_class', 'schema', 'last_activity', 'maintain_revisions', 'abilities', 'DEFAULT_ACL', 'SYS_ACL'])

@@ -4,6 +4,7 @@ describe('Field validation ---', function() {
 	var app, sysUser
 
 	
+	
 	before(function(done) {
 		
 		R.Promisify(factories.create('login_system_user'))
@@ -81,6 +82,8 @@ describe('Field validation ---', function() {
 	
 	})
 
+
+	
 
 	describe('Text', function() {
 		
@@ -302,7 +305,8 @@ describe('Field validation ---', function() {
 
 	
 
-	describe('Multiple and field format ', function() {
+
+	describe('Text Multiple and field format ', function() {
 			
 		var classTextMul
 		
@@ -545,12 +549,53 @@ describe('Field validation ---', function() {
 		
 
 		});
-		
 
 
 
 	});
 
+
+	
+	describe('Links', function() {
+			
+		before(function(done) {
+			R.Promisify(factories.create('Create_class', sysUser.authtoken, app.api_key, {
+				"class": {
+					"uid": "classLink",
+					"title": "classLink",
+					"schema": [{
+						"uid": "textfield",
+						"data_type": "text",
+						"display_name": "textField",
+						"mandatory": true,
+						"max": 10,
+						"min": 5,
+						"multiple": false,
+						// "format": "[abc]",
+						"unique": null,
+						"action": "add",
+						"field_metadata": {
+							"allow_rich_text": false,
+							"multiline": false
+						}
+					}]
+				}
+			}))
+			.then(function(res) {
+				classText = res.body.class
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+				console.log(err)
+			})
+		
+
+		})
+
+
+	});
 
 
 

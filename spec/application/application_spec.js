@@ -828,7 +828,7 @@ describe('Applications ---', function() {
 
   describe('Update app', function() {
 
-    it.skip('should be able to update created application', function(done) {
+    it('should be able to update created application', function(done) {
       factories.create('Update_application', authtoken, api_key, {
           "name": "updated"
         })

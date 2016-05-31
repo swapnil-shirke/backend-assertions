@@ -975,7 +975,7 @@
 		return api.get(config.endpoints.uploads + "/" + uploadUID)
 			.set('application_api_key', api_key)
 			.set('authtoken', authtoken)
-			.expect(200)
+			// .expect(200)
 	})
 
 	factories.addFactory('update_upload', function(authtoken, api_key, uploadUID, filename, body) {

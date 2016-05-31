@@ -5,6 +5,7 @@ describe('Installation data ---', function() {
 	var email
 	var appname
 
+	
 	before(function(done) {
 		factories.create('login_system_user')
 			.end(function(err, res) {
@@ -16,6 +17,7 @@ describe('Installation data ---', function() {
 
 				done(err)
 			})
+	
 	})
 
 	before(function(done) {
@@ -28,6 +30,7 @@ describe('Installation data ---', function() {
 
 				done(err)
 			})
+	
 	})
 
 	after(function(done) {
@@ -36,13 +39,16 @@ describe('Installation data ---', function() {
 				// console.log("application delete")
 				done(err)
 			})
+	
 	})
 
 
 
 	describe('Create an installations', function() {
+		
 		this.timeout(15000)
-		it('should create installation object', function(done) {
+		
+		it('should be able to create installation object for an app', function(done) {
 
 			factories.create('Create_Installation_object', authtoken, api_key, {
 					"object": {
@@ -139,8 +145,10 @@ describe('Installation data ---', function() {
 
 	// need to add ramdom string
 	describe('Get all installations', function() {
+		
 		this.timeout(15000)
-		it('should get installation objects', function(done) {
+		
+		it('should be able to get installation objects created for an app', function(done) {
 
 			factories.create('Create_Installation_object', authtoken, api_key)
 				.expect(201)
@@ -214,7 +222,7 @@ describe('Installation data ---', function() {
 
 	describe('Get single object', function() {
 		this.timeout(15000)
-		it('should get single object', function(done) {
+		it('should be able to get single object created for an app', function(done) {
 			
 			factories.create('Create_Installation_object', authtoken, api_key)
 				.expect(201)
@@ -289,7 +297,7 @@ describe('Installation data ---', function() {
 
 	describe('Update an installation', function() {
 		this.timeout(15000)
-		it('should update installation objects', function(done) {
+		it('should be able to update installation objects created for an app', function(done) {
 
 			factories.create('Create_Installation_object', authtoken, api_key)
 				.expect(201)
@@ -393,7 +401,7 @@ describe('Installation data ---', function() {
 
 	describe('Delete an installation', function() {
 		this.timeout(15000)
-		it('should delete an installation object', function(done) {
+		it('should be able to delete an installation object created for an app', function(done) {
 
 			factories.create('Create_Installation_object', authtoken, api_key)
 				.expect(201)

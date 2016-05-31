@@ -13,6 +13,7 @@ describe('Uploads --- ', function() {
 	var uploadCollaborator, uploadAppuser
 
 
+	
 	before(function(done) {
 		this.timeout(35000)
 
@@ -57,6 +58,7 @@ describe('Uploads --- ', function() {
 
 	})
 
+	
 	before(function(done) {
 		this.timeout(25000)
 
@@ -104,6 +106,7 @@ describe('Uploads --- ', function() {
 
 	})
 
+	
 	before(function(done) {
 		this.timeout(25000)
 
@@ -166,8 +169,10 @@ describe('Uploads --- ', function() {
 
 		})
 
-		it('should get all uploads created', function(done) {
+	
+		it('should be able to get all created uploads for an app', function(done) {
 			factories.create('get_uploads', authtoken, api_key)
+				.expect(200)
 				.end(function(err, res) {
 
 					upload = res.body.uploads[0]
@@ -207,9 +212,10 @@ describe('Uploads --- ', function() {
 
 		});
 
-		it('should get single upload', function(done) {
+		
+		it('should be able to get single upload created for an app', function(done) {
 			factories.create('get_single_upload', authtoken, api_key, uploadUID)
-
+			.expect(200)
 			.end(function(err, res) {
 
 				upload = res.body.upload
@@ -249,6 +255,28 @@ describe('Uploads --- ', function() {
 
 		});
 
+		
+		it('should provided an error message for invalid upload uid', function(done) {
+			factories.create('get_single_upload', authtoken, api_key, 'asdasd')
+			.expect(404)
+			.end(function(err, res) {
+				res.body.should.be.deep.equal({
+				  "error_message": "Oops! That file was not found.",
+				  "error_code": 145,
+				  "errors": {
+				    "uid": [
+				      "is invalid"
+				    ]
+				  }
+				})
+
+
+				done(err)
+			})
+
+		});
+
+	
 	});
 
 
@@ -274,7 +302,8 @@ describe('Uploads --- ', function() {
 		})
 
 
-		it('should get all images uploaded on backend', function(done) {
+		
+		it('should be able to get all images uploaded for an app', function(done) {
 			factories.create('get_uploads_images', authtoken, api_key)
 				.end(function(err, res) {
 					
@@ -315,7 +344,8 @@ describe('Uploads --- ', function() {
 
 		});
 
-		it('should get all videos uploaded on backend', function(done) {
+		
+		it('should be able to get all videos uploaded for an app', function(done) {
 
 			factories.create('get_uploads_videos', authtoken, api_key)
 				.end(function(err, res) {
@@ -356,12 +386,14 @@ describe('Uploads --- ', function() {
 
 		});
 
+
 	});
 
 
 	describe('create_upload', function() {
 
-		it('should create an upload (system)', function(done) {
+		
+		it('should be able to create an upload(system) for an app', function(done) {
 
 			var filename1 = 'jpg_1.JPG'
 
@@ -403,7 +435,8 @@ describe('Uploads --- ', function() {
 
 		});
 
-		it('should create an upload (collaborator)', function(done) {
+		
+		it('should be able to create an upload(collaborator) for an app', function(done) {
 
 			var filename1 = 'jpg_2.jpg'
 
@@ -444,7 +477,8 @@ describe('Uploads --- ', function() {
 
 		});
 
-		it('should create an upload (anonymous)', function(done) {
+		
+		it('should be able to create an upload(anonymous) for an app', function(done) {
 
 			var filename1 = 'jpg_1.JPG'
 
@@ -485,7 +519,8 @@ describe('Uploads --- ', function() {
 
 		});
 
-		it('should create an upload (application user)', function(done) {
+		
+		it('should be able to create an upload(application user) for an app', function(done) {
 
 			var filename = 'json_1.json'
 
@@ -524,12 +559,15 @@ describe('Uploads --- ', function() {
 
 		});
 
+
+
+
 	});
 
 
 	describe('Uploads tags', function() {
 
-		it('should get a list of all tags created', function(done) {
+		it('should be able to get a list of all tags created for an upload', function(done) {
 			factories.create('get_upload_tags', authtoken, api_key)
 			.end(function(err, res){
 				res.body.tags.should.to.be.deep.equal(['supertest', 'backend'])
@@ -537,12 +575,15 @@ describe('Uploads --- ', function() {
 			})
 		});
 		
+	
 	});
 
 
 	describe('Update upload', function() {
+		
 		this.timeout(7000)
-		it('should update given upload object as a collaborator', function(done) {
+		
+		it('should be able to update given upload object as a collaborator', function(done) {
 
 			var filename1 = 'csv_1.csv'
 
@@ -583,7 +624,8 @@ describe('Uploads --- ', function() {
 
 		});
 
-		it('should provide error message when update object(system) as a application user', function(done) {
+		
+		it('should be able to provide an error message when application user updates upload object created by sysuser', function(done) {
 
 			var filename1 = 'csv_1.csv'
 
@@ -599,14 +641,15 @@ describe('Uploads --- ', function() {
 
 		});
 
-		it('should update upload object as a application user', function(done) {
+		
+		it.skip('should be able to update upload object as a application user', function(done) {
 
 			var filename1 = 'csv_1.csv'
 
-			factories.create('update_upload', app_user.authtoken, api_key, uploadAppuser.uid, filename1)
+			factories.create('update_upload', app_user.authtoken, api_key, filename1)
 				.expect(200)
 				.end(function(err, res) {
-
+					R.pretty(res.body)
 					res.body.notice.should.be.equal('Woot! File updated successfully.')
 					var upload = res.body.upload
 
@@ -638,12 +681,63 @@ describe('Uploads --- ', function() {
 
 		});
 
+
+		it('should provide an error message for invalid update upload', function(done) {
+
+			var filename1 = 'csv_1.csv'
+
+			factories.create('update_upload', app_user.authtoken, api_key, 'asd', filename1)
+				.expect(404)
+				.end(function(err, res) {
+					res.body.should.be.deep.equal({
+					  "error_message": "Oops! That file was not found.",
+					  "error_code": 145,
+					  "errors": {
+					    "uid": [
+					      "is invalid"
+					    ]
+					  }
+					})
+
+					done(err)
+				})
+
+		});
+
+
+		it('should provide an error message for invalid api key for update upload', function(done) {
+
+			var filename1 = 'csv_1.csv'
+
+			factories.create('update_upload', app_user.authtoken, 'asdasdad', 'asd', filename1)
+				.expect(412)
+				.end(function(err, res) {
+					R.pretty(res.body)
+					res.body.should.be.deep.equal({
+					  "error_message": "Bad news! We can't find that application. Please try again.",
+					  "error_code": 109,
+					  "errors": {
+					    "api_key": [
+					      "is invalid"
+					    ]
+					  }
+					})
+
+					done(err)
+				})
+
+		});
+
+
+
 	});
 
 
 	describe('delete upload', function() {
+		
 		this.timeout(15000)
-		it('should delete given upload object as a collaborator', function(done) {
+		
+		it('should be able to delete given upload object as a collaborator', function(done) {
 
 			factories.create('delete_upload', collaborator.authtoken, api_key, uploadUID)
 				.expect(200)
@@ -654,7 +748,8 @@ describe('Uploads --- ', function() {
 
 		});
 
-		it('should provide error message when delete object(system) as a application user', function(done) {
+		
+		it('should be able to provide an error message when delete object(system) as a application user', function(done) {
 
 			factories.create('delete_upload', app_user.authtoken, api_key, uploadUID1)
 				.expect(401)
@@ -668,7 +763,49 @@ describe('Uploads --- ', function() {
 
 		});
 
-		it('should update upload object as a application user', function(done) {
+		
+
+		it('should provide error message invalid upload delete', function(done) {
+
+			factories.create('delete_upload', app_user.authtoken, api_key, 'asd')
+				// .expect(200)
+				.end(function(err, res) {
+					// R.pretty(res.body)
+					res.body.should.be.deep.equal({
+						  "error_message": "Oops! That file was not found.",
+						  "error_code": 145,
+						  "errors": {
+						    "uid": [
+						      "is invalid"
+						    ]
+						  }
+						})
+					done(err)
+				})
+
+		});
+
+
+		it('should provide error message invalid user authtoken for upload delete', function(done) {
+
+			factories.create('delete_upload', '', api_key, uploadAppuser.uid)
+				.expect(401)
+				.end(function(err, res) {
+					// R.pretty(res.body)
+					res.body.should.be.deep.equal({
+						  "error_message": "Access denied. You have insufficient permissions to perform this operation.",
+						  "error_code": 162,
+						  "errors": {}
+						})
+
+					done(err)
+				})
+
+		});
+
+
+
+		it('should be able to delete upload object as a application user', function(done) {
 
 			factories.create('delete_upload', app_user.authtoken, api_key, uploadAppuser.uid)
 				.expect(200)
@@ -679,12 +816,15 @@ describe('Uploads --- ', function() {
 
 		});
 
+
+
 	});
 
 
 	describe('uploads default_acl', function() {
 
-		it('should get the default ACL set for this application on uploads', function(done) {
+		
+		it('should be able to get the default ACL set for an uploads', function(done) {
 			factories.create('get_default_acl', authtoken, api_key)
 				.end(function(err, res) {
 					
@@ -708,7 +848,8 @@ describe('Uploads --- ', function() {
 
 		});
 
-		it('should Specify a default ACL for uploads', function(done) {
+		
+		it('should be able to specify a default ACL for uploads', function(done) {
 			factories.create('set_default_acl', authtoken, api_key, {
 				"DEFAULT_ACL": {
 					"others": {
@@ -759,6 +900,7 @@ describe('Uploads --- ', function() {
 
 		});
 
+	
 	});
 
 

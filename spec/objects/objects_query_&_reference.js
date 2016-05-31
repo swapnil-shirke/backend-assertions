@@ -263,7 +263,7 @@ describe('Queries and reference', function() {
 		})	
 
 
-  	it('should get object using simple query', function(done) {
+  	it('should be able to get objects created for an app using simple query', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass.uid, {
 			 "query": {
 			    "author": "swapnil"
@@ -285,7 +285,7 @@ describe('Queries and reference', function() {
   	});
 
   	
-  	it('should get object using regex in query', function(done) {
+  	it('should be able to get objects created for an app using regex in query', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, {
 			 	"query": {
 			    "author": {
@@ -310,7 +310,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get object using query on simple group field', function(done) {
+  	it('should be able to get objects created for an app using query on simple group field', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, {
 			 	"query": {
 		    	"address.city": "anjuna"  
@@ -332,7 +332,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get object using $or query', function(done) {
+  	it('should be able to get objects created for an app using $or query', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
 				"query": {
 					"$or": [{
@@ -365,7 +365,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get object using $and query', function(done) {
+  	it('should be able to get objects created for an app using $and query', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
 				"query": {
 					"$and": [{
@@ -395,7 +395,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get object using $lt(less then) operators', function(done) {
+  	it('should be able to get objects created for an app using $lt(less then) operators', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
 			 	"query": {
 			    "daysold": {
@@ -420,7 +420,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get object using $lte(less then or equal to) operators', function(done) {
+  	it('should be able t0 get objects created for an app using $lte(less then or equal to) operators', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
 			 	"query": {
 			    "daysold": {
@@ -447,7 +447,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get object using $gt(greater than) operators', function(done) {
+  	it('should be able to get objects created for an app using $gt(greater than) operators', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
 			 	"query": {
 			    "daysold": {
@@ -474,7 +474,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get object using $gte(greater than or equal to) operators', function(done) {
+  	it('should be able to get objects created for an app using $gte(greater than or equal to) operators', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
 			 	"query": {
 			    "daysold": {
@@ -501,7 +501,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get object using $ne(not equal to) operators', function(done) {
+  	it('should be able to get objects created for an app using $ne(not equal to) operators', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
 			 	"query": {
 			    "daysold": {
@@ -536,7 +536,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get object using $in(contained In) operators', function(done) {
+  	it('should be able to get objects created for an app using $in(contained In) operators', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
 			 	"query": {
 			    "daysold": {
@@ -565,7 +565,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get object using $in(not contained In) operators', function(done) {
+  	it('should be able to get objects created for an app using $in(not contained In) operators', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
 			 	"query": {
 			    "daysold": {
@@ -596,7 +596,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get object using $exists(exists) operators', function(done) {
+  	it('should be able to get objects created for an app using $exists(exists) operators', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
 			 	"query": {
 			    "bookname": {
@@ -619,7 +619,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get objects and include owner', function(done) {
+  	it('should be able to get objects created for an app and include its owner', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
 			  "_method": "get",
 			  "include_owner": true
@@ -640,7 +640,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get objects and include count', function(done) {
+  	it('should be able to get objects created for an app and include its count', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
 			  "_method": "get",
 			  "include_count": true
@@ -660,7 +660,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get objects and include schema', function(done) {
+  	it('should be able to get objects created for an app and include its schema', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid, '', {
 			  "_method": "get",
 			  "include_schema": true
@@ -682,7 +682,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get objects and include unpublished', function(done) {
+  	it('should be able to get objects created for an app and include unpublished objects', function(done) {
   		R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, myclass.uid, {
 					"object": {
 						"name": "one",
@@ -906,7 +906,7 @@ describe('Queries and reference', function() {
 
 
 
-		it('should get reference objects using $in_query query', function(done) {
+		it('should be able to get reference objects created for an app using $in_query query', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, {
 			  "query": {
 			    "project": {
@@ -933,7 +933,7 @@ describe('Queries and reference', function() {
 
 
 
-		it('should get reference objects using $nin_query query', function(done) {
+		it('should be able to get reference objects created for an app using $nin_query query', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, {
 			  "query": {
 			    "project": {
@@ -959,7 +959,7 @@ describe('Queries and reference', function() {
   	});
 
 
-		it('should get reference objects using include[]', function(done) {
+		it('should be able to get reference objects created for an app using include[]', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, '', {
 			  "method": "get",
 			  "include": [
@@ -984,7 +984,7 @@ describe('Queries and reference', function() {
   	});
 
 
-		it('should get objects using ONLY BASE query', function(done) {
+		it('should be able to get objects created for an app using ONLY BASE query', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, '', {
 			  "_method": "get",
 			  "only": {
@@ -1009,7 +1009,7 @@ describe('Queries and reference', function() {
   	});
 
 
-		it('should get reference objects using include[] and Only BASE query', function(done) {
+		it('should be able to get reference objects created for an app using include[] and Only BASE query', function(done) {
   		R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, '', {
 			  "_method": "get",
 			  "include": [
@@ -1040,7 +1040,7 @@ describe('Queries and reference', function() {
   	});
 
 
-		it('should get objects using except BASE query', function(done) {  		
+		it('should be able to get objects created for an app using except BASE query', function(done) {  		
 			R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, '', {
 			  "_method": "get",
 			  "except": {
@@ -1064,7 +1064,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get reference objects using include[] and except BASE query', function(done) {  		
+  	it('should be able to get reference objects created for an app using include[] and except BASE query', function(done) {  		
 			R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, '', { 
 				"include": ["project"],
 			  "_method": "get",
@@ -1093,7 +1093,7 @@ describe('Queries and reference', function() {
   	});
 
 
-  	it('should get objects using exists[field_uid] query', function(done) {  		
+  	it('should be able to get objects created for an app using exists[field_uid] query', function(done) {  		
 			R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass2.uid, '', {
 			  "_method": "get",
 			  "exists": {
@@ -1115,7 +1115,7 @@ describe('Queries and reference', function() {
 
   	});
 
-  	it('should create reference object without passing array', function(done) {
+  	it('should be able to create reference object without passing array', function(done) {
   		
   		var pro = object1.uid
   		

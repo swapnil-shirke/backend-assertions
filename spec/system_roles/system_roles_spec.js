@@ -19,8 +19,10 @@ describe('System roles --- ', function() {
 
 				done(err)
 			})
+	
 	})
 
+	
 	before(function(done) {
 		factories.create('Create_application', authtoken)
 			.end(function(err, res) {
@@ -32,20 +34,23 @@ describe('System roles --- ', function() {
 				//console.log(res.body)
 				done(err)
 			})
+	
 	})
 
+	
 	after(function(done) {
 		factories.create('Delete_application', authtoken, api_key)
 			.end(function(err, res1) {
 				console.log("application delete")
 				done(err)
 			})
+	
 	})
 
 
 	describe('Create an system roles', function() {
 
-		it('should create a system roles', function(done) {
+		it('should be able to create a system roles for an app', function(done) {
 			factories.create('Create_system_role', authtoken, api_key, {
 					"name": "role_test"
 				})
@@ -103,13 +108,14 @@ describe('System roles --- ', function() {
 
 					done(err)
 				})
+		
 		});
 
 	});
 
 	describe('Get system_roles', function() {
 
-		it('should get all system roles', function(done) {
+		it('should be able to get all system roles created for an app', function(done) {
 			factories.create('Create_system_role', authtoken, api_key, {
 					"name": "dev manager"
 				})
@@ -185,6 +191,7 @@ describe('System roles --- ', function() {
 
 
 				})
+		
 		});
 
 	});
@@ -192,7 +199,7 @@ describe('System roles --- ', function() {
 
 	describe('Get single system role', function() {
 
-		it('should get single system_role', function(done) {
+		it('should be able to get single system_role created for an app', function(done) {
 			factories.create('Create_system_role', authtoken, api_key, {
 					"name": "supertest"
 				})
@@ -259,6 +266,7 @@ describe('System roles --- ', function() {
 
 						});
 				});
+		
 		});
 
 	});
@@ -266,7 +274,7 @@ describe('System roles --- ', function() {
 
 	describe('Update system role', function() {
 
-		it('should update system role', function(done) {
+		it('should be able to update system role created for an app', function(done) {
 			factories.create('Create_system_role', authtoken, api_key, {
 					"name": "managers"
 				})
@@ -335,13 +343,15 @@ describe('System roles --- ', function() {
 						})
 
 				})
+		
 		});
 
 	});
 
 	describe('Delete system role', function() {
 
-		it('should delete a system role', function(done) {
+		it('should be able to delete a system role created for an app', function(done) {
+			
 			factories.create('Create_system_role', authtoken, api_key, {
 					"name": "clients"
 				})
@@ -362,6 +372,7 @@ describe('System roles --- ', function() {
 						})
 
 				})
+		
 		});
 
 	});
