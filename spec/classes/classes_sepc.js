@@ -261,22 +261,18 @@ describe('classes ---', function() {
 					"_method": "get",
 					"skip": -3
 				})
-				.expect(200)
+				.expect(200) // should be 422
 				.end(function(err, res) {
-					R.pretty(res.body)
-					// var classes = res.body.classes
-
-					// classes.length.should.be.equal(1)
-
-					// // Keys assertion
-					// Object.keys(classes[0]).should.be.deep.equal(['created_at', 'updated_at', 'title', 'uid', 'inbuilt_class', 'schema', 'last_activity', 'maintain_revisions', 'abilities', 'DEFAULT_ACL', 'SYS_ACL'])
-
-					// // Data type assertion
-
-					// // Value assertion
-					// classes[0].uid.should.be.equal('built_io_upload')
-					// classes[0].title.should.be.equal('built.io Uploads')
-					// classes[0].inbuilt_class.should.be.equal(true)
+					// R.pretty(res.body)
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Failed to fetch classes. Please try again with valid parameters.",
+					  "error_code": 141,
+					  "errors": {
+					    "params": [
+					      "has an invalid operation."
+					    ]
+					  }
+					})
 
 					done(err)
 				})

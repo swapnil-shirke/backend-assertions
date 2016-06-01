@@ -15,65 +15,65 @@ describe('App users ---', function() {
   before(function(done) {
     this.timeout(25000)
     R.Promisify(factories.create('login_system_user'))
-      .then(function(res) {
-        authtoken = res.body.user.authtoken;
-        userUID   = res.body.user.uid;
-        username  = res.body.user.username;
-        email     = res.body.user.email;
-      })
-      .then(function(res) {
-        return R.Promisify(factories.create('Create_application', authtoken))
-      })
-      .then(function(res) {
-        api_key    = res.body.application.api_key;
-        master_key = res.body.application.master_key;
-        appname    = res.body.application.name;
-        appUid     = res.body.application.uid
-      })
-      .then(function(res) {
-        var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
-        var appUserName = R.bltRandom(8);
-        return R.Promisify(factories.create('create_app_user_object', authtoken, api_key, {
-          "object": {
-            "published": true,
-            "__loc": [72.79246119999993, 19.4563596],
-            "active": true,
-            "username": appUserName,
-            "email": appUseremail,
-            "first_name": "ironman",
-            "last_name": "avangers",
-            "password": "raw123",
-            "password_confirmation": "raw123",
-            "device_type": "ios",
-            "tags": ["testuser", "backend"]
-          }
-        }))
-      })
-      .then(function(res) {
-        appUser = res.body.object
-      })
-      .then(function(res) {
-        return R.Promisify(factories.create('Create_app_user_role', authtoken, api_key))
-      })
-      .then(function(res) {
-        roleId = res.body.object.uid
-      })
-      .then(function(res) {
-        done()
-      })
-      .catch(function(err) {
-        console.log(err)
-      })
+	  .then(function(res) {
+	    authtoken = res.body.user.authtoken;
+	    userUID   = res.body.user.uid;
+	    username  = res.body.user.username;
+	    email     = res.body.user.email;
+	  })
+	  .then(function(res) {
+	    return R.Promisify(factories.create('Create_application', authtoken))
+	  })
+	  .then(function(res) {
+	    api_key    = res.body.application.api_key;
+	    master_key = res.body.application.master_key;
+	    appname    = res.body.application.name;
+	    appUid     = res.body.application.uid
+	  })
+	  .then(function(res) {
+	    var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
+	    var appUserName = R.bltRandom(8);
+	    return R.Promisify(factories.create('create_app_user_object', authtoken, api_key, {
+	      "object": {
+	        "published": true,
+	        "__loc": [72.79246119999993, 19.4563596],
+	        "active": true,
+	        "username": appUserName,
+	        "email": appUseremail,
+	        "first_name": "ironman",
+	        "last_name": "avangers",
+	        "password": "raw123",
+	        "password_confirmation": "raw123",
+	        "device_type": "ios",
+	        "tags": ["testuser", "backend"]
+	      }
+	    }))
+	  })
+	  .then(function(res) {
+	    appUser = res.body.object
+	  })
+	  .then(function(res) {
+	    return R.Promisify(factories.create('Create_app_user_role', authtoken, api_key))
+	  })
+	  .then(function(res) {
+	    roleId = res.body.object.uid
+	  })
+	  .then(function(res) {
+	    done()
+	  })
+	  .catch(function(err) {
+	    console.log(err)
+	  })
 
   })
 
 
   after(function(done) {
     factories.create('Delete_application', authtoken, api_key)
-      .end(function(err, res1) {
-        // console.log("application delete")
-        done(err)
-      })
+    .end(function(err, res1) {
+      // console.log("application delete")
+      done(err)
+    })
 
   })
 
@@ -81,7 +81,7 @@ describe('App users ---', function() {
 
 
 
-  describe('App user creation', function() {
+  describe('App user Object', function() {
 
     var appUser1
 
@@ -225,13 +225,223 @@ describe('App users ---', function() {
 
     });
 
+
+		it.skip('should provide an error message for mandetory fields(email)', function(done) {
+      // var roleId
+      var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
+      var appUserName = R.bltRandom(8);
+
+      factories.create('create_app_user_object', authtoken, api_key, {
+        "object": {
+          "published": true,
+          "__loc": [-122.4431164995849, 37.74045209829323],
+          "active": true,
+          // "email": appUseremail,
+          "first_name": "james",
+          "last_name": "bond",
+          "password": "password",
+          "password_confirmation": "password",
+          "device_type": "ios",
+          "ACL": {
+            "disable": false,
+            "roles": [{
+              "uid": roleId,
+              "read": true,
+              "update": false,
+              "delete": false,
+            }],
+            "others": {
+              "read": false,
+              "update": false,
+              "delete": false
+            }
+          },
+          "tags": ["supertest", "backend"]
+        }
+
+      })
+      .end(function(err, res) {
+      	// R.pretty(res.body)
+        res.body.should.be.deep.equal({
+				  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+				  "error_code": 119,
+				  "errors": {
+				    "email": [
+				      "is required"
+				    ]
+				  }
+				})
+
+        done(err)
+
+      })
+
+    });
+
     
+    it('should provide an error message for unique email', function(done) {
+      // var roleId
+      var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
+      var appUserName = R.bltRandom(8);
+
+      factories.create('create_app_user_object', authtoken, api_key, {
+        "object": {
+          "published": true,
+          "__loc": [-122.4431164995849, 37.74045209829323],
+          "active": true,
+          "username": appUserName,
+          "email": appUser1.email,
+          "first_name": "james",
+          "last_name": "bond",
+          "password": "password",
+          "password_confirmation": "password",
+          "device_type": "ios",
+          "ACL": {
+            "disable": false,
+            "roles": [{
+              "uid": roleId,
+              "read": true,
+              "update": false,
+              "delete": false,
+            }],
+            "others": {
+              "read": false,
+              "update": false,
+              "delete": false
+            }
+          },
+          "tags": ["supertest", "backend"]
+        }
+
+      })
+      .end(function(err, res) {
+      	res.body.should.be.deep.equal({
+				  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+				  "error_code": 119,
+				  "errors": {
+				    "email": [
+				      "is not unique"
+				    ]
+				  }
+				})
+
+        done(err)
+
+      })
+
+    });
+
+
+    it('should provide an error message for unique username', function(done) {
+      // var roleId
+      var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
+      var appUserName = R.bltRandom(8);
+
+      factories.create('create_app_user_object', authtoken, api_key, {
+        "object": {
+          "published": true,
+          "__loc": [-122.4431164995849, 37.74045209829323],
+          "active": true,
+          "username": appUser1.username,
+          "email": appUseremail,
+          "first_name": "james",
+          "last_name": "bond",
+          "password": "password",
+          "password_confirmation": "password",
+          "device_type": "ios",
+          "ACL": {
+            "disable": false,
+            "roles": [{
+              "uid": roleId,
+              "read": true,
+              "update": false,
+              "delete": false,
+            }],
+            "others": {
+              "read": false,
+              "update": false,
+              "delete": false
+            }
+          },
+          "tags": ["supertest", "backend"]
+        }
+
+      })
+      .end(function(err, res) {
+      	res.body.should.be.deep.equal({
+				  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+				  "error_code": 119,
+				  "errors": {
+				    "username": [
+				      "is not unique"
+				    ]
+				  }
+				})
+
+        done(err)
+
+      })
+
+    });
+
+
+    it('should provide an error message for invalid authtoken(app user)', function(done) {
+      // var roleId
+      var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
+      var appUserName = R.bltRandom(8);
+
+      factories.create('create_app_user_object', 'fhts2323432', api_key, {
+        "object": {
+          "published": true,
+          "__loc": [-122.4431164995849, 37.74045209829323],
+          "active": true,
+          "username": appUserName,
+          "email": appUseremail,
+          "first_name": "james",
+          "last_name": "bond",
+          "password": "password",
+          "password_confirmation": "password",
+          "device_type": "ios",
+          "ACL": {
+            "disable": false,
+            "roles": [{
+              "uid": roleId,
+              "read": true,
+              "update": false,
+              "delete": false,
+            }],
+            "others": {
+              "read": false,
+              "update": false,
+              "delete": false
+            }
+          },
+          "tags": ["supertest", "backend"]
+        }
+
+      })
+      .expect(401)
+      .end(function(err, res) {
+      	// R.pretty(res.body)
+        res.body.should.be.deep.equal({
+				  "error_message": "Access denied. You have insufficient permissions to perform this operation.",
+				  "error_code": 162,
+				  "errors": {}
+				})
+
+        done(err)
+
+      })
+
+    });
+
+
     it('should be able to get all application user objects present', function(done) {
 
       factories.create('get_app_user_objects', authtoken, api_key)
         .expect(200)
         .end(function(err, res) {
-
+        	// R.pretty(res.body)
           var object = R.last(res.body.objects)
 
           // Keys assertion
@@ -334,6 +544,28 @@ describe('App users ---', function() {
 
     });
 
+
+    it('should provide an error message for invalid uid', function(done) {
+
+      factories.create('get_object_app_user', authtoken, api_key, 'adafewt34vf')
+        .end(function(err, res) {
+        	// R.pretty(res.body)
+          res.body.should.be.deep.equal({
+					  "error_message": "Bummer. The requested object doesn't exist.",
+					  "error_code": 141,
+					  "errors": {
+					    "uid": [
+					      "is invalid"
+					    ]
+					  }
+					})
+
+          done(err)
+
+        })
+
+    });
+
     
     it('should be able to update application user object', function(done) {
 
@@ -343,6 +575,7 @@ describe('App users ---', function() {
           "last_name": "objectUpdate"
         }
       })
+      .expect(200)
       .end(function(err, res) {
 
         var object = res.body.object
@@ -386,6 +619,58 @@ describe('App users ---', function() {
 
         object._version.should.be.equal(2)
         object.tags.should.be.deep.equal(['testuser', 'backend'])
+
+        done(err)
+
+      })
+
+    });
+
+
+    it('should provide an error message for invalid authtoken(app user) for update', function(done) {
+
+      factories.create('update_object_app_user', 'asdafe2323dfr445', api_key, appUser1.uid, {
+        "object": {
+          "first_name": "objectUpdate",
+          "last_name": "objectUpdate"
+        }
+      })
+      .expect(401)
+      .end(function(err, res) {
+      	// R.pretty(res.body)
+        res.body.should.be.deep.equal({
+				  "error_message": "Access denied. You have insufficient permissions to perform this operation.",
+				  "error_code": 162,
+				  "errors": {}
+				})
+
+        done(err)
+
+      })
+
+    });
+
+    
+    it('should provide an error message for invalid uid for update', function(done) {
+
+      factories.create('update_object_app_user', authtoken, api_key, 'asfa323dfgs', {
+        "object": {
+          "first_name": "objectUpdate",
+          "last_name": "objectUpdate"
+        }
+      })
+      .expect(422)
+      .end(function(err, res) {
+      	// R.pretty(res.body)
+        res.body.should.be.deep.equal({
+				  "error_message": "Bummer. The requested object doesn't exist.",
+				  "error_code": 141,
+				  "errors": {
+				    "uid": [
+				      "is invalid"
+				    ]
+				  }
+				})
 
         done(err)
 
@@ -448,12 +733,57 @@ describe('App users ---', function() {
     });
 
 
+
+    it('should provide an error message for invalid authtoken for delete', function(done) {
+
+      factories.create('delete_object_app_user', 'asdwvf434vdfv', api_key, appUser1.uid)
+        .expect(401)
+        .end(function(err, res) {
+        	// R.pretty(res.body)
+          res.body.should.be.deep.equal({
+					  "error_message": "Access denied. You have insufficient permissions to perform this operation.",
+					  "error_code": 162,
+					  "errors": {}
+					})
+
+          done(err)
+
+        })
+
+    });
+
+
     it('should be able to delete application user object', function(done) {
 
       factories.create('delete_object_app_user', authtoken, api_key, appUser1.uid)
-        .end(function(err, res) {
+      .expect(200)  
+      .end(function(err, res) {
 
-          res.body.notice.should.be.equal('Woot! Object deleted successfully.')
+        res.body.notice.should.be.equal('Woot! Object deleted successfully.')
+
+        done(err)
+
+      })
+
+    });
+
+
+
+    it('should provide an error message for invalid uid for delete', function(done) {
+
+      factories.create('delete_object_app_user', authtoken, api_key, 'adf34d34d')
+        .expect(422)
+        .end(function(err, res) {
+        	// R.pretty(res.body)
+          res.body.should.be.deep.equal({
+					  "error_message": "Bummer. The requested object doesn't exist.",
+					  "error_code": 141,
+					  "errors": {
+					    "uid": [
+					      "is invalid"
+					    ]
+					  }
+					})
 
           done(err)
 
@@ -469,7 +799,7 @@ describe('App users ---', function() {
       })
       .expect(200)
       .end(function(err, res) {
-        // console.log(res.body)
+        
         res.body.objects.should.be.equal(2)  
 
 
@@ -478,6 +808,208 @@ describe('App users ---', function() {
       })
 
     });
+
+    
+    it('should be able to get application user objects includeing count', function(done) {
+
+      factories.create('get_app_user_objects', authtoken, api_key, '', {
+        "include_count": "true"
+      })
+      .expect(200)
+      .end(function(err, res) {
+        // R.pretty(res.body)
+        res.body.count.should.be.equal(2)  
+
+        var object = R.last(res.body.objects)
+
+        // Keys assertion
+        Object.keys(object).should.to.be.deep.equal(['published', '__loc', 'username', 'email', 'first_name', 'last_name', 'device_type', 'tags', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', 'ACL', '_version'])
+
+        // Data type assertion
+        object.published.should.be.a('boolean')
+        object.__loc.should.be.a('array')
+        object.username.should.be.a('string')
+        object.email.should.be.a('string')
+        object.first_name.should.be.a('string')
+        object.last_name.should.be.a('string')
+        object.device_type.should.be.a('string')
+        object.ACL.should.be.a('object')
+        object.app_user_object_uid.should.be.a('string')
+        object.created_by.should.be.a('string')
+        object.updated_by.should.be.a('string')
+        object.created_at.should.be.a('string')
+        object.updated_at.should.be.a('string')
+        object.uid.should.be.a('string')
+        object._version.should.be.a('number')
+        object.tags.should.be.a('array')
+
+        // Value assertion
+        object.published.should.be.equal(true)
+        object.__loc.should.be.deep.equal(appUser.__loc)
+        // object.__loc[0].should.be.equal(appUser.__loc[0])
+        // object.__loc[1].should.be.equal(appUser.__loc[1])
+        object.username.should.be.equal(appUser.username)
+        object.email.should.be.equal(appUser.email)
+        object.first_name.should.be.equal(appUser.first_name)
+        object.last_name.should.be.equal(appUser.last_name)
+        object.device_type.should.be.equal('ios')
+
+        object.app_user_object_uid.should.be.equal('system')
+        object.created_by.should.be.equal(userUID)
+        object.updated_by.should.be.equal(object.created_by)
+        object.created_at.should.be.equal(object.updated_at)
+
+        object._version.should.be.equal(1)
+        object.tags.should.be.deep.equal(['testuser', 'backend'])
+
+        done(err)
+
+      })
+
+    });
+
+
+    it('should be able to get application user objects using skip and count', function(done) {
+
+      factories.create('get_app_user_objects', authtoken, api_key, '', {
+        "skip": 1,
+        "include_count": true
+      })
+      .expect(200)
+      .end(function(err, res) {
+        // R.pretty(res.body)
+        res.body.objects.length.should.be.equal(1)
+        res.body.count.should.be.equal(2)  
+
+
+        done(err)
+
+      })
+
+    });
+
+
+    it('should be able to get application user objects using limit and count', function(done) {
+
+      factories.create('get_app_user_objects', authtoken, api_key, '', {
+        "limit": 1,
+        "include_count": true
+      })
+      .expect(200)
+      .end(function(err, res) {
+        // R.pretty(res.body)
+        res.body.objects.length.should.be.equal(1)
+        res.body.count.should.be.equal(2)  
+
+
+        done(err)
+
+      })
+
+    });
+
+
+    it('should be able to get application user objects using skip', function(done) {
+
+      factories.create('get_app_user_objects', authtoken, api_key, '', {
+        "skip": 2
+      })
+      .expect(200)
+      .end(function(err, res) {
+        // R.pretty(res.body)
+        res.body.objects.length.should.be.equal(0)
+
+
+
+        done(err)
+
+      })
+
+    });
+    
+
+    it('should be able to get application user objects using -ve skip value', function(done) {
+
+      factories.create('get_app_user_objects', authtoken, api_key, '', {
+        "skip": -2
+      })
+      .expect(422)
+      .end(function(err, res) {
+        R.pretty(res.body)
+        res.body.should.be.deep.equal({
+				  "error_message": "Bummer. Failed to fetch objects. Please try again with valid parameters.",
+				  "error_code": 141,
+				  "errors": {
+				    "params": [
+				      "has an invalid operation."
+				    ]
+				  }
+				})
+
+        done(err)
+
+      })
+
+    });
+
+
+    it('should be able to get application user objects using -ve limit value', function(done) {
+
+      factories.create('get_app_user_objects', authtoken, api_key, '', {
+        "limit": -1
+      })
+      .expect(200)
+      .end(function(err, res) {
+        // R.pretty(res.body)
+        var object = res.body.objects[0]
+
+        // Keys assertion
+        Object.keys(object).should.to.be.deep.equal(['published', '__loc', 'username', 'email', 'first_name', 'last_name', 'device_type', 'tags', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', 'ACL', '_version'])
+
+        // Data type assertion
+        object.published.should.be.a('boolean')
+        object.__loc.should.be.a('array')
+        object.username.should.be.a('string')
+        object.email.should.be.a('string')
+        object.first_name.should.be.a('string')
+        object.last_name.should.be.a('string')
+        object.device_type.should.be.a('string')
+        object.ACL.should.be.a('object')
+        object.app_user_object_uid.should.be.a('string')
+        object.created_by.should.be.a('string')
+        object.updated_by.should.be.a('string')
+        object.created_at.should.be.a('string')
+        object.updated_at.should.be.a('string')
+        object.uid.should.be.a('string')
+        object._version.should.be.a('number')
+        object.tags.should.be.a('array')
+
+        // Value assertion
+        object.published.should.be.equal(true)
+        object.__loc.should.be.deep.equal(appUser.__loc)
+        // object.__loc[0].should.be.equal(appUser.__loc[0])
+        // object.__loc[1].should.be.equal(appUser.__loc[1])
+        object.username.should.be.equal(appUser1.username)
+        object.email.should.be.equal(appUser1.email)
+        object.first_name.should.be.equal(appUser1.first_name)
+        object.last_name.should.be.equal(appUser1.last_name)
+        object.device_type.should.be.equal('ios')
+
+        object.app_user_object_uid.should.be.equal('system')
+        object.created_by.should.be.equal(userUID)
+        object.updated_by.should.be.equal(object.created_by)
+        object.created_at.should.be.equal(object.updated_at)
+
+        object._version.should.be.equal(1)
+        object.tags.should.be.deep.equal(['testuser', 'backend'])
+
+        done(err)
+
+      })
+
+    });
+
+
 
   
   });
@@ -594,6 +1126,108 @@ describe('App users ---', function() {
 
     });
 
+
+    it('should provide error message for password confirmation', function(done) {
+
+      var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
+      var appUserName = R.bltRandom(8);
+
+      factories.create('register_app_user', api_key, {
+        "application_user": {
+          "email": appUseremail,
+          "first_name": "john",
+          "last_name": "smith",
+          "password": "raw1234",
+          "password_confirmation": "raw123",
+          "username": appUserName
+        }
+      })
+      .end(function(err, res) {
+      	res.body.should.be.deep.equal({
+				  "error_message": "Bummer. Couldn't sign you up. Please try again.",
+				  "error_code": 192,
+				  "errors": {
+				    "password_confirmation": [
+				      "password and password_confirmation must match"
+				    ]
+				  }
+				})
+
+        done(err)
+
+      })
+
+    });
+
+
+    it('should provide error message for register unique username', function(done) {
+
+      var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
+      var appUserName = R.bltRandom(8);
+
+      factories.create('register_app_user', api_key, {
+        "application_user": {
+          "email": appUseremail,
+          "first_name": "john",
+          "last_name": "smith",
+          "password": "raw123",
+          "password_confirmation": "raw123",
+          "username": appUser2.username
+        }
+      })
+      .end(function(err, res) {
+    		// R.pretty(res.body)
+      	res.body.should.be.deep.equal({
+				  "error_message": "Bummer. Couldn't sign you up. Please try again.",
+				  "error_code": 127,
+				  "errors": {
+				    "username": [
+				      "is not unique"
+				    ]
+				  }
+				})
+
+        done(err)
+
+      })
+
+    });
+
+
+    it('should provide error message for register unique email', function(done) {
+
+      var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
+      var appUserName = R.bltRandom(8);
+
+      factories.create('register_app_user', api_key, {
+        "application_user": {
+          "email": appUser2.email,
+          "first_name": "john",
+          "last_name": "smith",
+          "password": "raw123",
+          "password_confirmation": "raw123",
+          "username": appUserName
+        }
+      })
+      .end(function(err, res) {
+    		// R.pretty(res.body)
+      	res.body.should.be.deep.equal({
+				  "error_message": "Bummer. Couldn't sign you up. Please try again.",
+				  "error_code": 127,
+				  "errors": {
+				    "email": [
+				      "is not unique"
+				    ]
+				  }
+				})
+
+        done(err)
+
+      })
+
+    });
+
+    
     it('should be able to update registered application user', function(done) {
 
       factories.create('update_register_app_user', appUser_authtoken, api_key, appUser2.uid, {
@@ -602,6 +1236,7 @@ describe('App users ---', function() {
           "last_name": "objectUpdate",
         }
       })
+      .expect(200)
       .end(function(err, res) {
 
         var object = res.body.application_user
@@ -654,6 +1289,31 @@ describe('App users ---', function() {
 
     });
 
+    
+    it('should provide an error message for invalid app user authtoken ', function(done) {
+
+      factories.create('update_register_app_user', '', api_key, appUser2.uid, {
+        "application_user": {
+          "first_name": "objectUpdate",
+          "last_name": "objectUpdate",
+        }
+      })
+      .expect(422)
+      .end(function(err, res) {
+      	// R.pretty(res.body)
+      	res.body.should.be.deep.equal({
+				  "error_message": "Access denied. You have insufficient permissions to perform this operation.",
+				  "error_code": 162,
+				  "errors": {}
+				})
+
+        done(err)
+
+      })
+
+    });
+
+   
     it('should be able to get registered application user', function(done) {
 
       factories.create('get_register_app_user', appUser_authtoken, api_key, appUser2.uid)
@@ -709,6 +1369,7 @@ describe('App users ---', function() {
 
     });
 
+    
     it('should be able to deactivate an existing application user', function(done) {
 
       factories.create('delete_register_app_user', appUser_authtoken, api_key, appUser2.uid)
@@ -997,6 +1658,29 @@ describe('App users ---', function() {
 
     });
 
+
+    it('should provide an error message for invalid application user authtoken', function(done) {
+      this.timeout(30000)
+      
+      R.Promisify(factories.create('get_current_app_user', '899769kjnkj', api_key))
+        .then(function(res) {
+        	// R.pretty(res.body)
+          res.status.should.be.equal(422)
+          res.body.should.be.deep.equal({
+					  "error_message": "Access denied. You have insufficient permissions to perform this operation.",
+					  "error_code": 162,
+					  "errors": {}
+					})
+        })
+        .then(function(res) {
+          done()
+        })
+        .catch(function(err) {
+          console.log(err)
+        })
+
+    });
+
     
     it('should be able to retrieve application user uid', function(done) {
       
@@ -1027,6 +1711,19 @@ describe('App users ---', function() {
       })
 
     });
+
+
+    it('should provide an error message for an invalid application`s master key', function(done) {
+      
+      R.Promisify(factories.create('app_user_token', 'kdsj43fvbgkj', api_key, appUser4.uid))
+      .then(function(res) {
+        // R.pretty(res.body)
+        // res.body.token.should.be.a('string')
+        done()
+      })
+
+    });
+
 
   });
 
@@ -1083,6 +1780,28 @@ describe('App users ---', function() {
         done()
       })   
     
+    });
+
+    it('should provide an error message for invalid token', function(done) {
+      R.Promisify(factories.create('activate_app_user', api_key, appUser5.uid, '4569y8zvzkdfgzdf'))
+      .then(function(res) {
+      	// R.pretty(res.body)
+      	res.status.should.be.equal(422)
+        res.body.should.be.deep.equal({
+				  "error_message": "Bummer. Couldn't retreive the token for you.",
+				  "error_code": 147,
+				  "errors": {
+				    "token": [
+				      "Bummer. The token provided is invalid. Please try again."
+				    ]
+				  }
+				})
+        
+      })
+      .then(function(res) {
+      	done()
+      })   
+    
     });   
   
   })  
@@ -1131,6 +1850,7 @@ describe('App users ---', function() {
 
     })
     
+    
     it('should be able to request reset password, for an application', function(done) {
       R.Promisify(factories.create('req_forgot_password', api_key, {
         "application_user": {
@@ -1143,7 +1863,36 @@ describe('App users ---', function() {
         done()
       })
       .catch(function(err) {
-        console.log(err.trace)
+        console.log(err)
+      })
+    
+    });
+
+    
+    it('should provide an error message for invalid email for forgot password', function(done) {
+      R.Promisify(factories.create('req_forgot_password', api_key, {
+        "application_user": {
+            "email": "swapnil.shirke@raweng.com"
+        }
+      }))
+      .then(function(res) {
+      	
+        res.body.should.be.deep.equal({
+				  "error_message": "Bummer. Couldn't help you with your password. Please try again.",
+				  "error_code": 148,
+				  "errors": {
+				    "email": [
+				      "is invalid"
+				    ]
+				  }
+				})
+        
+      })
+      .then(function(res) {
+      	done()
+      })
+      .catch(function(err) {
+        console.log(err)
       })
     
     });
@@ -1196,6 +1945,7 @@ describe('App users ---', function() {
 
     })
 
+    
     it('should be able to reset password using provided token', function(done) {
       
       R.Promisify(factories.create('reset_password_app_user', api_key, {
@@ -1209,6 +1959,37 @@ describe('App users ---', function() {
         res.body.notice.should.be.equal('Woot! You\'ve successfully reset your password.')
         
         done()
+      })
+      .catch(function(err) {
+        console.log(err)
+      })
+    
+    });
+
+    
+    it('should provide an error message for invalid reset password token', function(done) {
+      
+      R.Promisify(factories.create('reset_password_app_user', api_key, {
+        "application_user": {
+          "reset_password_token": "swapnil",
+          "password": "password",
+          "password_confirmation": "password"
+        }
+      }))
+      .then(function(res) {
+        // R.pretty(res.body)
+        res.body.should.be.deep.equal({
+				  "error_message": "Bummer. Couldn't reset your password. Please try again.",
+				  "error_code": 149,
+				  "errors": {
+				    "reset_password_token": [
+				      "Bummer. The token provided is invalid. Please try again."
+				    ]
+				  }
+				})
+      })
+      .then(function(res) {
+      	done()
       })
       .catch(function(err) {
         console.log(err)
@@ -1264,12 +2045,40 @@ describe('App users ---', function() {
 
     })
 
+    
+
     it('should be able to check whether reset password token is valid or not', function(done) {
       
       R.Promisify(factories.create('validate_token_app_user', api_key, { 'application_user[reset_password_token]': token }))
       .then(function(res) {
         res.body.notice.should.be.equal('That token works!')
         done()
+      })
+      .catch(function(err) {
+        console.log(err)
+      })
+    
+    });
+
+    
+    it('should provide an error message for invalid provided token', function(done) {
+      
+      R.Promisify(factories.create('validate_token_app_user', api_key, { 'application_user[reset_password_token]': 'swapnil' }))
+      .then(function(res) {
+      	// R.pretty(res.body)
+        res.body.should.be.deep.equal({
+				  "error_message": "Bummer. The token provided is invalid. Please try again.",
+				  "error_code": 210,
+				  "errors": {
+				    "reset_password_token": [
+				      "is not valid, or it might have expired"
+				    ]
+				  }
+				})
+        
+      })
+      .then(function(res) {
+      	done()
       })
       .catch(function(err) {
         console.log(err)

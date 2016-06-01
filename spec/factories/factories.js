@@ -770,7 +770,7 @@
 			.set('application_api_key', api_key)
 			.query(query)
 			.send(body)
-			.expect(200)
+			// .expect(200)
 
 	})
 
@@ -794,7 +794,7 @@
 			.set('authtoken', authtoken)
 			.set('application_api_key', api_key)
 			.send(body)
-			.expect(200)
+			// .expect(200)
 	})
 
 	factories.addFactory('delete_object_app_user', function(authtoken, api_key, appuserUid) {
@@ -803,7 +803,7 @@
 			.set('web_ui_api_key', config.web_ui_api_key)
 			.set('authtoken', authtoken)
 			.set('application_api_key', api_key)
-			.expect(200)
+			// .expect(200)
 	})
 
 	// -----------------
@@ -857,7 +857,7 @@
 			.set('authtoken', authtoken)
 			.set('application_api_key', api_key)
 			.send(body)
-			.expect(200)
+			// .expect(200)
 	})
 	
 
