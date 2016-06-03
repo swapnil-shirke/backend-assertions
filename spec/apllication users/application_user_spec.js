@@ -13,7 +13,9 @@ describe('App users ---', function() {
 
 
   before(function(done) {
+    
     this.timeout(25000)
+    
     R.Promisify(factories.create('login_system_user'))
 	  .then(function(res) {
 	    authtoken = res.body.user.authtoken;
@@ -83,12 +85,12 @@ describe('App users ---', function() {
 
   describe('App user Object', function() {
 
-    var appUser1
+    var appUser1, object
 
     before(function(done) {
       // this.timeout(10000)
-      var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
-      var appUserName = R.bltRandom(8);
+			var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
+			var appUserName  = R.bltRandom(8);
 
       R.Promisify(factories.create('create_app_user_object', authtoken, api_key, {
         "object": {
@@ -105,15 +107,44 @@ describe('App users ---', function() {
           "tags": ["testuser", "backend"]
         }
       }))
-        .then(function(res) {
-          appUser1 = res.body.object
-        })
-        .then(function(res) {
-          done()
-        })
-        .catch(function(err) {
-          console.log(err)
-        })
+      .then(function(res) {
+        appUser1 = res.body.object
+      })
+      .then(function(res) {
+      	
+      	var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
+				var appUserName  = R.bltRandom(8);
+
+      	return R.Promisify(factories.create('create_app_user_object', authtoken, api_key, {
+	        "object": {
+	          "published": true,
+	          "__loc": [72.79246119999993, 19.4563596],
+	          "active": true,
+	          "username": appUserName,
+	          "email": appUseremail,
+	          "first_name": "catwoman",
+	          "last_name": "smith",
+	          "password": "raw123",
+	          "password_confirmation": "raw123",
+	          "device_type": "android",
+	          "tags": ["catwoman", "backend"],
+	          "ACL": {
+	          	"others": {
+						    "read": true
+						  }
+	          }
+	        }
+	      }))
+      })
+      .then(function(res) {
+        appUser6 = res.body.object
+      })
+      .then(function(res) {
+        done()
+      })
+      .catch(function(err) {
+        console.log(err)
+      })
     
     })
 
@@ -153,75 +184,75 @@ describe('App users ---', function() {
         }
 
       })
-        .end(function(err, res) {
+      .end(function(err, res) {
 
-          var object = res.body.object
+        var object = res.body.object
 
-          res.body.notice.should.be.equal('Woot! Object created successfully.')
+        res.body.notice.should.be.equal('Woot! Object created successfully.')
 
-          // Keys assertion
-          Object.keys(object).should.to.be.deep.equal(['published', '__loc', 'username', 'email', 'first_name', 'last_name', 'device_type', 'ACL', 'tags', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', '_version'])
+        // Keys assertion
+        Object.keys(object).should.to.be.deep.equal(['published', '__loc', 'username', 'email', 'first_name', 'last_name', 'device_type', 'ACL', 'tags', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', '_version'])
 
-          // Data type assertion
-          object.published.should.be.a('boolean')
-          object.__loc.should.be.a('array')
-          object.username.should.be.a('string')
-          object.email.should.be.a('string')
-          object.first_name.should.be.a('string')
-          object.last_name.should.be.a('string')
-          object.device_type.should.be.a('string')
-          object.ACL.should.be.a('object')
-          object.app_user_object_uid.should.be.a('string')
-          object.created_by.should.be.a('string')
-          object.updated_by.should.be.a('string')
-          object.created_at.should.be.a('string')
-          object.updated_at.should.be.a('string')
-          object.uid.should.be.a('string')
-          object._version.should.be.a('number')
-          object.tags.should.be.a('array')
-          object.ACL.disable.should.be.a('boolean')
-          object.ACL.others.should.be.a('object')
-          object.ACL.others.read.should.be.a('boolean')
-          object.ACL.others.update.should.be.a('boolean')
-          object.ACL.others.delete.should.be.a('boolean')
-          object.ACL.roles.should.be.a('array')
-          object.ACL.roles[0].uid.should.be.a('string')
-          object.ACL.roles[0].read.should.be.a('boolean')
-          object.ACL.roles[0].update.should.be.a('boolean')
-          object.ACL.roles[0].delete.should.be.a('boolean')
-
-
-          // Value assertion
-          object.published.should.be.equal(true)
-          object.__loc[0].should.be.equal(-122.4431164995849)
-          object.__loc[1].should.be.equal(37.74045209829323)
-          object.username.should.be.equal(appUserName)
-          object.email.should.be.equal(appUseremail)
-          object.first_name.should.be.equal('james')
-          object.last_name.should.be.equal('bond')
-          object.device_type.should.be.equal('ios')
-
-          object.ACL.others.read.should.be.equal(false)
-          object.ACL.others.update.should.be.equal(false)
-          object.ACL.others.delete.should.be.equal(false)
-
-          object.ACL.roles[0].uid.should.be.equal(roleId)
-          object.ACL.roles[0].read.should.be.equal(true)
-          object.ACL.roles[0].update.should.be.equal(false)
-          object.ACL.roles[0].delete.should.be.equal(false)
-
-          object.app_user_object_uid.should.be.equal('system')
-          object.created_by.should.be.equal(userUID)
-          object.updated_by.should.be.equal(object.created_by)
-          object.created_at.should.be.equal(object.updated_at)
+        // Data type assertion
+        object.published.should.be.a('boolean')
+        object.__loc.should.be.a('array')
+        object.username.should.be.a('string')
+        object.email.should.be.a('string')
+        object.first_name.should.be.a('string')
+        object.last_name.should.be.a('string')
+        object.device_type.should.be.a('string')
+        object.ACL.should.be.a('object')
+        object.app_user_object_uid.should.be.a('string')
+        object.created_by.should.be.a('string')
+        object.updated_by.should.be.a('string')
+        object.created_at.should.be.a('string')
+        object.updated_at.should.be.a('string')
+        object.uid.should.be.a('string')
+        object._version.should.be.a('number')
+        object.tags.should.be.a('array')
+        object.ACL.disable.should.be.a('boolean')
+        object.ACL.others.should.be.a('object')
+        object.ACL.others.read.should.be.a('boolean')
+        object.ACL.others.update.should.be.a('boolean')
+        object.ACL.others.delete.should.be.a('boolean')
+        object.ACL.roles.should.be.a('array')
+        object.ACL.roles[0].uid.should.be.a('string')
+        object.ACL.roles[0].read.should.be.a('boolean')
+        object.ACL.roles[0].update.should.be.a('boolean')
+        object.ACL.roles[0].delete.should.be.a('boolean')
 
 
-          object._version.should.be.equal(1)
-          object.tags[0].should.be.equal('supertest')
+        // Value assertion
+        object.published.should.be.equal(true)
+        object.__loc[0].should.be.equal(-122.4431164995849)
+        object.__loc[1].should.be.equal(37.74045209829323)
+        object.username.should.be.equal(appUserName)
+        object.email.should.be.equal(appUseremail)
+        object.first_name.should.be.equal('james')
+        object.last_name.should.be.equal('bond')
+        object.device_type.should.be.equal('ios')
 
-          done(err)
+        object.ACL.others.read.should.be.equal(false)
+        object.ACL.others.update.should.be.equal(false)
+        object.ACL.others.delete.should.be.equal(false)
 
-        })
+        object.ACL.roles[0].uid.should.be.equal(roleId)
+        object.ACL.roles[0].read.should.be.equal(true)
+        object.ACL.roles[0].update.should.be.equal(false)
+        object.ACL.roles[0].delete.should.be.equal(false)
+
+        object.app_user_object_uid.should.be.equal('system')
+        object.created_by.should.be.equal(userUID)
+        object.updated_by.should.be.equal(object.created_by)
+        object.created_at.should.be.equal(object.updated_at)
+
+
+        object._version.should.be.equal(1)
+        object.tags[0].should.be.equal('supertest')
+
+        done(err)
+
+      })
 
     });
 
@@ -800,7 +831,7 @@ describe('App users ---', function() {
       .expect(200)
       .end(function(err, res) {
         
-        res.body.objects.should.be.equal(2)  
+        res.body.objects.should.be.equal(3)  
 
 
         done(err)
@@ -818,7 +849,7 @@ describe('App users ---', function() {
       .expect(200)
       .end(function(err, res) {
         // R.pretty(res.body)
-        res.body.count.should.be.equal(2)  
+        res.body.count.should.be.equal(3)  
 
         var object = R.last(res.body.objects)
 
@@ -878,8 +909,8 @@ describe('App users ---', function() {
       .expect(200)
       .end(function(err, res) {
         // R.pretty(res.body)
-        res.body.objects.length.should.be.equal(1)
-        res.body.count.should.be.equal(2)  
+        res.body.objects.length.should.be.equal(2)
+        res.body.count.should.be.equal(3)  
 
 
         done(err)
@@ -899,7 +930,7 @@ describe('App users ---', function() {
       .end(function(err, res) {
         // R.pretty(res.body)
         res.body.objects.length.should.be.equal(1)
-        res.body.count.should.be.equal(2)  
+        res.body.count.should.be.equal(3)  
 
 
         done(err)
@@ -912,13 +943,14 @@ describe('App users ---', function() {
     it('should be able to get application user objects using skip', function(done) {
 
       factories.create('get_app_user_objects', authtoken, api_key, '', {
-        "skip": 2
+        "skip": 2,
+        "include_count": true
       })
       .expect(200)
       .end(function(err, res) {
         // R.pretty(res.body)
-        res.body.objects.length.should.be.equal(0)
-
+        res.body.objects.length.should.be.equal(1)
+        res.body.count.should.be.equal(3)
 
 
         done(err)
@@ -935,7 +967,7 @@ describe('App users ---', function() {
       })
       .expect(422)
       .end(function(err, res) {
-        R.pretty(res.body)
+        // R.pretty(res.body)
         res.body.should.be.deep.equal({
 				  "error_message": "Bummer. Failed to fetch objects. Please try again with valid parameters.",
 				  "error_code": 141,
@@ -956,7 +988,9 @@ describe('App users ---', function() {
     it('should be able to get application user objects using -ve limit value', function(done) {
 
       factories.create('get_app_user_objects', authtoken, api_key, '', {
-        "limit": -1
+        "limit": -1,
+        "skip": 1
+
       })
       .expect(200)
       .end(function(err, res) {
@@ -964,7 +998,7 @@ describe('App users ---', function() {
         var object = res.body.objects[0]
 
         // Keys assertion
-        Object.keys(object).should.to.be.deep.equal(['published', '__loc', 'username', 'email', 'first_name', 'last_name', 'device_type', 'tags', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', 'ACL', '_version'])
+        Object.keys(object).should.to.be.deep.equal(['published', '__loc', 'username', 'email', 'first_name', 'last_name', 'device_type', 'tags', 'ACL', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', '_version'])
 
         // Data type assertion
         object.published.should.be.a('boolean')
@@ -986,14 +1020,14 @@ describe('App users ---', function() {
 
         // Value assertion
         object.published.should.be.equal(true)
-        object.__loc.should.be.deep.equal(appUser.__loc)
+        object.__loc.should.be.deep.equal(object.__loc)
         // object.__loc[0].should.be.equal(appUser.__loc[0])
         // object.__loc[1].should.be.equal(appUser.__loc[1])
-        object.username.should.be.equal(appUser1.username)
-        object.email.should.be.equal(appUser1.email)
-        object.first_name.should.be.equal(appUser1.first_name)
-        object.last_name.should.be.equal(appUser1.last_name)
-        object.device_type.should.be.equal('ios')
+        object.username.should.be.equal(object.username)
+        object.email.should.be.equal(object.email)
+        object.first_name.should.be.equal(object.first_name)
+        object.last_name.should.be.equal(object.last_name)
+        object.device_type.should.be.equal('android')
 
         object.app_user_object_uid.should.be.equal('system')
         object.created_by.should.be.equal(userUID)
@@ -1001,7 +1035,7 @@ describe('App users ---', function() {
         object.created_at.should.be.equal(object.updated_at)
 
         object._version.should.be.equal(1)
-        object.tags.should.be.deep.equal(['testuser', 'backend'])
+        object.tags.should.be.deep.equal(['catwoman', 'backend'])
 
         done(err)
 
@@ -1009,9 +1043,7 @@ describe('App users ---', function() {
 
     });
 
-
-
-  
+ 
   });
 
 
@@ -1382,6 +1414,7 @@ describe('App users ---', function() {
 
     });
 
+
   });
 
 
@@ -1543,6 +1576,7 @@ describe('App users ---', function() {
         })
 
     });
+
 
   });
 
@@ -1804,6 +1838,7 @@ describe('App users ---', function() {
     
     });   
   
+
   })  
 
 
@@ -1897,6 +1932,7 @@ describe('App users ---', function() {
     
     });
 
+  
   })
 
 
@@ -1997,6 +2033,7 @@ describe('App users ---', function() {
     
     });
 
+ 
   });
 
 
@@ -2086,6 +2123,7 @@ describe('App users ---', function() {
     
     });
 
+  
   });
 
 

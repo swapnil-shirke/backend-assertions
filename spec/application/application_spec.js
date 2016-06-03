@@ -833,7 +833,7 @@ describe('Applications ---', function() {
           "name": "updated"
         })
         .end(function(err, res) {
-          R.pretty(res.body)
+          // R.pretty(res.body)
           var application = res.body.application
 
           // Keys assertion

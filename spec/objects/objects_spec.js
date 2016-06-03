@@ -153,11 +153,17 @@ describe('Objects ---', function() {
 
 		it('should be able to get all objects present for given class', function(done) {
 			R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, myclass.uid))
-				.then(function(res) {
-					objects = res.body.objects
-					objects.length.should.be.equal(5)
-					done()
-				})
+			.then(function(res) {
+				objects = res.body.objects
+				objects.length.should.be.equal(5)
+				
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+				console.log(err)
+			})
 
 		});
 
@@ -169,7 +175,13 @@ describe('Objects ---', function() {
 				.then(function(res) {
 					objects = res.body.objects
 					objects.length.should.be.equal(1)
+					
+				})
+				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 
 		});
@@ -182,7 +194,13 @@ describe('Objects ---', function() {
 				.then(function(res) {
 					objects = res.body.objects
 					objects.length.should.be.equal(3)
+					
+				})
+				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 
 		});
@@ -196,7 +214,13 @@ describe('Objects ---', function() {
 				.then(function(res) {
 					objects = res.body.objects
 					objects.length.should.be.equal(1)
+					
+				})
+				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 
 		});
@@ -209,7 +233,13 @@ describe('Objects ---', function() {
 				.then(function(res) {
 					objects = res.body.objects
 					objects.should.be.equal(5)
+					
+				})
+				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 
 		});
@@ -225,7 +255,13 @@ describe('Objects ---', function() {
 					schema = res.body.schema
 					should.exist(schema)
 					schema[0].uid.should.be.equal("name")
+					
+				})
+				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 
 		});
@@ -242,7 +278,13 @@ describe('Objects ---', function() {
 					count = res.body.count
 					should.exist(count)
 					count.should.be.equal(5)
+					
+				})
+				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 
 		});
@@ -260,6 +302,9 @@ describe('Objects ---', function() {
 			})
 			.then(function(res) {
 				done()
+			})
+			.catch(function(err) {
+				console.log(err)
 			})
 
 		});
@@ -279,8 +324,12 @@ describe('Objects ---', function() {
 					objects[2].name.should.be.equal('3')
 					objects[3].name.should.be.equal('4')
 					objects[4].name.should.be.equal('5')
-
+				})
+				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 
 		});
@@ -300,9 +349,15 @@ describe('Objects ---', function() {
 					objects[2].name.should.be.equal('3')
 					objects[3].name.should.be.equal('2')
 					objects[4].name.should.be.equal('1')
-
+				})
+				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
+					
+
 
 		});
 
@@ -424,9 +479,14 @@ describe('Objects ---', function() {
 
 				deletedAt[0].name.should.be.equal(object3.name)
 
-
+			})
+			.then(function(res) {
 				done()
 			})
+			.catch(function(err) {
+				console.log(err)
+			})
+
 
 		});
 
@@ -454,7 +514,13 @@ describe('Objects ---', function() {
 
 				createdAt[0].name.should.be.equal('updated')
 				createdAt[1].name.should.be.equal(object1.name)
+				
+			})
+			.then(function(res) {
 				done()
+			})
+			.catch(function(err) {
+				console.log(err)
 			})
 
 		});
@@ -483,7 +549,13 @@ describe('Objects ---', function() {
 
 					updatedAt[0].name.should.be.equal('updated')
 					updatedAt[1].name.should.be.equal(object1.name)
+					
+				})
+				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 
 		});
@@ -510,7 +582,13 @@ describe('Objects ---', function() {
 					deletedAt[0].uid.should.be.equal(object3.uid)
 					deletedAt[0].name.should.be.equal('one')
 
+					
+				})
+				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 
 		});
@@ -577,7 +655,13 @@ describe('Objects ---', function() {
 					object = res.body.object
 
 					Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'tags'])
+					
+				})
+				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 
 		});
@@ -595,7 +679,13 @@ describe('Objects ---', function() {
 
 					res.body.notice.should.be.equal('Woot! Object updated successfully.')
 					Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'tags'])
+					
+				})
+				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 
 		});
@@ -814,12 +904,15 @@ describe('Objects ---', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 
 			});
 
 			
-			it.skip('should be able to PUSH value (object property) in array field present in group', function(done) {
+			it('should be able to PUSH value (object property) in array field present in group', function(done) {
 				
 				var objUid = object.uid 
 	 			
@@ -836,12 +929,13 @@ describe('Objects ---', function() {
 					}
 				}))
 				.then(function(res) {
+					// R.pretty(res.body)
 					res.body.should.be.deep.equal({
 					  "error_message": "Bummer. Object update failed. Please enter valid data.",
 					  "error_code": 121,
 					  "errors": {
-					    "Invalid parameters": [
-					      "have invalid update operation(s). Please check if they were performed on null values."
+					    "roundone": [
+					      "has an invalid array operation."
 					    ]
 					  }
 					})
@@ -849,12 +943,15 @@ describe('Objects ---', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 
 			});
 
 
-			it.skip('should able to PUSH value (object property) in array field present in group without pasing index', function(done) {
+			it('should able to PUSH value (object property) in array field present in group without pasing index', function(done) {
 				
 				var objUid = object.uid 
 	 			
@@ -871,6 +968,9 @@ describe('Objects ---', function() {
 				}))
 				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 			
 
@@ -899,6 +999,9 @@ describe('Objects ---', function() {
 				})
 				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 			
 
@@ -933,6 +1036,9 @@ describe('Objects ---', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 
 			});
@@ -958,6 +1064,9 @@ describe('Objects ---', function() {
 				})
 				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 			
 
@@ -987,11 +1096,14 @@ describe('Objects ---', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 
 			});
 
-			it.skip('should provide an error message when "data" key is not present', function(done) {
+			it.skip('should provide an error message when data key is not present', function(done) {
 				
 				var objUid = object.uid 
 	 			
@@ -999,26 +1111,35 @@ describe('Objects ---', function() {
 					"object": {
 						"roundone": {
 							"hits": {
-								"PUSH": [786]
+								"PUSH": ["786"]
 							}
 						}
 					}
 				}))
 				.then(function(res) {
-					// R.pretty(res.body)
-					// res.body.notice.should.be.equal('Woot! Object created successfully.')
-					// object = res.body.object.roundone.hits[0]
-					// object.should.be.equal(555)
+					R.pretty(res.body)
+					res.body.should.be.equal.deep.equal({
+					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+					  "error_code": 119,
+					  "errors": {
+					    "parameter": [
+					      "is invalid"
+					    ]
+					  }
+					})
 				})
 				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err.trace)
 				})
 			
 
 			});
 
 
-			it.skip('should able to create object and PUSH values in it using dot property', function(done) {
+			it('should able to create object and PUSH values in it using dot property', function(done) {
 				
 				var objUid = object.uid 
 	 			
@@ -1033,12 +1154,21 @@ describe('Objects ---', function() {
 				}))
 				.then(function(res) {
 					// R.pretty(res.body)
-					// res.body.notice.should.be.equal('Woot! Object created successfully.')
-					// object = res.body.object.roundone.hits[0]
-					// object.should.be.equal(555)
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
+					  "error_code": 119,
+					  "errors": {
+					    "parameter": [
+					      "is invalid"
+					    ]
+					  }
+					})
 				})
 				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 			
 
@@ -1084,6 +1214,9 @@ describe('Objects ---', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 
 			});
@@ -1124,6 +1257,9 @@ describe('Objects ---', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 			
 
 			});
@@ -1156,6 +1292,9 @@ describe('Objects ---', function() {
 				})
 				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 			
 
@@ -1202,6 +1341,9 @@ describe('Objects ---', function() {
 				})
 				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 			
 
@@ -1354,20 +1496,22 @@ describe('Objects ---', function() {
 
 
 			
-			it.skip('should provide an error message for -ve index in UPDATE operation', function(done) {
-				
+			it('should provide an error message for -ve index in UPDATE operation', function(done) {
+				this.timeout(55000)
 	 			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
 					"object": {
 						"roundone": {
 							"hits": ["201", "202", "203", "204", "205"],
-							"name": "supertest2"
+							"name": "supertest122"
 						}
 					}
 				}))
 				.then(function(res) {
+	 				// R.pretty(res.body)
 	 				objUid = res.body.object.uid
 	 			})
 				.then(function(res) {
+					console.log(objUid)
 					return R.Promisify(factories.create('update_object', appUser1.authtoken, app.api_key, myclass7.uid, objUid, {
 						"object": {
 							"roundone": {
@@ -1382,16 +1526,16 @@ describe('Objects ---', function() {
 					}))
 				})
 				.then(function(res) {
-					// R.pretty(res.body)
-					// res.body.should.be.deep.equal({
-					//   "error_message": "Bummer. Object update failed. Please enter valid data.",
-					//   "error_code": 121,
-					//   "errors": {
-					//     "Invalid parameters": [
-					//       "have invalid update operation(s). Please check if they were performed on null values."
-					//     ]
-					//   }
-					// })
+					R.pretty(res.body)
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object update failed. Please enter valid data.",
+					  "error_code": 121,
+					  "errors": {
+					    "roundone": [
+					      "has an invalid array operation."
+					    ]
+					  }
+					})
 				})
 				.then(function(res) {
 					done()
@@ -1404,13 +1548,13 @@ describe('Objects ---', function() {
 			});			
 
 			
-			it.skip('should be able to update the given value(object property) at provided index', function(done) {
-				
+			it('should be able to update the given value(object property) at provided index', function(done) {
+				this.timeout(35000)
 	 			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
 					"object": {
 						"roundone": {
 							"hits": ["201", "202", "203", "204", "205"],
-							"name": "supertest2"
+							"name": "supertest12"
 						}
 					}
 				}))
@@ -1433,15 +1577,15 @@ describe('Objects ---', function() {
 				})
 				.then(function(res) {
 					// R.pretty(res.body)
-					// res.body.should.be.deep.equal({
-					//   "error_message": "Bummer. Object update failed. Please enter valid data.",
-					//   "error_code": 121,
-					//   "errors": {
-					//     "Invalid parameters": [
-					//       "have invalid update operation(s). Please check if they were performed on null values."
-					//     ]
-					//   }
-					// })
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object update failed. Please enter valid data.",
+					  "error_code": 121,
+					  "errors": {
+					    "roundone": [
+					      "has an invalid array operation."
+					    ]
+					  }
+					})
 				})
 				.then(function(res) {
 					done()
@@ -1496,7 +1640,7 @@ describe('Objects ---', function() {
 			});
 
 
-			it.skip('should provide an error message for multiple values(object property) PUSH on same object', function(done) {
+			it('should provide an error message for multiple values(object property) PUSH on same object', function(done) {
 				
 				var objUid = object1.uid
 
@@ -1524,10 +1668,16 @@ describe('Objects ---', function() {
 						}
 					}))
 				.then(function(res) {
-					R.pretty(res.body)
-					// res.body.notice.should.be.equal('Woot! Object updated successfully.')
-					// object = res.body.object
-					// object.roundone.hits[0].should.be.equal(666)
+					// R.pretty(res.body)
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object update failed. Please enter valid data.",
+					  "error_code": 121,
+					  "errors": {
+					    "group.0.subject": [
+					      "is not multiple"
+					    ]
+					  }
+					})
 				})
 				.then(function(res) {
 					done()
@@ -1698,6 +1848,9 @@ describe('Objects ---', function() {
 				})
 				.then(function(res) {
 					done()
+				})
+				.catch(function(err) {
+					console.log(err)
 				})
 				
 
@@ -3644,6 +3797,9 @@ describe('Objects ---', function() {
 				.then(function(res) {
 					done()
 				})
+				.catch(function(err) {
+					console.log(err)
+				})
 
 		});
 
@@ -3669,56 +3825,59 @@ describe('Objects ---', function() {
 					}
 				}
 			}))
-				.then(function(res) {
-					object = res.body.object
-					// R.pretty(res.body)
+			.then(function(res) {
+				object = res.body.object
+				// R.pretty(res.body)
 
-					// key assertion 
-					Object.keys(object).should.to.be.deep.equal(['published', 'group1', 'username', 'email', 'device_type', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', 'ACL', '__loc', '_version', 'tags'])
-					Object.keys(object.group1).should.to.be.deep.equal(['g1_field1', 'g1_field2', 'g1_group2', 'g1_group1'])
-					Object.keys(object.group1.g1_group1).should.to.be.deep.equal(['g1_g1_field1', 'g1_g1_group1'])
-					Object.keys(object.group1.g1_group1.g1_g1_group1).should.to.be.deep.equal(['g1_g1_g1_field1'])
-					Object.keys(object.group1.g1_group2[0]).should.to.be.deep.equal(['g1_g2_field1', 'g1_g2_group1'])
-					Object.keys(object.group1.g1_group2[0].g1_g2_group1).should.to.be.deep.equal(['g1_g2_field1'])
+				// key assertion 
+				Object.keys(object).should.to.be.deep.equal(['published', 'group1', 'username', 'email', 'device_type', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'active', 'ACL', '__loc', '_version', 'tags'])
+				Object.keys(object.group1).should.to.be.deep.equal(['g1_field1', 'g1_field2', 'g1_group2', 'g1_group1'])
+				Object.keys(object.group1.g1_group1).should.to.be.deep.equal(['g1_g1_field1', 'g1_g1_group1'])
+				Object.keys(object.group1.g1_group1.g1_g1_group1).should.to.be.deep.equal(['g1_g1_g1_field1'])
+				Object.keys(object.group1.g1_group2[0]).should.to.be.deep.equal(['g1_g2_field1', 'g1_g2_group1'])
+				Object.keys(object.group1.g1_group2[0].g1_g2_group1).should.to.be.deep.equal(['g1_g2_field1'])
 
-					// value assertion
-					object.published.should.be.equal(true)
-					object.group1.should.be.deep.equal({
-						"g1_field1": "updated group 1 field 1",
-						"g1_field2": 900,
-						"g1_group1": {
-							"g1_g1_field1": "updated group 1 group 1 field1",
-							"g1_g1_group1": {
-								"g1_g1_g1_field1": "updated group 1 group 1 group 1 field1"
-							}
-						},
-						"g1_group2": [{
-							"g1_g2_field1": [900, 900, 900],
-							"g1_g2_group1": {
-								"g1_g2_field1": ["zxcvb"]
-							}
-						}]
-					})
-					object.username.should.be.equal(userObj.username)
-					object.email.should.be.equal(userObj.email)
-					object.device_type.should.be.equal('ios')
-					object.app_user_object_uid.should.be.equal('system')
-					object.created_by.should.be.equal(object.updated_by)
-
-					object.created_at.should.be.not.equal(object.updated_at)
-
-					object.uid.should.be.equal(userObj.uid)
-					object.active.should.be.equal(true)
-					object.ACL.should.be.deep.equal({})
-					object._version.should.be.equal(2)
-					object.tags.should.be.deep.equal([])
-
-					should.not.exist(object.__loc)
-
+				// value assertion
+				object.published.should.be.equal(true)
+				object.group1.should.be.deep.equal({
+					"g1_field1": "updated group 1 field 1",
+					"g1_field2": 900,
+					"g1_group1": {
+						"g1_g1_field1": "updated group 1 group 1 field1",
+						"g1_g1_group1": {
+							"g1_g1_g1_field1": "updated group 1 group 1 group 1 field1"
+						}
+					},
+					"g1_group2": [{
+						"g1_g2_field1": [900, 900, 900],
+						"g1_g2_group1": {
+							"g1_g2_field1": ["zxcvb"]
+						}
+					}]
 				})
-				.then(function(res) {
-					done()
-				})
+				object.username.should.be.equal(userObj.username)
+				object.email.should.be.equal(userObj.email)
+				object.device_type.should.be.equal('ios')
+				object.app_user_object_uid.should.be.equal('system')
+				object.created_by.should.be.equal(object.updated_by)
+
+				object.created_at.should.be.not.equal(object.updated_at)
+
+				object.uid.should.be.equal(userObj.uid)
+				object.active.should.be.equal(true)
+				object.ACL.should.be.deep.equal({})
+				object._version.should.be.equal(2)
+				object.tags.should.be.deep.equal([])
+
+				should.not.exist(object.__loc)
+
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+				console.log(err)
+			})
 
 		});
 

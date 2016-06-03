@@ -994,7 +994,7 @@ describe('Queries and reference', function() {
 			  }
 			}))
 			.then(function(res) {
-				// R.pretty(res.body)
+				R.pretty(res.body)
 				object = R.last(res.body.objects)
 				Object.keys(object).should.to.be.deep.equal(['uid'])
 			})

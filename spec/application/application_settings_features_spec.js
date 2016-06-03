@@ -438,7 +438,7 @@ describe('General app settings ---', function() {
     })
 
 
-    it('should be able to restrict whitelisted files only', function(done) {
+    it('should be able to restrict whitelisted uploads files only', function(done) {
       R.Promisify(factories.create('update_register_app_user', appUser1.authtoken, app1.api_key, appUser1.uid, {
           "application_user": {
             "first_name": "superman",
@@ -487,7 +487,7 @@ describe('General app settings ---', function() {
     })
 
 
-    it('should be able to restrict whitelisted files only', function(done) {
+    it('should be able to restrict whitelisted user profile only', function(done) {
       R.Promisify(factories.create('update_register_app_user', appUser2.authtoken, app1.api_key, appUser1.uid, {
           "application_user": {
             "first_name": "superman",

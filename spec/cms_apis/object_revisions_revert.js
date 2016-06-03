@@ -111,7 +111,7 @@ describe('Objects revisions/revert --- ', function() {
 				"include_created_by": true
 			})
 			.end(function(err, res) {
-
+				// R.pretty(res.body)
 				var object = res.body.object
 
 				// Keys assertion        
@@ -163,7 +163,7 @@ describe('Objects revisions/revert --- ', function() {
 				"include_updated_by": true
 			})
 				.end(function(err, res) {
-
+					// R.pretty(res.body)
 					var object = res.body.object
 
 					// Keys assertion        
@@ -217,7 +217,7 @@ describe('Objects revisions/revert --- ', function() {
 					}
 				}))
 				.then(function(res) {
-
+					
 					var objectId = res.body.object.uid
 
 					return R.Promisify(factories.create('get_all_objects', authtoken_1, api_key, classUid, {
@@ -228,7 +228,7 @@ describe('Objects revisions/revert --- ', function() {
 				})
 				.then(function(res1) {
 
-					// R.pretty(res1.body)
+					R.pretty(res1.body)
 
 					var object = res1.body.objects[0]
 
@@ -273,7 +273,7 @@ describe('Objects revisions/revert --- ', function() {
 					}
 				}))
 				.then(function(res) {
-
+					// R.pretty(res.body)
 					var objectId = res.body.object.uid
 
 					return R.Promisify(factories.create('get_object', authtoken, api_key, classUid, objectUid, {
@@ -305,7 +305,7 @@ describe('Objects revisions/revert --- ', function() {
 		});
 
 		it('should get all objects with revisions', function(done) {
-
+			// R.pretty(res.body)
 			return R.Promisify(factories.create('update_object', authtoken_1, api_key, classUid, objectUid, {
 					"object": {
 						"name": "supertest_update"
@@ -321,7 +321,7 @@ describe('Objects revisions/revert --- ', function() {
 				})
 				.then(function(res1) {
 
-					// R.pretty(res1.body)
+					R.pretty(res1.body)
 
 					var object1 = res1.body.objects[0]
 					var object2 = res1.body.objects[1]
