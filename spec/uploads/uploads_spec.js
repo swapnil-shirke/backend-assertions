@@ -642,14 +642,14 @@ describe('Uploads --- ', function() {
 		});
 
 		
-		it.skip('should be able to update upload object as a application user', function(done) {
+		it('should be able to update upload object as a application user', function(done) {
 
-			var filename1 = 'csv_1.csv'
-
-			factories.create('update_upload', app_user.authtoken, api_key, filename1)
+			var filename9 = 'csv_1.csv'
+			
+			factories.create('update_upload', app_user.authtoken, api_key, uploadAppuser.uid, filename9)
 				.expect(200)
 				.end(function(err, res) {
-					R.pretty(res.body)
+					
 					res.body.notice.should.be.equal('Woot! File updated successfully.')
 					var upload = res.body.upload
 
@@ -673,7 +673,7 @@ describe('Uploads --- ', function() {
 					should.not.exist(upload.updated_by)
 					upload.app_user_object_uid.should.be.equal(app_user.uid)
 					upload.content_type.should.be.equal('text/csv')
-					upload.filename.should.be.equal(filename1)
+					upload.filename.should.be.equal(filename9)
 					upload.ACL.can.should.to.be.deep.equal(['update', 'delete'])
 
 					done(err)
@@ -712,7 +712,7 @@ describe('Uploads --- ', function() {
 			factories.create('update_upload', app_user.authtoken, 'asdasdad', 'asd', filename1)
 				.expect(412)
 				.end(function(err, res) {
-					R.pretty(res.body)
+					// R.pretty(res.body)
 					res.body.should.be.deep.equal({
 					  "error_message": "Bad news! We can't find that application. Please try again.",
 					  "error_code": 109,

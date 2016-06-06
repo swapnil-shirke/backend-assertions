@@ -228,7 +228,7 @@ describe('Objects revisions/revert --- ', function() {
 				})
 				.then(function(res1) {
 
-					R.pretty(res1.body)
+					// R.pretty(res1.body)
 
 					var object = res1.body.objects[0]
 
@@ -321,7 +321,7 @@ describe('Objects revisions/revert --- ', function() {
 				})
 				.then(function(res1) {
 
-					R.pretty(res1.body)
+					// R.pretty(res1.body)
 
 					var object1 = res1.body.objects[0]
 					var object2 = res1.body.objects[1]

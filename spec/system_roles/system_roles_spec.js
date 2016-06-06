@@ -41,7 +41,7 @@ describe('System roles --- ', function() {
 	after(function(done) {
 		factories.create('Delete_application', authtoken, api_key)
 			.end(function(err, res1) {
-				console.log("application delete")
+				// console.log("application delete")
 				done(err)
 			})
 	
@@ -111,8 +111,60 @@ describe('System roles --- ', function() {
 		
 		});
 
+		
+		it('should provide error message for mandetory field', function(done) {
+			factories.create('Create_system_role', authtoken, api_key, {
+					"uid": "role_test"
+				})
+				.end(function(err, res) {
+					// R.pretty(res.body)
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Group creation failed. Please try again.",
+					  "error_code": 157,
+					  "errors": {
+					    "name": [
+					      "is a required field"
+					    ]
+					  }
+					})
+
+					done(err)
+				})
+		
+		});
+
+		
+		it('should provide error message for unique name', function(done) {
+			factories.create('Create_system_role', authtoken, api_key, {
+					"name": "role_test"
+				})
+				.end(function(err, res) {
+					factories.create('Create_system_role', authtoken, api_key, {
+						"name": "role_test"
+					})
+					.end(function(err, res) {
+						res.body.should.be.deep.equal({
+						  "error_message": "Bummer. Group creation failed. Please try again.",
+						  "error_code": 157,
+						  "errors": {
+						    "name": [
+						      "is not unique"
+						    ]
+						  }
+						})
+
+						done(err)
+					})
+
+				})
+		
+		});
+
+
+
 	});
 
+	
 	describe('Get system_roles', function() {
 
 		it('should be able to get all system roles created for an app', function(done) {
@@ -198,7 +250,7 @@ describe('System roles --- ', function() {
 
 
 	describe('Get single system role', function() {
-
+		var role_uid
 		it('should be able to get single system_role created for an app', function(done) {
 			factories.create('Create_system_role', authtoken, api_key, {
 					"name": "supertest"
@@ -269,11 +321,43 @@ describe('System roles --- ', function() {
 		
 		});
 
+
+		it.skip('should provide an error message for invalid uid', function(done) {
+			factories.create('Get_single_role', authtoken, api_key, 'asdardf')
+				// .expect(200)
+				.end(function(err, res) {
+					R.pretty(res.body)
+
+					done(err)
+
+				});
+		
+		});
+
+
+		it('should provide an error message for invalid authtoken', function(done) {
+			factories.create('Get_single_role', 'blt69cf33d54698aaeca4fd5c9a', api_key, role_uid)
+				// .expect(200)
+				.end(function(err, res) {
+					res.body.should.be.deep.equal({
+					  "error_message": "Hey! You're not allowed in here unless you're logged in.",
+					  "error_code": 105,
+					  "errors": {}
+					})
+
+					done(err)
+
+				});
+		
+		});
+
 	});
 
 
 	describe('Update system role', function() {
-
+		
+		var role_uid
+		
 		it('should be able to update system role created for an app', function(done) {
 			factories.create('Create_system_role', authtoken, api_key, {
 					"name": "managers"
@@ -346,10 +430,28 @@ describe('System roles --- ', function() {
 		
 		});
 
+
+		it.skip('should provide an error message for invalid uid', function(done) {
+			factories.create('Update_system_role', authtoken, api_key, 'ddfbkdfkjf', {
+					"name": "developers"
+				})
+				// .expect(200)
+				.end(function(err, res) {
+					R.pretty(res.body)
+
+					done(err)
+
+				});
+		
+		});
+
 	});
+
+
 
 	describe('Delete system role', function() {
 
+		
 		it('should be able to delete a system role created for an app', function(done) {
 			
 			factories.create('Create_system_role', authtoken, api_key, {
@@ -372,6 +474,21 @@ describe('System roles --- ', function() {
 						})
 
 				})
+		
+		});
+
+
+		it.skip('should provide an error message for invalid uid', function(done) {
+			factories.create('delete_system_role', authtoken, api_key, 'ddfbkdfkjf', {
+					"name": "developers"
+				})
+				// .expect(200)
+				.end(function(err, res) {
+					R.pretty(res.body)
+
+					done(err)
+
+				});
 		
 		});
 

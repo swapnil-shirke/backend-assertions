@@ -1117,7 +1117,7 @@ describe('Objects ---', function() {
 					}
 				}))
 				.then(function(res) {
-					R.pretty(res.body)
+					// R.pretty(res.body)
 					res.body.should.be.equal.deep.equal({
 					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
 					  "error_code": 119,
@@ -1511,7 +1511,7 @@ describe('Objects ---', function() {
 	 				objUid = res.body.object.uid
 	 			})
 				.then(function(res) {
-					console.log(objUid)
+					// console.log(objUid)
 					return R.Promisify(factories.create('update_object', appUser1.authtoken, app.api_key, myclass7.uid, objUid, {
 						"object": {
 							"roundone": {
@@ -1526,7 +1526,7 @@ describe('Objects ---', function() {
 					}))
 				})
 				.then(function(res) {
-					R.pretty(res.body)
+					// R.pretty(res.body)
 					res.body.should.be.deep.equal({
 					  "error_message": "Bummer. Object update failed. Please enter valid data.",
 					  "error_code": 121,

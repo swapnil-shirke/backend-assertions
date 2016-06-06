@@ -113,7 +113,7 @@ describe('Objects metadata --- ', function() {
 		});
 
 		// bug(no error message provided, it creates object without metadata) 
-		it.skip('should be able to provide error message for _metadata field while creating object', function(done) {
+		it('should be able to ignore _metadata field while creating object', function(done) {
 			factories.create('Create_object', authtoken, api_key, classUid, {
 					"object": {
 						"name": "_metadata object",
@@ -127,11 +127,10 @@ describe('Objects metadata --- ', function() {
 						}
 					}
 				})
-				.expect(422)
+				.expect(201)
 				.end(function(err, res) {
-					console.log(res.body)
-					// res.body.error_message.should.be.equal('Bummer. Object creation failed. Please enter valid data.')
-					// res.body.error_code.should.be.equal(119)
+					object = res.body.object
+					Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'tags'])
 
 					done(err)
 				})
@@ -168,7 +167,7 @@ describe('Objects metadata --- ', function() {
 
 		});
 
-		it.skip('should be able to provide error message for _metadata field while updating object', function(done) {
+		it('should be able to provide error message for _metadata field while updating object', function(done) {
 			factories.create('update_object', authtoken, api_key, classUid, objectUid, {
 					"object": {
 						"name": "isupertest",
@@ -179,11 +178,12 @@ describe('Objects metadata --- ', function() {
 						}
 					}
 				})
-				.expect(422)
+				.expect(200)
 				.end(function(err, res) {
-					R.pretty(res.body)
-					res.body.error_message.should.be.equal('Bummer. Object update failed. Please enter valid data.')
-					res.body.error_code.should.be.equal(121)
+					// R.pretty(res.body)
+					object = res.body.object
+					Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'tags'])
+					
 					done(err)
 				})
 

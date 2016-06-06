@@ -1,12 +1,12 @@
 describe('classes ---', function() {
-	
+
 	var authtoken, userUID
 	var api_key
 	var username
 	var email
 	var appname
 
-	
+
 	before(function(done) {
 		factories.create('login_system_user')
 			.end(function(err, res) {
@@ -19,10 +19,10 @@ describe('classes ---', function() {
 
 				done(err)
 			})
-	
+
 	})
 
-	
+
 	before(function(done) {
 		factories.create('Create_application', authtoken)
 			.end(function(err, res) {
@@ -34,19 +34,18 @@ describe('classes ---', function() {
 				//console.log(res.body)
 				done(err)
 			})
-	
+
 	})
 
-	
+
 	after(function(done) {
 		factories.create('Delete_application', authtoken, api_key)
 			.end(function(err, res1) {
 				// console.log("application delete")
 				done(err)
 			})
-	
-	})
 
+	})
 
 
 
@@ -55,8 +54,8 @@ describe('classes ---', function() {
 
 		it('should be able to get all classes present', function(done) {
 			factories.create('Get_all_classes', authtoken, api_key, {
-					"_method": "get"
-				})
+				"_method": "get"
+			})
 				.expect(200)
 				.end(function(err, res) {
 					// R.pretty(res.body)
@@ -152,14 +151,14 @@ describe('classes ---', function() {
 
 					done(err)
 				})
-		
+
 		});
 
 		it('should be able to get count for the classes present', function(done) {
 			factories.create('Get_all_classes', authtoken, api_key, {
-					"_method": "get",
-					"count": true
-				})
+				"_method": "get",
+				"count": true
+			})
 				.expect(200)
 				.end(function(err, res) {
 					//console.log(res.body)
@@ -170,14 +169,14 @@ describe('classes ---', function() {
 
 					done(err)
 				})
-		
+
 		});
 
 		it('should be able to get classes using limit param', function(done) {
 			factories.create('Get_all_classes', authtoken, api_key, {
-					"_method": "get",
-					"limit": 1
-				})
+				"_method": "get",
+				"limit": 1
+			})
 				.expect(200)
 				.end(function(err, res) {
 					// console.log(res.body)
@@ -187,7 +186,7 @@ describe('classes ---', function() {
 
 					// Keys assertion
 					Object.keys(response[0]).should.be.deep.equal(['created_at', 'updated_at', 'title', 'uid', 'inbuilt_class', 'schema', 'last_activity', 'maintain_revisions', 'abilities', 'DEFAULT_ACL', 'SYS_ACL'])
-						// Data type assertion
+					// Data type assertion
 
 					// Value assertion
 					response[0].uid.should.be.equal('built_io_application_user')
@@ -196,14 +195,14 @@ describe('classes ---', function() {
 
 					done(err)
 				})
-		
+
 		});
 
 		it('should be able to get classes using skip param', function(done) {
 			factories.create('Get_all_classes', authtoken, api_key, {
-					"_method": "get",
-					"skip": 3
-				})
+				"_method": "get",
+				"skip": 3
+			})
 				.expect(200)
 				.end(function(err, res) {
 					// console.log(res.body)
@@ -223,16 +222,16 @@ describe('classes ---', function() {
 
 					done(err)
 				})
-		
+
 		});
 
 		it('should be able to get classes simple query', function(done) {
 			factories.create('Get_all_classes', authtoken, api_key, {
-					"_method": "get",
-					"query": {
-						"uid": "built_io_application_user_role"
-					}
-				})
+				"_method": "get",
+				"query": {
+					"uid": "built_io_application_user_role"
+				}
+			})
 				.expect(200)
 				.end(function(err, res) {
 					//console.log(res.body)
@@ -252,37 +251,37 @@ describe('classes ---', function() {
 
 					done(err)
 				})
-		
+
 		});
 
 		it.skip('should provide error message for -ve skip/limit value', function(done) {
-			
-			factories.create('Get_all_classes', authtoken, api_key, {
-					"_method": "get",
-					"skip": -3
-				})
-				.expect(200) // should be 422
-				.end(function(err, res) {
-					// R.pretty(res.body)
-					res.body.should.be.deep.equal({
-					  "error_message": "Bummer. Failed to fetch classes. Please try again with valid parameters.",
-					  "error_code": 141,
-					  "errors": {
-					    "params": [
-					      "has an invalid operation."
-					    ]
-					  }
-					})
 
-					done(err)
+			factories.create('Get_all_classes', authtoken, api_key, {
+				"_method": "get",
+				"skip": -3
+			})
+				.expect(200) // should be 422
+			.end(function(err, res) {
+				// R.pretty(res.body)
+				res.body.should.be.deep.equal({
+					"error_message": "Bummer. Failed to fetch classes. Please try again with valid parameters.",
+					"error_code": 141,
+					"errors": {
+						"params": [
+							"has an invalid operation."
+						]
+					}
 				})
-		
+
+				done(err)
+			})
+
 		});
 
 
 	})
 
-	
+
 	describe('Class creation', function() {
 
 		it('should be able to create a class for given app', function(done) {
@@ -291,25 +290,25 @@ describe('classes ---', function() {
 			// var class_uid  = product_supertest;
 
 			factories.create('Create_class', authtoken, api_key, {
-					"class": {
-						"title": "class_name",
-						"uid": "class_uid",
-						"schema": [{
-							"multiple": false,
-							"mandatory": true,
-							"display_name": "Name",
-							"uid": "name",
-							"data_type": "text",
-							"unique": "local"
-						}]
-					}
-				})
+				"class": {
+					"title": "class_name",
+					"uid": "class_uid",
+					"schema": [{
+						"multiple": false,
+						"mandatory": true,
+						"display_name": "Name",
+						"uid": "name",
+						"data_type": "text",
+						"unique": "local"
+					}]
+				}
+			})
 				.expect(201)
 				.end(function(err, res) {
 					var res = res.body
 
 					res.notice.should.be.equal('Woot! Class created successfully!')
-						//console.log(res)
+					//console.log(res)
 
 					// Keys assertion
 					Object.keys(res.class).should.be.deep.equal(['created_at', 'updated_at', 'title', 'uid', 'inbuilt_class', 'schema', 'last_activity', 'maintain_revisions', 'abilities', 'DEFAULT_ACL', 'SYS_ACL'])
@@ -357,7 +356,7 @@ describe('classes ---', function() {
 
 					done(err)
 				})
-		
+
 		});
 
 
@@ -367,30 +366,30 @@ describe('classes ---', function() {
 			// var class_uid  = product_supertest;
 
 			factories.create('Create_class', authtoken, api_key, {
-					"classes": {
-						"title": "class_name",
-						"uid": "class_uid",
-						"schema": [{
-							"multiple": false,
-							"mandatory": true,
-							"display_name": "Name",
-							"uid": "name",
-							"data_type": "text",
-							"unique": "local"
-						}]
-					}
+				"classes": {
+					"title": "class_name",
+					"uid": "class_uid",
+					"schema": [{
+						"multiple": false,
+						"mandatory": true,
+						"display_name": "Name",
+						"uid": "name",
+						"data_type": "text",
+						"unique": "local"
+					}]
+				}
+			})
+			// .expect(201)
+			.end(function(err, res) {
+				res.body.should.be.deep.equal({
+					"error_message": "Please send your attributes wrapped in 'class'",
+					"error_code": 141,
+					"errors": {}
 				})
-				// .expect(201)
-				.end(function(err, res) {
-					res.body.should.be.deep.equal({
-					  "error_message": "Please send your attributes wrapped in 'class'",
-					  "error_code": 141,
-					  "errors": {}
-					})
 
-					done(err)
-				})
-		
+				done(err)
+			})
+
 		});
 
 
@@ -400,55 +399,55 @@ describe('classes ---', function() {
 			// var class_uid  = product_supertest;
 
 			factories.create('Create_class', '', api_key, {
-					"classes": {
-						"title": "class_name",
-						"uid": "class_uid",
-						"schema": [{
-							"multiple": false,
-							"mandatory": true,
-							"display_name": "Name",
-							"uid": "name",
-							"data_type": "text",
-							"unique": "local"
-						}]
-					}
-				})
-				// .expect(201)
-				.end(function(err, res) {
-					
-					res.body.should.be.deep.equal({
-					  "error_message": "Hey! You're not allowed in here unless you're logged in.",
-					  "error_code": 105,
-					  "errors": {}
-					})
+				"classes": {
+					"title": "class_name",
+					"uid": "class_uid",
+					"schema": [{
+						"multiple": false,
+						"mandatory": true,
+						"display_name": "Name",
+						"uid": "name",
+						"data_type": "text",
+						"unique": "local"
+					}]
+				}
+			})
+			// .expect(201)
+			.end(function(err, res) {
 
-					done(err)
+				res.body.should.be.deep.equal({
+					"error_message": "Hey! You're not allowed in here unless you're logged in.",
+					"error_code": 105,
+					"errors": {}
 				})
-		
+
+				done(err)
+			})
+
 		});
 
 	})
 
-	
+
 	describe('Get class', function() {
 
-		
+
 		it('should be able to get single(built_io_installation_data) class', function(done) {
-			
+
 			var classUid = "built_io_installation_data"
-			
+
 			factories.create('Get_a_class', authtoken, api_key, classUid)
 				.expect(200)
 				.end(function(err, res) {
-					
+
 					var installation = res.body.class
 
 					// Keys assertion
 					Object.keys(installation).should.to.be.deep.equal(['created_at', 'updated_at', 'title', 'uid', 'inbuilt_class', 'schema', 'last_activity', 'maintain_revisions', 'abilities', 'DEFAULT_ACL', 'SYS_ACL'])
 					Object.keys(installation.schema[0]).should.to.be.deep.equal(['display_name', 'uid', 'data_type', 'mandatory', 'field_metadata', 'multiple'])
-					
+
 					installation.schema.length.should.be.equal(7)
-					
+
 					// Data type assertion
 					installation.created_at.should.be.a('string')
 					installation.updated_at.should.be.a('string')
@@ -468,24 +467,24 @@ describe('classes ---', function() {
 
 					done(err)
 				})
-		
+
 		});
 
 		it('should be able to get single(built_io_application_user_role) class', function(done) {
-			
+
 			var classUid = "built_io_application_user_role"
-			
+
 			factories.create('Get_a_class', authtoken, api_key, classUid)
 				.expect(200)
 				.end(function(err, res) {
-					
+
 					var appUserRole = res.body.class
-					//console.log(appUserRole)
-					
+						//console.log(appUserRole)
+
 					// Keys assertion
 					Object.keys(appUserRole).should.to.be.deep.equal(['created_at', 'updated_at', 'title', 'uid', 'inbuilt_class', 'schema', 'last_activity', 'maintain_revisions', 'abilities', 'DEFAULT_ACL', 'SYS_ACL'])
 					Object.keys(appUserRole.schema[0]).should.to.be.deep.equal(['display_name', 'uid', 'data_type', 'multiple', 'mandatory', 'unique', 'field_metadata'])
-					
+
 					appUserRole.schema.length.should.be.equal(3)
 
 					// Data type assertion
@@ -499,7 +498,7 @@ describe('classes ---', function() {
 					appUserRole.abilities.should.be.a('object')
 					appUserRole.DEFAULT_ACL.should.be.a('object')
 					appUserRole.SYS_ACL.should.be.a('object')
-					
+
 
 					// Value assertion
 					appUserRole.uid.should.be.equal('built_io_application_user_role')
@@ -508,25 +507,25 @@ describe('classes ---', function() {
 
 					done(err)
 				})
-		
+
 		});
 
 		it('should be able to get single(built_io_application_user) class', function(done) {
-			
+
 			var classUid = "built_io_application_user"
-			
+
 			factories.create('Get_a_class', authtoken, api_key, classUid)
 				.expect(200)
 				.end(function(err, res) {
-					
+
 					var appUserClass = res.body.class
 
 					// Keys assertion
 					Object.keys(appUserClass).should.to.be.deep.equal(['created_at', 'updated_at', 'title', 'uid', 'inbuilt_class', 'schema', 'last_activity', 'maintain_revisions', 'abilities', 'DEFAULT_ACL', 'SYS_ACL'])
 					Object.keys(appUserClass.schema[0]).should.to.be.deep.equal(['display_name', 'uid', 'data_type', 'unique', 'field_metadata', 'multiple', 'mandatory'])
-					
+
 					appUserClass.schema.length.should.be.equal(9)
-					
+
 					// Data type assertion
 					appUserClass.created_at.should.be.a('string')
 					appUserClass.updated_at.should.be.a('string')
@@ -538,7 +537,7 @@ describe('classes ---', function() {
 					appUserClass.abilities.should.be.a('object')
 					appUserClass.DEFAULT_ACL.should.be.a('object')
 					appUserClass.SYS_ACL.should.be.a('object')
-					
+
 					// Value assertion
 					appUserClass.uid.should.be.equal('built_io_application_user')
 					appUserClass.title.should.be.equal('Application User')
@@ -546,23 +545,23 @@ describe('classes ---', function() {
 
 					done(err)
 				})
-		
+
 		});
 
 		it('should be able to get single(built_io_upload) class', function(done) {
-			
+
 			var classUid = "built_io_upload"
-			
+
 			factories.create('Get_a_class', authtoken, api_key, classUid)
 				.expect(200)
 				.end(function(err, res) {
-					
+
 					var uploadClass = res.body.class
 
 					// Keys assertion
 					Object.keys(uploadClass).should.to.be.deep.equal(['created_at', 'updated_at', 'title', 'uid', 'inbuilt_class', 'schema', 'last_activity', 'maintain_revisions', 'abilities', 'DEFAULT_ACL', 'SYS_ACL'])
 					Object.keys(uploadClass.schema[0]).should.to.be.deep.equal(['display_name', 'uid', 'data_type', 'field_metadata', 'multiple', 'mandatory'])
-					
+
 					uploadClass.schema.length.should.be.equal(3)
 
 					// Data type assertion
@@ -581,12 +580,12 @@ describe('classes ---', function() {
 					uploadClass.uid.should.be.equal('built_io_upload')
 					uploadClass.title.should.be.equal('built.io Uploads')
 					uploadClass.inbuilt_class.should.be.equal(true)
-					
+
 					done(err)
 				})
-		
+
 		});
-	
+
 
 	})
 
@@ -594,48 +593,48 @@ describe('classes ---', function() {
 	describe('Update class', function() {
 
 		it('should be able to update the given class', function(done) {
-			
+
 			factories.create('Create_class', authtoken, api_key, {
-					"class": {
-						"title": "testclas",
-						"uid": "testclass",
-						"schema": [{
-							"multiple": false,
-							"mandatory": true,
-							"display_name": "Name",
-							"uid": "name",
-							"data_type": "text",
-							"unique": "local"
-						}]
-					}
-				})
+				"class": {
+					"title": "testclas",
+					"uid": "testclass",
+					"schema": [{
+						"multiple": false,
+						"mandatory": true,
+						"display_name": "Name",
+						"uid": "name",
+						"data_type": "text",
+						"unique": "local"
+					}]
+				}
+			})
 				.expect(201)
 				.end(function(err, res1) {
-					
+
 					var classUid = res1.body.class.uid
 
 					factories.create('Update_class', authtoken, api_key, classUid, {
-							"class": {
-								"title": "changed",
-								"schema": [{
-										"multiple": false,
-										"mandatory": true,
-										"display_name": "name",
-										"uid": "name",
-										"data_type": "text",
-										"unique": "local"
-									}, {
-										"multiple": false,
-										"mandatory": true,
-										"display_name": "count",
-										"uid": "count",
-										"data_type": "number",
-										"unique": "local"
-									}
+						"class": {
+							"title": "changed",
+							"schema": [{
+									"multiple": false,
+									"mandatory": true,
+									"display_name": "name",
+									"uid": "name",
+									"data_type": "text",
+									"unique": "local"
+								}, {
+									"multiple": false,
+									"mandatory": true,
+									"display_name": "count",
+									"uid": "count",
+									"data_type": "number",
+									"unique": "local"
+								}
 
-								]
-							}
-						})
+							]
+						}
+					})
 						.expect(200)
 						.end(function(err, res2) {
 							// R.pretty(res2.body)
@@ -684,52 +683,50 @@ describe('classes ---', function() {
 							done(err)
 						})
 				})
-		
+
 		});
-	
+
 	})
 
-	
+
 	describe('Delete Class', function(done) {
 
 		it('should be able to delete class', function(done) {
 			factories.create('Create_class', authtoken, api_key, {
-					"class": {
-						"title": "new class",
-						"uid": "new_class",
-						"schema": [{
-							"multiple": false,
-							"mandatory": true,
-							"display_name": "Name",
-							"uid": "name",
-							"data_type": "text",
-							"unique": "local"
-						}]
-					}
-				})
+				"class": {
+					"title": "new class",
+					"uid": "new_class",
+					"schema": [{
+						"multiple": false,
+						"mandatory": true,
+						"display_name": "Name",
+						"uid": "name",
+						"data_type": "text",
+						"unique": "local"
+					}]
+				}
+			})
 				.expect(200)
 				.end(function(err, res1) {
-					
+
 
 					var classUid = res1.body.class.uid
- 					
+
 					factories.create('Delete_class', authtoken, api_key, classUid)
 						.expect(200)
 						.end(function(err, res2) {
-							
+
 							res2.body.notice.should.be.equal('Woot! Class deleted successfully!')
-							
+
 							done(err)
 						})
- 					
-					
+
+
 				})
-		
+
 		});
 
 	})
-
-
 
 
 
