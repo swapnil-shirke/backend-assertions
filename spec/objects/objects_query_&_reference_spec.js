@@ -944,6 +944,7 @@ describe('Queries and reference', function() {
 			  }
 			}))
 			.then(function(res) {
+				R.pretty(res.body)
 				object = R.last(res.body.objects)
 				object.name.should.be.equal('four')
 				object.project[0].should.be.equal(object2.uid)

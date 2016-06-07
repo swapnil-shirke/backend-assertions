@@ -6,36 +6,87 @@ describe('System roles --- ', function() {
 	var appname
 	var appuid
 
-	
-	before(function(done) {
-		factories.create('login_system_user')
-			.end(function(err, res) {
-				//console.log(res.body)
+	var sys_user2
 
+	
+	// before(function(done) {
+	// 	factories.create('login_system_user')
+	// 		.end(function(err, res) {
+	// 			//console.log(res.body)
+
+	// 			authtoken = res.body.user.authtoken;
+	// 			userUID = res.body.user.uid;
+	// 			username = res.body.user.username;
+	// 			email = res.body.user.email;
+
+	// 			done(err)
+	// 		})
+	
+	// })
+
+	
+	// before(function(done) {
+	// 	factories.create('Create_application', authtoken)
+	// 		.end(function(err, res) {
+				
+	// 			api_key    = res.body.application.api_key;
+	// 			master_key = res.body.application.master_key;
+	// 			appname    = res.body.application.name;
+	// 			appuid     = res.body.application.uid
+
+	// 			//console.log(res.body)
+	// 			done(err)
+	// 		})
+	
+	// })
+
+
+
+	before(function(done) {
+		this.timeout(25000)
+		R.Promisify(factories.create('login_system_user'))
+			.then(function(res) {
+				
 				authtoken = res.body.user.authtoken;
-				userUID = res.body.user.uid;
-				username = res.body.user.username;
-				email = res.body.user.email;
-
-				done(err)
+				userUID   = res.body.user.uid;
+				username  = res.body.user.username;
+				email     = res.body.user.email;
+			
 			})
-	
-	})
-
-	
-	before(function(done) {
-		factories.create('Create_application', authtoken)
-			.end(function(err, res) {
-				api_key = res.body.application.api_key;
+			.then(function(res) {
+				return R.Promisify(factories.create('Create_application', authtoken))
+			})
+			.then(function(res) {
+				
+				api_key    = res.body.application.api_key;
 				master_key = res.body.application.master_key;
-				appname = res.body.application.name;
-				appuid = res.body.application.uid
-
-				//console.log(res.body)
-				done(err)
+				appname    = res.body.application.name;
+				appuid     = res.body.application.uid
+			
 			})
-	
+			.then(function(res) {
+				return R.Promisify(factories.create('login_system_user', config.user2))
+			})
+			.then(function(res) {
+				sys_user2 = res.body.user
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('invite_collaborator', authtoken, api_key, {
+					"emails": [
+						sys_user2.email
+					]
+				}))
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+				console.log(err)
+			})
+
 	})
+
+
 
 	
 	after(function(done) {
@@ -322,11 +373,16 @@ describe('System roles --- ', function() {
 		});
 
 
-		it.skip('should provide an error message for invalid uid', function(done) {
+		it('should provide an error message for invalid uid for get operation', function(done) {
 			factories.create('Get_single_role', authtoken, api_key, 'asdardf')
-				// .expect(200)
+				.expect(422)
 				.end(function(err, res) {
-					R.pretty(res.body)
+					// R.pretty(res.body)
+					res.body.should.be.deep.equal({
+						  "error_message": "Bummer. The group was not found. Please try again.",
+						  "error_code": 158,
+						  "errors": {}
+						})
 
 					done(err)
 
@@ -364,13 +420,16 @@ describe('System roles --- ', function() {
 				})
 				.expect(201)
 				.end(function(err, res1) {
-					var role_uid = res1.body.uid
+					// R.pretty(res1.body)
+					var role_uid = res1.body.system_role.uid
 
 					factories.create('Update_system_role', authtoken, api_key, role_uid, {
 							"name": "developers"
 						})
 						.expect(200)
 						.end(function(err, res2) {
+							
+							// R.pretty(res2.body)
 
 							var updatedRole = res2.body.system_role
 
@@ -431,17 +490,98 @@ describe('System roles --- ', function() {
 		});
 
 
-		it.skip('should provide an error message for invalid uid', function(done) {
+		it('should provide an error message for invalid uid', function(done) {
 			factories.create('Update_system_role', authtoken, api_key, 'ddfbkdfkjf', {
 					"name": "developers"
 				})
-				// .expect(200)
+				.expect(422)
 				.end(function(err, res) {
-					R.pretty(res.body)
+					// R.pretty(res.body)
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. The group was not found. Please try again.",
+					  "error_code": 158,
+					  "errors": {}
+					})
 
 					done(err)
 
 				});
+		
+		});
+
+		
+		it('should be able to update role when not restricted', function(done) {
+			factories.create('Create_system_role', authtoken, api_key, {
+					"name": "QA_manager"
+				})
+				.expect(201)
+				.end(function(err, res1) {
+					// R.pretty(res1.body)
+					var role_uid = res1.body.system_role.uid
+
+					factories.create('Update_system_role', sys_user2.authtoken, api_key, role_uid, {
+							"name": "Tester"
+						})
+						.expect(200)
+						.end(function(err, res2) {
+							
+							// R.pretty(res2.body)
+
+							var updatedRole = res2.body.system_role
+
+							res2.body.notice.should.be.equal('Woot! The group was updated successfully.')
+
+							Object.keys(updatedRole).should.to.be.deep.equal(['uid', 'name', 'users', 'roles', 'created_at', 'updated_at', 'owner', 'application', 'SYS_ACL'])
+							Object.keys(updatedRole).should.to.be.deep.equal(['uid', 'name', 'users', 'roles', 'created_at', 'updated_at', 'owner', 'application', 'SYS_ACL'])
+							Object.keys(updatedRole.application).should.to.be.deep.equal(['created_at', 'updated_at', 'uid', 'name', 'api_key', 'owner_uid', 'user_uids'])
+
+							//Data type assertion
+
+							updatedRole.uid.should.be.a('string')
+							updatedRole.name.should.be.a('string')
+
+							updatedRole.users.should.be.a('array')
+							updatedRole.roles.should.be.a('array')
+
+							updatedRole.created_at.should.be.a('string')
+							updatedRole.updated_at.should.be.a('string')
+							updatedRole.owner.should.be.a('string')
+
+							updatedRole.application.should.be.a('object')
+							updatedRole.SYS_ACL.should.be.a('object')
+
+							updatedRole.uid.length.should.be.equal(19)
+
+							updatedRole.application.created_at.should.be.a('string')
+							updatedRole.application.updated_at.should.be.a('string')
+							updatedRole.application.uid.should.be.a('string')
+							updatedRole.application.name.should.be.a('string')
+							updatedRole.application.api_key.should.be.a('string')
+							updatedRole.application.owner_uid.should.be.a('string')
+							updatedRole.application.user_uids.should.be.a('array')
+							// updatedRole.application.master_key.should.be.a('string')
+
+							updatedRole.application.user_uids[0].should.be.a('string')
+
+							// Value assertion
+
+							updatedRole.name.should.be.equal('Tester')
+							updatedRole.owner.should.be.equal(email)
+								// bug
+								//updatedRole.application.created_at.should.be.equal(updatedRole.application.updated_at)
+
+							updatedRole.application.uid.should.be.equal(appuid)
+
+							updatedRole.application.name.should.be.equal(appname)
+							updatedRole.application.api_key.should.be.equal(api_key)
+							updatedRole.application.owner_uid.should.be.equal(userUID)
+							updatedRole.application.user_uids[0].should.be.equal(userUID)
+							// updatedRole.application.master_key.should.be.equal(master_key)
+
+							done(err)
+						})
+
+				})
 		
 		});
 
@@ -459,14 +599,15 @@ describe('System roles --- ', function() {
 				})
 				.expect(201)
 				.end(function(err, res1) {
-					var role_uid = res1.body.uid
+					// R.pretty(res1.body)
+					var role_uid = res1.body.system_role.uid
 
 					factories.create('delete_system_role', authtoken, api_key, role_uid, {
 							"name": "developers"
 						})
 						.expect(200)
 						.end(function(err, res2) {
-
+							// R.pretty(res2.body)
 							//var updatedRole = res2.body.system_role
 							res2.body.notice.should.be.equal('Woot! The group was deleted successfully.')
 
@@ -478,13 +619,18 @@ describe('System roles --- ', function() {
 		});
 
 
-		it.skip('should provide an error message for invalid uid', function(done) {
+		it('should provide an error message for invalid uid for delete operation', function(done) {
 			factories.create('delete_system_role', authtoken, api_key, 'ddfbkdfkjf', {
 					"name": "developers"
 				})
-				// .expect(200)
+				.expect(422)
 				.end(function(err, res) {
-					R.pretty(res.body)
+					// R.pretty(res.body)
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. The group was not found. Please try again.",
+					  "error_code": 158,
+					  "errors": {}
+					})
 
 					done(err)
 
