@@ -373,6 +373,21 @@
 			.query(query)
 	})
 
+
+	factories.addFactory('update_object_sclient', function(authtoken, api_key, timeless, classUid, objectId, body, query) {
+		
+		body  = body || {}
+		query = query || {}
+		
+		return api.put(config.endpoints.classes + "/" + classUid + "/" + "objects" + "/" + objectId)
+			.set('web_ui_api_key', config.web_ui_api_key)
+			.set('authtoken', authtoken)
+			.set('application_api_key', api_key)
+			.set('timeless', timeless)
+			.send(body)
+			.query(query)
+	})
+
 	
 	factories.addFactory('delete_object', function(authtoken, api_key, classUid, objectId) {
 		

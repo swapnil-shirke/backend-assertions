@@ -638,6 +638,16 @@ describe('Objects ---', function() {
 					object1 = res.body.object
 				})
 				.then(function(res) {
+					return R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, myclass3.uid, {
+						"object": {
+							"name": "two"
+						}
+					}))
+				})
+				.then(function(res) {
+					object2 = res.body.object
+				})
+				.then(function(res) {
 					done()
 				})
 				.catch(function(err) {
@@ -687,6 +697,29 @@ describe('Objects ---', function() {
 				.catch(function(err) {
 					console.log(err)
 				})
+
+		});
+
+
+		it('should be able to perform scilent update on object', function(done) {
+			
+			R.Promisify(factories.create('update_object_sclient', sys_user1.authtoken, app.api_key, true, myclass3.uid, object2.uid, {
+				"object": {
+					"name": "updated"
+				}
+			}))
+			.then(function(res) {
+				object = res.body.object
+				res.body.notice.should.be.equal('Woot! Object updated successfully.')
+				Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'tags'])
+				object.created_at.should.be.equal(object.updated_at)
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+				console.log(err)
+			})
 
 		});
 

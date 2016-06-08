@@ -301,7 +301,9 @@ describe('System roles --- ', function() {
 
 
 	describe('Get single system role', function() {
+		
 		var role_uid
+		
 		it('should be able to get single system_role created for an app', function(done) {
 			factories.create('Create_system_role', authtoken, api_key, {
 					"name": "supertest"
@@ -490,7 +492,7 @@ describe('System roles --- ', function() {
 		});
 
 
-		it('should provide an error message for invalid uid', function(done) {
+		it('should provide an error message for invalid uid whlie updating system roles', function(done) {
 			factories.create('Update_system_role', authtoken, api_key, 'ddfbkdfkjf', {
 					"name": "developers"
 				})
@@ -510,7 +512,7 @@ describe('System roles --- ', function() {
 		});
 
 		
-		it('should be able to update role when not restricted', function(done) {
+		it('should be able to update role as collaborator when not restricted', function(done) {
 			factories.create('Create_system_role', authtoken, api_key, {
 					"name": "QA_manager"
 				})

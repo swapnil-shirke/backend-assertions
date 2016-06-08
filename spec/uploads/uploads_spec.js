@@ -217,7 +217,7 @@ describe('Uploads --- ', function() {
 			factories.create('get_single_upload', authtoken, api_key, uploadUID)
 			.expect(200)
 			.end(function(err, res) {
-
+				// R.pretty(res.body)
 				upload = res.body.upload
 				uploadID = res.body.upload.uid
 
