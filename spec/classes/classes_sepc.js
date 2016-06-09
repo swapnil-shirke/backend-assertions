@@ -254,23 +254,23 @@ describe('classes ---', function() {
 
 		});
 
-		it.skip('should provide error message for -ve skip/limit value', function(done) {
+		it('should provide error message for -ve skip/limit value', function(done) {
 
 			factories.create('Get_all_classes', authtoken, api_key, {
 				"_method": "get",
 				"skip": -3
 			})
-				.expect(200) // should be 422
+			.expect(422) 
 			.end(function(err, res) {
 				// R.pretty(res.body)
 				res.body.should.be.deep.equal({
-					"error_message": "Bummer. Failed to fetch classes. Please try again with valid parameters.",
-					"error_code": 141,
-					"errors": {
-						"params": [
-							"has an invalid operation."
-						]
-					}
+				  "error_message": "Bummer. Failed to fetch classes. Please try again with valid parameters.",
+				  "error_code": 141,
+				  "errors": {
+				    "params": [
+				      "has an invalid operation."
+				    ]
+				  }
 				})
 
 				done(err)

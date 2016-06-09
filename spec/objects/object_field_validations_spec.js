@@ -435,23 +435,18 @@ describe('Field validation ---', function() {
 		});
 
 
-		it.skip('should provide an error message for null inside an array', function(done) {
+		it('should be able to create object with valid format', function(done) {
 			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classTextMul.uid, {
 			    "object": {
+			        "textfield": ["ASD"],
 			        "list": [null]
 			    }
 			}))
 			.then(function(res) {
 				// R.pretty(res.body)
-				res.body.should.be.deep.equal({
-				  "error_message": "Bummer. Object creation failed. Please enter valid data.",
-				  "error_code": 119,
-				  "errors": {
-				    "list": [
-				      "is not present"
-				    ]
-				  }
-				})
+				res.body.notice.should.be.equal('Woot! Object created successfully.')
+				res.body.object.textfield[0].should.be.equal('ASD')
+				res.body.object.app_user_object_uid.should.be.equal(appUser1.uid)
 			})
 			.then(function(res) {
 				done()

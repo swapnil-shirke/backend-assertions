@@ -257,7 +257,7 @@ describe('App users ---', function() {
     });
 
 
-		it.skip('should provide an error message for mandetory fields(email)', function(done) {
+		it('should provide an error message for mandetory fields(email)', function(done) {
       // var roleId
       var appUseremail = R.bltRandom(8) + "@" + "mailinator.com";
       var appUserName = R.bltRandom(8);
@@ -294,14 +294,14 @@ describe('App users ---', function() {
       .end(function(err, res) {
       	// R.pretty(res.body)
         res.body.should.be.deep.equal({
-				  "error_message": "Bummer. Object creation failed. Please enter valid data.",
-				  "error_code": 119,
-				  "errors": {
-				    "email": [
-				      "is required"
-				    ]
-				  }
-				})
+          "error_message": "Bummer. Object creation failed. Please enter valid data.",
+          "error_code": 119,
+          "errors": {
+            "email": [
+              "is a required field"
+            ]
+          }
+        })
 
         done(err)
 

@@ -192,6 +192,7 @@ describe('Applications ---', function() {
       factories.create('Get_all_applications', authtoken, {
           "_method": "get"
         })
+        .expect(200)
         .end(function(err, res) {
           
           res.body.applications.length.should.be.equal(1)
@@ -238,6 +239,7 @@ describe('Applications ---', function() {
           "_method": "get",
           "count": true
         })
+        .expect(200)
         .end(function(err, res) {
           // R.pretty(res.body)
           Object.keys(res.body).should.to.be.deep.equal(['applications'])
@@ -256,6 +258,7 @@ describe('Applications ---', function() {
             "api_key": api_key
           }
         })
+        .expect(200)
         .end(function(err, res) {
           res.body.applications.length.should.be.equal(1)
 
@@ -301,6 +304,7 @@ describe('Applications ---', function() {
           "_method": "get",
           "count": true
         })
+        .expect(200)
         .end(function(err, res) {
           var response = res.body
           
@@ -418,6 +422,7 @@ describe('Applications ---', function() {
               "_method": "get",
               "include_application_variables": true
             })
+            .expect(200)
             .end(function(err, res2) {
               //res2.body.applications.length.should.be.equal(1)
               
@@ -518,6 +523,7 @@ describe('Applications ---', function() {
           "_method": "get",
           "skip": 3
         })
+        .expect(200)
         .end(function(err, res) {
           // R.pretty(res.body)
           res.body.applications.length.should.be.equal(1)
@@ -535,6 +541,7 @@ describe('Applications ---', function() {
           "_method": "get",
           "limit": "2"
         })
+        .expect(200)
         .end(function(err, res) {
           res.body.applications.length.should.be.equal(2)
           
@@ -545,19 +552,28 @@ describe('Applications ---', function() {
     });
 
     
-    it.skip('should provide error message for -ve skip/limit values while getting all apps', function(done) {
+    it('should provide error message for -ve skip/limit values while getting all apps', function(done) {
       factories.create('Get_all_applications', authtoken, {
           "_method": "get",
           "skip": -2,
           "limit": -2
         })
-        .end(function(err, res) {
-          R.pretty(res.body)
-          // res.body.applications.length.should.be.equal(2)
-          
-
-          done(err)
+      .expect(422)
+      .end(function(err, res) {
+        // R.pretty(res.body)
+        res.body.should.be.deep.equal({
+          "error_message": "Bummer. Failed to fetch applications. Please try again with valid parameters.",
+          "error_code": 109,
+          "errors": {
+            "params": [
+              "has an invalid operation."
+            ]
+          }
         })
+        
+
+        done(err)
+      })
 
     });
 
@@ -850,7 +866,7 @@ describe('Applications ---', function() {
           application.SYS_ACL.should.be.a('object')
           // application.user_uids[0].length.should.be.a('string')
 
-          console.log("==", application.user_uids)
+          // console.log("==", application.user_uids)
           application.uid.length.should.be.equal(19)
           application.api_key.length.should.be.equal(19)
           application.master_key.length.should.be.equal(19)
@@ -1460,7 +1476,7 @@ describe('Applications ---', function() {
     
 
 
-    it('should be able to get all collaborators present in an application', function(done) {
+    it.only('should be able to get all collaborators present in an application', function(done) {
       
       R.Promisify(factories.create('login_system_user', config.user2))
       .then(function(res) {
@@ -1478,15 +1494,15 @@ describe('Applications ---', function() {
         return R.Promisify(factories.create('Get_collaborators', authtoken, api_key)) 
       })
       .then(function(res) {
-        
-        users = res.body.users
+        R.pretty(res.body)
+        // users = res.body.users
 
-        Object.keys(users[0]).should.to.be.deep.equal(['uid','created_at','updated_at','email','username','plan_id','roles'])
-        Object.keys(users[1]).should.to.be.deep.equal(['uid','created_at','updated_at','email','username','plan_id','is_owner','roles'])
+        // Object.keys(users[0]).should.to.be.deep.equal(['uid','created_at','updated_at','email','username','plan_id','roles'])
+        // Object.keys(users[1]).should.to.be.deep.equal(['uid','created_at','updated_at','email','username','plan_id','is_owner','roles'])
 
-        users[0].email.should.be.equal(collaborator.email)
-        users[1].email.should.be.equal(email)
-        users[1].is_owner.should.be.equal(true)
+        // users[0].email.should.be.equal(collaborator.email)
+        // users[1].email.should.be.equal(email)
+        // users[1].is_owner.should.be.equal(true)
       })
       .then(function(res) {
         done()
