@@ -1,7 +1,7 @@
 module.exports = {
 
-
-	host: 'https://stag-api.built.io',
+	host: 'https://api.built.io',
+	// host: 'https://stag-api.built.io',
 	// host: 'http://code-bltdev-new.cloudthis.com',
 	// _host : 'http://172.16.0.154:8000',
 	version: 'v1',
@@ -21,6 +21,21 @@ module.exports = {
 		email: 'rocky@mailinator.com',
 		password: 'password'
 	}
+
+
+
+	// user1: {
+	// 	email: 'swapnil.shirke@raweng.com',
+	// 	password: 'password'
+	// },
+	// user2: {
+	// 	email: 'smita.sankhe@raweng.com',
+	// 	password: 'raw123'
+	// },
+	// user3: {
+	// 	email: 'hulk@mailinator.com',
+	// 	password: 'raw123'
+	// }
 };
 
 

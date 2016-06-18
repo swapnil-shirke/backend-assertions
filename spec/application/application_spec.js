@@ -21,9 +21,9 @@ describe('Applications ---', function() {
       return R.Promisify(factories.create('Create_application', authtoken))
     })
     .then(function(res){
-        api_key    = res.body.application.api_key;
-        master_key = res.body.application.master_key;
-        appname    = res.body.application.name;
+      api_key    = res.body.application.api_key;
+      master_key = res.body.application.master_key;
+      appname    = res.body.application.name;
     })
     .then(function(res) {
       done()
@@ -1058,7 +1058,7 @@ describe('Applications ---', function() {
       .end(function(err, res) {
         var settings = res.body.app_settings
           // Keys assertion
-        Object.keys(settings).should.to.be.deep.equal(['application_variables', 'discrete_variables', 'login_schemes', 'upload_type_restriction', 'restricted_profile_update', 'hide_email', 'allow_client_notifications', 'active_user_threshold', 'auto_create_tenants', 'activation_template', 'welcome_template', 'forgot_password_template'])
+        Object.keys(settings).should.to.be.deep.equal(['application_variables', 'discrete_variables', 'smtp_settings', 'login_schemes', 'upload_type_restriction', 'restricted_profile_update', 'hide_email', 'allow_client_notifications', 'active_user_threshold', 'auto_create_tenants', 'activation_template', 'welcome_template', 'forgot_password_template'])
 
         Object.keys(settings.login_schemes).should.to.be.deep.equal(['google', 'facebook', 'twitter', 'tibbr', 'traditional', 'anyauth'])
         Object.keys(settings.upload_type_restriction).should.to.be.deep.equal(['enabled', 'whitelist', 'list'])
@@ -1197,7 +1197,7 @@ describe('Applications ---', function() {
           res.body.notice.should.be.equal('Awesome! The application settings were updated successfully.')
 
           // Keys assertion
-          Object.keys(settings).should.to.be.deep.equal(['application_variables', 'discrete_variables', 'login_schemes', 'upload_type_restriction', 'restricted_profile_update', 'hide_email', 'allow_client_notifications', 'active_user_threshold', 'auto_create_tenants', 'activation_template', 'welcome_template', 'forgot_password_template'])
+          Object.keys(settings).should.to.be.deep.equal(['application_variables', 'discrete_variables', 'smtp_settings', 'login_schemes', 'upload_type_restriction', 'restricted_profile_update', 'hide_email', 'allow_client_notifications', 'active_user_threshold', 'auto_create_tenants', 'activation_template', 'welcome_template', 'forgot_password_template'])
 
           Object.keys(settings.login_schemes).should.to.be.deep.equal(['google', 'facebook', 'twitter', 'tibbr', 'traditional', 'anyauth'])
           Object.keys(settings.upload_type_restriction).should.to.be.deep.equal(['enabled', 'whitelist', 'list'])
@@ -1340,7 +1340,7 @@ describe('Applications ---', function() {
 
               
               // Keys assertion
-              Object.keys(settings).should.to.be.deep.equal(['application_variables', 'discrete_variables', 'login_schemes', 'upload_type_restriction', 'restricted_profile_update', 'hide_email', 'allow_client_notifications', 'active_user_threshold', 'auto_create_tenants', 'activation_template', 'welcome_template', 'forgot_password_template'])
+              Object.keys(settings).should.to.be.deep.equal(['application_variables', 'discrete_variables', 'smtp_settings', 'login_schemes', 'upload_type_restriction', 'restricted_profile_update', 'hide_email', 'allow_client_notifications', 'active_user_threshold', 'auto_create_tenants', 'activation_template', 'welcome_template', 'forgot_password_template'])
 
               Object.keys(settings.login_schemes).should.to.be.deep.equal(['google', 'facebook', 'twitter', 'tibbr', 'traditional', 'anyauth'])
               Object.keys(settings.upload_type_restriction).should.to.be.deep.equal(['enabled', 'whitelist', 'list'])
@@ -1476,7 +1476,7 @@ describe('Applications ---', function() {
     
 
 
-    it.only('should be able to get all collaborators present in an application', function(done) {
+    it('should be able to get all collaborators present in an application', function(done) {
       
       R.Promisify(factories.create('login_system_user', config.user2))
       .then(function(res) {
@@ -1494,15 +1494,15 @@ describe('Applications ---', function() {
         return R.Promisify(factories.create('Get_collaborators', authtoken, api_key)) 
       })
       .then(function(res) {
-        R.pretty(res.body)
-        // users = res.body.users
+        // R.pretty(res.body)
+        users = res.body.users
 
-        // Object.keys(users[0]).should.to.be.deep.equal(['uid','created_at','updated_at','email','username','plan_id','roles'])
-        // Object.keys(users[1]).should.to.be.deep.equal(['uid','created_at','updated_at','email','username','plan_id','is_owner','roles'])
+        Object.keys(users[0]).should.to.be.deep.equal(['uid','created_at','updated_at','email','username','plan_id','roles'])
+        Object.keys(users[1]).should.to.be.deep.equal(['uid','created_at','updated_at','email','username','plan_id','is_owner','roles'])
 
-        // users[0].email.should.be.equal(collaborator.email)
-        // users[1].email.should.be.equal(email)
-        // users[1].is_owner.should.be.equal(true)
+        users[0].email.should.be.equal(collaborator.email)
+        users[1].email.should.be.equal(email)
+        users[1].is_owner.should.be.equal(true)
       })
       .then(function(res) {
         done()

@@ -13,12 +13,13 @@ describe('App users ---', function() {
 
 
   before(function(done) {
-    
+    // console.log("====start====")
     this.timeout(25000)
     
     R.Promisify(factories.create('login_system_user'))
 	  .then(function(res) {
-	    authtoken = res.body.user.authtoken;
+	    // R.pretty(res.body)
+      authtoken = res.body.user.authtoken;
 	    userUID   = res.body.user.uid;
 	    username  = res.body.user.username;
 	    email     = res.body.user.email;

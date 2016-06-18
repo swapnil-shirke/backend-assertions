@@ -180,7 +180,7 @@ describe('Objects metadata --- ', function() {
 				})
 				.expect(200)
 				.end(function(err, res) {
-					// R.pretty(res.body)
+					R.pretty(res.body)
 					object = res.body.object
 					Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'tags'])
 					

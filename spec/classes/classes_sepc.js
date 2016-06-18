@@ -69,7 +69,7 @@ describe('classes ---', function() {
 					Object.keys(app_user).should.to.be.deep.equal(['created_at', 'updated_at', 'title', 'uid', 'inbuilt_class', 'schema', 'last_activity', 'maintain_revisions', 'abilities', 'DEFAULT_ACL', 'SYS_ACL'])
 					Object.keys(app_user_role).should.to.be.deep.equal(['created_at', 'updated_at', 'title', 'uid', 'inbuilt_class', 'schema', 'last_activity', 'maintain_revisions', 'abilities', 'DEFAULT_ACL', 'SYS_ACL'])
 					Object.keys(installation_data).should.to.be.deep.equal(['created_at', 'updated_at', 'title', 'uid', 'inbuilt_class', 'schema', 'last_activity', 'maintain_revisions', 'abilities', 'DEFAULT_ACL', 'SYS_ACL'])
-					Object.keys(upload_class).should.to.be.deep.equal(['created_at', 'updated_at', 'title', 'uid', 'inbuilt_class', 'schema', 'last_activity', 'maintain_revisions', 'abilities', 'DEFAULT_ACL', 'SYS_ACL'])
+					
 
 					//console.log(app_user.schema[0])
 
@@ -77,14 +77,14 @@ describe('classes ---', function() {
 					Object.keys(app_user.schema[0]).should.to.be.deep.equal(['display_name', 'uid', 'data_type', 'unique', 'field_metadata', 'multiple', 'mandatory'])
 					Object.keys(app_user_role.schema[0]).should.to.be.deep.equal(['display_name', 'uid', 'data_type', 'multiple', 'mandatory', 'unique', 'field_metadata'])
 					Object.keys(installation_data.schema[0]).should.to.be.deep.equal(['display_name', 'uid', 'data_type', 'mandatory', 'field_metadata', 'multiple'])
-					Object.keys(upload_class.schema[0]).should.to.be.deep.equal(['display_name', 'uid', 'data_type', 'field_metadata', 'multiple', 'mandatory'])
+					// Object.keys(upload_class.schema[0]).should.to.be.deep.equal(['display_name', 'uid', 'data_type', 'field_metadata', 'multiple', 'mandatory'])
 
 
 
 					app_user.schema.length.should.be.equal(9)
 					app_user_role.schema.length.should.be.equal(3)
 					installation_data.schema.length.should.be.equal(7)
-					upload_class.schema.length.should.be.equal(3)
+					// upload_class.schema.length.should.be.equal(3)
 
 					// Data type assertion
 					app_user.created_at.should.be.a('string')
@@ -120,16 +120,16 @@ describe('classes ---', function() {
 					installation_data.DEFAULT_ACL.should.be.a('object')
 					installation_data.SYS_ACL.should.be.a('object')
 
-					upload_class.created_at.should.be.a('string')
-					upload_class.updated_at.should.be.a('string')
-					upload_class.title.should.be.a('string')
-					upload_class.uid.should.be.a('string')
-					upload_class.inbuilt_class.should.be.a('boolean')
-					upload_class.schema.should.be.a('array')
-					upload_class.maintain_revisions.should.be.a('boolean')
-					upload_class.abilities.should.be.a('object')
-					upload_class.DEFAULT_ACL.should.be.a('object')
-					upload_class.SYS_ACL.should.be.a('object')
+					// upload_class.created_at.should.be.a('string')
+					// upload_class.updated_at.should.be.a('string')
+					// upload_class.title.should.be.a('string')
+					// upload_class.uid.should.be.a('string')
+					// upload_class.inbuilt_class.should.be.a('boolean')
+					// upload_class.schema.should.be.a('array')
+					// upload_class.maintain_revisions.should.be.a('boolean')
+					// upload_class.abilities.should.be.a('object')
+					// upload_class.DEFAULT_ACL.should.be.a('object')
+					// upload_class.SYS_ACL.should.be.a('object')
 
 
 					// Value assertion
@@ -145,9 +145,9 @@ describe('classes ---', function() {
 					installation_data.title.should.be.equal('Installation Data')
 					installation_data.inbuilt_class.should.be.equal(true)
 
-					upload_class.uid.should.be.equal('built_io_upload')
-					upload_class.title.should.be.equal('built.io Uploads')
-					upload_class.inbuilt_class.should.be.equal(true)
+					// upload_class.uid.should.be.equal('built_io_upload')
+					// upload_class.title.should.be.equal('built.io Uploads')
+					// upload_class.inbuilt_class.should.be.equal(true)
 
 					done(err)
 				})
@@ -165,7 +165,7 @@ describe('classes ---', function() {
 
 					Object.keys(res.body).should.to.be.deep.equal(['classes'])
 					res.body.classes.should.be.a('number')
-					res.body.classes.should.be.equal(4)
+					res.body.classes.should.be.equal(3)
 
 					done(err)
 				})
@@ -201,7 +201,7 @@ describe('classes ---', function() {
 		it('should be able to get classes using skip param', function(done) {
 			factories.create('Get_all_classes', authtoken, api_key, {
 				"_method": "get",
-				"skip": 3
+				"skip": 2
 			})
 				.expect(200)
 				.end(function(err, res) {
@@ -216,8 +216,8 @@ describe('classes ---', function() {
 					// Data type assertion
 
 					// Value assertion
-					classes[0].uid.should.be.equal('built_io_upload')
-					classes[0].title.should.be.equal('built.io Uploads')
+					classes[0].uid.should.be.equal('built_io_installation_data')
+					classes[0].title.should.be.equal('Installation Data')
 					classes[0].inbuilt_class.should.be.equal(true)
 
 					done(err)
@@ -284,6 +284,7 @@ describe('classes ---', function() {
 
 	describe('Class creation', function() {
 
+		
 		it('should be able to create a class for given app', function(done) {
 
 			// var class_name = product_supertest;
@@ -393,6 +394,36 @@ describe('classes ---', function() {
 		});
 
 
+		it('should provide an error message for invalid schema', function(done) {
+
+			// var class_name = product_supertest;
+			// var class_uid  = product_supertest;
+
+			factories.create('Create_class', authtoken, api_key, {
+				"class": {
+					"title": "class_name",
+					"uid": "class_uid"
+				}
+			})
+			// .expect(201)
+			.end(function(err, res) {
+				// R.pretty(res.body)
+				res.body.should.be.deep.equal({
+				  "error_message": "Bummer. Class creation failed. Please try again.",
+				  "error_code": 115,
+				  "errors": {
+				    "schema": [
+				      "should have a group schema"
+				    ]
+				  }
+				})
+
+				done(err)
+			})
+
+		});
+
+
 		it('should provide an error message for invalid authtoken', function(done) {
 
 			// var class_name = product_supertest;
@@ -426,6 +457,7 @@ describe('classes ---', function() {
 
 		});
 
+	
 	})
 
 
@@ -548,21 +580,21 @@ describe('classes ---', function() {
 
 		});
 
-		it('should be able to get single(built_io_upload) class', function(done) {
+		it('should be able to get single(inbuilt) class', function(done) {
 
-			var classUid = "built_io_upload"
+			var classUid = "built_io_application_user"
 
 			factories.create('Get_a_class', authtoken, api_key, classUid)
 				.expect(200)
 				.end(function(err, res) {
-
+					// R.pretty(res.body)
 					var uploadClass = res.body.class
 
 					// Keys assertion
 					Object.keys(uploadClass).should.to.be.deep.equal(['created_at', 'updated_at', 'title', 'uid', 'inbuilt_class', 'schema', 'last_activity', 'maintain_revisions', 'abilities', 'DEFAULT_ACL', 'SYS_ACL'])
-					Object.keys(uploadClass.schema[0]).should.to.be.deep.equal(['display_name', 'uid', 'data_type', 'field_metadata', 'multiple', 'mandatory'])
-
-					uploadClass.schema.length.should.be.equal(3)
+					Object.keys(uploadClass.schema[0]).should.to.be.deep.equal(['display_name', 'uid', 'data_type', 'unique', 'field_metadata', 'multiple', 'mandatory'])
+					// console.log(uploadClass.schema.length)
+					uploadClass.schema.length.should.be.equal(9)
 
 					// Data type assertion
 					uploadClass.created_at.should.be.a('string')
@@ -577,8 +609,8 @@ describe('classes ---', function() {
 					uploadClass.SYS_ACL.should.be.a('object')
 
 					// Value assertion
-					uploadClass.uid.should.be.equal('built_io_upload')
-					uploadClass.title.should.be.equal('built.io Uploads')
+					uploadClass.uid.should.be.equal('built_io_application_user')
+					uploadClass.title.should.be.equal('Application User')
 					uploadClass.inbuilt_class.should.be.equal(true)
 
 					done(err)

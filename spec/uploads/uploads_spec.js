@@ -150,7 +150,8 @@ describe('Uploads --- ', function() {
 
 
 	describe('Get Uploads', function() {
-		this.timeout(15000)
+		
+		
 		before(function(done) {
 			this.timeout(20000)
 			var uploadGet1

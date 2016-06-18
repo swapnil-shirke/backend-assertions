@@ -9,36 +9,7 @@ describe('System roles --- ', function() {
 	var sys_user2
 
 	
-	// before(function(done) {
-	// 	factories.create('login_system_user')
-	// 		.end(function(err, res) {
-	// 			//console.log(res.body)
 
-	// 			authtoken = res.body.user.authtoken;
-	// 			userUID = res.body.user.uid;
-	// 			username = res.body.user.username;
-	// 			email = res.body.user.email;
-
-	// 			done(err)
-	// 		})
-	
-	// })
-
-	
-	// before(function(done) {
-	// 	factories.create('Create_application', authtoken)
-	// 		.end(function(err, res) {
-				
-	// 			api_key    = res.body.application.api_key;
-	// 			master_key = res.body.application.master_key;
-	// 			appname    = res.body.application.name;
-	// 			appuid     = res.body.application.uid
-
-	// 			//console.log(res.body)
-	// 			done(err)
-	// 		})
-	
-	// })
 
 
 
@@ -113,7 +84,7 @@ describe('System roles --- ', function() {
 					Object.keys(role).should.to.be.deep.equal(['uid', 'name', 'users', 'roles', 'created_at', 'updated_at', 'owner', 'application', 'SYS_ACL'])
 					Object.keys(role.application).should.to.be.deep.equal(['created_at', 'updated_at', 'uid', 'name', 'api_key', 'owner_uid', 'user_uids', 'master_key'])
 
-					res.body.notice.should.be.equal('Woot! The group was created successfully.')
+					res.body.notice.should.be.equal('Woot! The system role was created successfully.')
 
 					//Data type assertion
 					role.uid.should.be.a('string')
@@ -170,7 +141,7 @@ describe('System roles --- ', function() {
 				.end(function(err, res) {
 					// R.pretty(res.body)
 					res.body.should.be.deep.equal({
-					  "error_message": "Bummer. Group creation failed. Please try again.",
+					  "error_message": "Bummer. system role creation failed. Please try again.",
 					  "error_code": 157,
 					  "errors": {
 					    "name": [
@@ -195,7 +166,7 @@ describe('System roles --- ', function() {
 					})
 					.end(function(err, res) {
 						res.body.should.be.deep.equal({
-						  "error_message": "Bummer. Group creation failed. Please try again.",
+						  "error_message": "Bummer. system role creation failed. Please try again.",
 						  "error_code": 157,
 						  "errors": {
 						    "name": [
@@ -381,7 +352,7 @@ describe('System roles --- ', function() {
 				.end(function(err, res) {
 					// R.pretty(res.body)
 					res.body.should.be.deep.equal({
-						  "error_message": "Bummer. The group was not found. Please try again.",
+						  "error_message": "Bummer. The system role was not found. Please try again.",
 						  "error_code": 158,
 						  "errors": {}
 						})
@@ -435,7 +406,7 @@ describe('System roles --- ', function() {
 
 							var updatedRole = res2.body.system_role
 
-							res2.body.notice.should.be.equal('Woot! The group was updated successfully.')
+							res2.body.notice.should.be.equal('Woot! The system role was updated successfully.')
 
 							Object.keys(updatedRole).should.to.be.deep.equal(['uid', 'name', 'users', 'roles', 'created_at', 'updated_at', 'owner', 'application', 'SYS_ACL'])
 							Object.keys(updatedRole).should.to.be.deep.equal(['uid', 'name', 'users', 'roles', 'created_at', 'updated_at', 'owner', 'application', 'SYS_ACL'])
@@ -500,7 +471,7 @@ describe('System roles --- ', function() {
 				.end(function(err, res) {
 					// R.pretty(res.body)
 					res.body.should.be.deep.equal({
-					  "error_message": "Bummer. The group was not found. Please try again.",
+					  "error_message": "Bummer. The system role was not found. Please try again.",
 					  "error_code": 158,
 					  "errors": {}
 					})
@@ -531,7 +502,7 @@ describe('System roles --- ', function() {
 
 							var updatedRole = res2.body.system_role
 
-							res2.body.notice.should.be.equal('Woot! The group was updated successfully.')
+							res2.body.notice.should.be.equal('Woot! The system role was updated successfully.')
 
 							Object.keys(updatedRole).should.to.be.deep.equal(['uid', 'name', 'users', 'roles', 'created_at', 'updated_at', 'owner', 'application', 'SYS_ACL'])
 							Object.keys(updatedRole).should.to.be.deep.equal(['uid', 'name', 'users', 'roles', 'created_at', 'updated_at', 'owner', 'application', 'SYS_ACL'])
@@ -611,7 +582,7 @@ describe('System roles --- ', function() {
 						.end(function(err, res2) {
 							// R.pretty(res2.body)
 							//var updatedRole = res2.body.system_role
-							res2.body.notice.should.be.equal('Woot! The group was deleted successfully.')
+							res2.body.notice.should.be.equal('Woot! The system role was deleted successfully.')
 
 							done(err)
 						})
@@ -629,7 +600,7 @@ describe('System roles --- ', function() {
 				.end(function(err, res) {
 					// R.pretty(res.body)
 					res.body.should.be.deep.equal({
-					  "error_message": "Bummer. The group was not found. Please try again.",
+					  "error_message": "Bummer. The system role was not found. Please try again.",
 					  "error_code": 158,
 					  "errors": {}
 					})
