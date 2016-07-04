@@ -1534,7 +1534,7 @@ describe('App users ---', function() {
 
           user.uid.should.be.equal(appUser3.uid)
           user.active.should.be.equal(true)
-          user.ACL.should.be.deep.equal({})
+          user.ACL.should.be.deep.equal({"can": []})
           user._version.should.be.equal(2)
 
           done(err)
@@ -1553,7 +1553,7 @@ describe('App users ---', function() {
 
     });
 
-    it('should be able to logout application user from an apllication', function(done) {
+    it('should be able to logout application user from an application', function(done) {
 
       R.Promisify(factories.create('login_app_user', api_key, {
         "application_user": {

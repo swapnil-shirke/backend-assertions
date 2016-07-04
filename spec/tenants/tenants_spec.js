@@ -1,4 +1,4 @@
-describe('Tenants new ---', function() {
+describe('Tenants ---', function() {
 	
 	var user, app, myTenant 
 

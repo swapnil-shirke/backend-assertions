@@ -61,7 +61,7 @@ describe('Field validation ---', function() {
 				}))
 			})
 			.then(function(res) {
-				appUser1 = res.body.application_user
+				appUser2 = res.body.application_user
 			})
 			.then(function(res) {
 				done()
@@ -76,7 +76,7 @@ describe('Field validation ---', function() {
 	after(function(done) {
 		factories.create('Delete_application', sysUser.authtoken, app.api_key)
 			.end(function(err, res1) {
-				console.log("application delete")
+				// console.log("application delete")
 				done(err)
 			})
 	
@@ -128,7 +128,7 @@ describe('Field validation ---', function() {
 		
 
 		it('should provide an error message for min value for given text field', function(done) {
-			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classText.uid, {
+			R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classText.uid, {
 				"object": {
 					"textfield": "asd"	
 				}
@@ -186,7 +186,7 @@ describe('Field validation ---', function() {
 
 
 		it('should provide an error message for mandatory value for given text field', function(done) {
-			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classText.uid, {
+			R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classText.uid, {
 				"object": {
 					"textfield": ""
 				}
@@ -244,7 +244,7 @@ describe('Field validation ---', function() {
 
 
 		it('should provide an error message for array value for given text field', function(done) {
-			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classText.uid, {
+			R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classText.uid, {
 				"object": {
 					"textfield": ["testing", "backend"]	
 				}
@@ -349,7 +349,7 @@ describe('Field validation ---', function() {
 
 
 		it('should provide an error message for blank array when field is mandatory', function(done) {
-			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classTextMul.uid, {
+			R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classTextMul.uid, {
 				"object": {
 					"textfield": []
 				}
@@ -407,7 +407,7 @@ describe('Field validation ---', function() {
 
 
 		it('should provide an error message for multiple field if blank', function(done) {
-			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classTextMul.uid, {
+			R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classTextMul.uid, {
 				"object": {
 					"textfield": [""]
 				}
@@ -460,7 +460,7 @@ describe('Field validation ---', function() {
 
 
 		it('should provide an error message for invalid value format for field', function(done) {
-			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classTextMul.uid, {
+			R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classTextMul.uid, {
 				"object": {
 					"textfield": ["asdasd"]
 				}
@@ -518,7 +518,7 @@ describe('Field validation ---', function() {
 
 
 		it('should provide an error message for object value inside array field', function(done) {
-			R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classTextMul.uid, {
+			R.Promisify(factories.create('Create_object', appUser2.authtoken, app.api_key, classTextMul.uid, {
 				"object": {
 					"textfield": [{"ASD": "AD"}]
 				}
@@ -552,7 +552,9 @@ describe('Field validation ---', function() {
 
 	
 	describe('Links', function() {
-			
+		
+		var classLink
+
 		before(function(done) {
 			R.Promisify(factories.create('Create_class', sysUser.authtoken, app.api_key, {
 				"class": {
@@ -577,7 +579,7 @@ describe('Field validation ---', function() {
 				}
 			}))
 			.then(function(res) {
-				classText = res.body.class
+				classLink = res.body.class
 			})
 			.then(function(res) {
 				done()
@@ -588,6 +590,14 @@ describe('Field validation ---', function() {
 		
 
 		})
+
+
+
+		// it('should provide an error message for ', function() {
+			
+		// 	R.Promisify()
+
+		// });
 
 
 	});

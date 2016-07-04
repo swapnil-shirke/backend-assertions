@@ -758,6 +758,101 @@ describe('classes ---', function() {
 
 		});
 
+		
+		it('should provide an error messgae on application user class delete', function(done) {
+			
+			var classUid = "built_io_application_user"
+
+			R.Promisify(factories.create('Delete_class', authtoken, api_key, classUid))
+			.then(function(res) {
+				res.body.should.be.deep.equal({
+				  "error_message": "Bummer. Class delete failed. Please try again.",
+				  "error_code": 117,
+				  "errors": {
+				    "inbuilt_class": [
+				      "cannot be removed"
+				    ]
+				  }
+				})
+			})
+			.then(function(res) {
+				done()
+			})
+		
+		});
+
+		
+		it('should provide an error messgae on application user role class delete', function(done) {
+			
+			var classUid = "built_io_application_user_role"
+
+			R.Promisify(factories.create('Delete_class', authtoken, api_key, classUid))
+			.then(function(res) {
+				res.body.should.be.deep.equal({
+				  "error_message": "Bummer. Class delete failed. Please try again.",
+				  "error_code": 117,
+				  "errors": {
+				    "inbuilt_class": [
+				      "cannot be removed"
+				    ]
+				  }
+				})
+			})
+			.then(function(res) {
+				done()
+			})
+		
+		});
+
+		
+		it.skip('should provide an error messgae on upload class delete', function(done) {
+			
+			var classUid = "built_io_upload"
+
+			R.Promisify(factories.create('Delete_class', authtoken, api_key, classUid))
+			.then(function(res) {
+				R.pretty(res.body)
+				res.body.should.be.deep.equal({
+				  "error_message": "Bummer. Class delete failed. Please try again.",
+				  "error_code": 117,
+				  "errors": {
+				    "inbuilt_class": [
+				      "cannot be removed"
+				    ]
+				  }
+				})
+			})
+			.then(function(res) {
+				done()
+			})
+		
+		});
+
+
+		it('should provide an error messgae on upload class delete', function(done) {
+			
+			var classUid = "built_io_installation_data"
+
+			R.Promisify(factories.create('Delete_class', authtoken, api_key, classUid))
+			.then(function(res) {
+				res.body.should.be.deep.equal({
+				  "error_message": "Bummer. Class delete failed. Please try again.",
+				  "error_code": 117,
+				  "errors": {
+				    "inbuilt_class": [
+				      "cannot be removed"
+				    ]
+				  }
+				})
+			})
+			.then(function(res) {
+				done()
+			})
+		
+		});
+
+
+
 	})
 
 

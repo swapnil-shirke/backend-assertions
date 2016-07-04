@@ -7,7 +7,7 @@ describe('Objects ---', function() {
 
 	// system user login and create application
 	before(function(done) {
-		this.timeout(25000)
+		this.timeout(55000)
 		R.Promisify(factories.create('login_system_user'))
 			.then(function(res) {
 				sys_user1 = res.body.user
@@ -30,6 +30,52 @@ describe('Objects ---', function() {
 						sys_user2.email
 					]
 				}))
+			})
+			.then(function(res) {
+				return factories.create('create_objects', 2, sys_user1.authtoken, app.api_key, 'built_io_application_user', [{
+					"published": true,
+					"active": true,
+					"username": "userFirst",
+					"email": "userFirst@mailinator.com",
+					"password": "raw123",
+					"password_confirmation": "raw123"
+				}, {
+					"published": true,
+					"active": true,
+					"username": "userSecond",
+					"email": "userSecond@mailinator.com",
+					"password": "raw123",
+					"password_confirmation": "raw123"
+				}])
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, 'built_io_application_user', ''))
+			})
+			.then(function(res) {
+				user1 = res.body.objects[0]
+				user2 = res.body.objects[1]
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('login_app_user', app.api_key, {
+					"application_user": {
+						"email": user1.email,
+						"password": "raw123"
+					}
+				}))
+			})
+			.then(function(res) {
+				appUser1 = res.body.application_user
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('login_app_user', app.api_key, {
+					"application_user": {
+						"email": user2.email,
+						"password": "raw123"
+					}
+				}))
+			})
+			.then(function(res) {
+				appUser2 = res.body.application_user
 			})
 			.then(function(res) {
 				done()
@@ -85,7 +131,7 @@ describe('Objects ---', function() {
 				myclass = res.body.class
 			})
 			.then(function(res) {
-				return factories.create('create_objects', 5, sys_user1.authtoken, app.api_key, myclass.uid, [{
+				return factories.create('create_objects', 5, appUser2.authtoken, app.api_key, myclass.uid, [{
 					name: '1'
 				}, {
 					name: '2'
@@ -151,12 +197,82 @@ describe('Objects ---', function() {
 
 
 
-		it('should be able to get all objects present for given class', function(done) {
+		it('should be able to get all objects present for given class as app owner(system user)', function(done) {
 			R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, myclass.uid))
 			.then(function(res) {
+				// R.pretty(res.body)
 				objects = res.body.objects
 				objects.length.should.be.equal(5)
-				
+
+				objCan  = R.last(res.body.objects)
+				objCan.ACL.should.be.deep.equal({})
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+				console.log(err)
+			})
+
+		});
+
+
+		it('should be able to get all objects present for given class as a collaborator', function(done) {
+			R.Promisify(factories.create('get_all_objects', sys_user2.authtoken, app.api_key, myclass.uid))
+			.then(function(res) {
+				// R.pretty(res.body)
+				objects = res.body.objects
+				objects.length.should.be.equal(5)
+
+				objCan  = R.last(res.body.objects)
+				objCan.ACL.should.be.deep.equal({})
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+				console.log(err)
+			})
+
+		});
+
+
+		it('should be able to get all objects present for given class as a app user(owner)', function(done) {
+			R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass.uid))
+			.then(function(res) {
+				// R.pretty(res.body)
+				objects = res.body.objects
+				objects.length.should.be.equal(5)
+
+				objCan  = R.last(res.body.objects)
+				objCan.ACL.should.be.deep.equal({
+	        "can": []
+	      })
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+				console.log(err)
+			})
+
+		});
+
+
+		it('should be able to get all objects present for given class as a other app user', function(done) {
+			R.Promisify(factories.create('get_all_objects', appUser2.authtoken, app.api_key, myclass.uid))
+			.then(function(res) {
+				// R.pretty(res.body)
+				objects = res.body.objects
+				objects.length.should.be.equal(5)
+
+				objCan  = R.last(res.body.objects)
+				objCan.ACL.should.be.deep.equal({
+	        "can": [
+	          "update",
+	          "delete"
+	        ]
+	      })
 			})
 			.then(function(res) {
 				done()
@@ -624,28 +740,94 @@ describe('Objects ---', function() {
 					}
 				}
 			}))
+			.then(function(res) {
+				myclass3 = res.body.class
+			})
+			.then(function(res) {
+				return factories.create('create_objects', 2, sys_user1.authtoken, app.api_key, 'built_io_application_user', [{
+					"published": true,
+					"active": true,
+					"username": "userSeven",
+					"email": "userSeven@mailinator.com",
+					"password": "raw123",
+					"password_confirmation": "raw123"
+				}, {
+					"published": true,
+					"active": true,
+					"username": "userEight",
+					"email": "userEight@mailinator.com",
+					"password": "raw123",
+					"password_confirmation": "raw123"
+				}])
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, 'built_io_application_user', ''))
+			})
+			.then(function(res) {
+				user5 = res.body.objects[0]
+				user6 = res.body.objects[1]
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('login_app_user', app.api_key, {
+					"application_user": {
+						"email": user5.email,
+						"password": "raw123"
+					}
+				}))
+			})
+			.then(function(res) {
+				appUser9 = res.body.application_user
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('login_app_user', app.api_key, {
+					"application_user": {
+						"email": user6.email,
+						"password": "raw123"
+					}
+				}))
+			})
+			.then(function(res) {
+				appUser10 = res.body.application_user
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, myclass3.uid, {
+					"object": {
+						"name": "one"
+					}
+				}))
+			})
+			.then(function(res) {
+				object1 = res.body.object
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('Create_object', appUser10.authtoken, app.api_key, myclass3.uid, {
+					"object": {
+						"name": "two"
+					}
+				}))
+			})
+			.then(function(res) {
+				object2 = res.body.object
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+				console.log(err)
+			})
+
+		})
+
+
+		it('should be able to get single object present as system user', function(done) {
+
+			R.Promisify(factories.create('get_object', sys_user1.authtoken, app.api_key, myclass3.uid, object1.uid))
 				.then(function(res) {
-					myclass3 = res.body.class
-				})
-				.then(function(res) {
-					return R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, myclass3.uid, {
-						"object": {
-							"name": "one"
-						}
-					}))
-				})
-				.then(function(res) {
-					object1 = res.body.object
-				})
-				.then(function(res) {
-					return R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, myclass3.uid, {
-						"object": {
-							"name": "two"
-						}
-					}))
-				})
-				.then(function(res) {
-					object2 = res.body.object
+
+					object = res.body.object
+
+					Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'tags'])
+					object.ACL.should.be.deep.equal({})
 				})
 				.then(function(res) {
 					done()
@@ -654,18 +836,70 @@ describe('Objects ---', function() {
 					console.log(err)
 				})
 
-		})
+		});
 
 
-		it('should be able to get single object present', function(done) {
+		it('should be able to get single object(sys) present as a app user', function(done) {
 
-			R.Promisify(factories.create('get_object', sys_user1.authtoken, app.api_key, myclass3.uid, object1.uid))
+			R.Promisify(factories.create('get_object', appUser10.authtoken, app.api_key, myclass3.uid, object1.uid))
 				.then(function(res) {
-
+					// R.pretty(res.body)
 					object = res.body.object
 
 					Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'tags'])
 					
+					object.ACL.should.be.deep.equal({
+			      "can": []
+			    })
+				})
+				.then(function(res) {
+					done()
+				})
+				.catch(function(err) {
+					console.log(err)
+				})
+
+		});
+
+
+		it('should be able to get single object present as a app user', function(done) {
+
+			R.Promisify(factories.create('get_object', appUser10.authtoken, app.api_key, myclass3.uid, object2.uid))
+				.then(function(res) {
+					// R.pretty(res.body)
+					object = res.body.object
+
+					Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'created_by', 'updated_by', 'tags'])
+					
+					object.ACL.should.be.deep.equal({
+			      "can": [
+			        "update",
+			        "delete"
+			      ]
+			    })
+				})
+				.then(function(res) {
+					done()
+				})
+				.catch(function(err) {
+					console.log(err)
+				})
+
+		});
+
+
+		it('should be able to get single object present as a other app user', function(done) {
+
+			R.Promisify(factories.create('get_object', appUser9.authtoken, app.api_key, myclass3.uid, object2.uid))
+				.then(function(res) {
+					// R.pretty(res.body)
+					object = res.body.object
+
+					Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'created_by', 'updated_by', 'tags'])
+					
+					object.ACL.should.be.deep.equal({
+			      "can": []
+			    })
 				})
 				.then(function(res) {
 					done()
@@ -711,7 +945,8 @@ describe('Objects ---', function() {
 			.then(function(res) {
 				object = res.body.object
 				res.body.notice.should.be.equal('Woot! Object updated successfully.')
-				Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'tags'])
+				// Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'tags'])
+				Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'created_by', 'updated_by', 'tags'])
 				object.created_at.should.be.equal(object.updated_at)
 			})
 			.then(function(res) {
@@ -770,6 +1005,164 @@ describe('Objects ---', function() {
 
 
 		});
+
+
+	});
+
+
+	describe('Unpublish object CURD', function() {
+
+		var myclass5, object1, object2
+
+		// create class and create mumtiple objects
+		before(function(done) {
+			this.timeout(35000)
+			R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+				"class": {
+					"title": "unpublish",
+					"uid": "unpublish",
+					"inbuilt_class": false,
+					"schema": [{
+						"uid": "name",
+						"data_type": "text",
+						"display_name": "name",
+						"mandatory": false,
+						"max": 10,
+						"min": 5,
+						"multiple": true,
+						"format": "",
+						"unique": "global",
+						"field_metadata": {
+							"allow_rich_text": false,
+							"multiline": false
+						}
+					}],
+					"options": {
+						"inbuiltFields": {
+							"publish": true,
+							"location": false,
+							"tag": true,
+							"include_owner": false
+						}
+					}
+				}
+			}))
+			.then(function(res) {
+				myclass5 = res.body.class
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, myclass5.uid, {
+					"object": {
+						"name": ["onePluse"],
+						"published": false
+					}
+				}))
+			})
+			.then(function(res) {
+				object1 = res.body.object
+			})
+			.then(function(res) {
+				return R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, myclass5.uid, {
+					"object": {
+						"name": ["twoPluse"],
+						"published": true
+					}
+				}))
+			})
+			.then(function(res) {
+				object2 = res.body.object
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+				console.log(err)
+			})
+
+		})
+
+
+
+
+		it('should be able to get all object includeing unpublish', function(done) {
+
+			R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, myclass5.uid))
+			.then(function(res) {
+				// R.pretty(res.body)
+				object = R.last(res.body.objects)
+
+				Object.keys(object).should.to.be.deep.equal(['name', 'published', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'ACL', '__loc', '_version', 'tags'])
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+				console.log(err)
+			})
+
+		});
+
+
+		it('should be able to get single unpublish object present', function(done) {
+
+			R.Promisify(factories.create('get_object', sys_user1.authtoken, app.api_key, myclass5.uid, object1.uid))
+				.then(function(res) {
+					object = res.body.object
+					Object.keys(object).should.to.be.deep.equal(['name', 'published', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'ACL', '__loc', '_version', 'tags'])
+				})
+				.then(function(res) {
+					done()
+				})
+				.catch(function(err) {
+					console.log(err)
+				})
+
+		});
+
+
+		it('should be able to update object present', function(done) {
+			
+			R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, myclass5.uid, object1.uid, {
+				"object": {
+					"name": ["updated"]
+				}
+			}))
+			.then(function(res) {
+				// R.pretty(res.body)
+				object = res.body.object
+
+				res.body.notice.should.be.equal('Woot! Object updated successfully.')
+				Object.keys(object).should.to.be.deep.equal(['name', 'published', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'ACL', '__loc', '_version', 'tags'])
+				
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+				console.log(err)
+			})
+
+		});
+
+
+		it('should be able to delete object present', function(done) {
+
+			R.Promisify(factories.create('delete_object', sys_user1.authtoken, app.api_key, myclass5.uid, object1.uid))
+				.then(function(res) {
+					// R.pretty(res.body)
+					res.body.notice.should.be.equal('Woot! Object deleted successfully.')
+					
+				})
+				.then(function(res) {
+					done()
+				})
+				.catch(function(err) {
+					console.log(err)
+				})
+		
+		});
+
+		
 
 
 	});
@@ -2492,6 +2885,37 @@ describe('Objects ---', function() {
 
 		});
 
+		
+		// describe('ACLs CAN', function() {
+				
+		// 	it.only('should be able to get CAN for object owner as app user', function() {
+		// 		R.Promisify('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
+		// 			"object": {
+		// 				"roundone": {
+		// 					"hits": ["1", "2", "3", "4", "5"],
+		// 					"name": "supertest"
+		// 				}
+		// 			}
+		// 		})
+		// 		.then(function(res) {
+		// 			R.pretty(res.body)
+		// 		})
+		// 		.then(function(res) {
+		// 			done()
+		// 		})
+		// 		.catch(function(err) {
+  //       	console.log(err)
+  //     	})
+
+		// 	});
+
+
+		// });
+
+
+
+
+
 
 	});
 
@@ -3551,7 +3975,7 @@ describe('Objects ---', function() {
 
 
 	describe('System class group fields', function() {
-
+		// 
 		var userObj
 
 		before(function(done) {

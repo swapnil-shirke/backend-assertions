@@ -129,14 +129,14 @@ describe('Bulk sys ACL --- ', function() {
 	})
 
 
-	// after(function(done) {
-	// 	factories.create('Delete_application', authtoken, api_key)
-	// 		.end(function(err, res1) {
-	// 			// console.log("application delete")
-	// 			done(err)
-	// 		})
+	after(function(done) {
+		factories.create('Delete_application', authtoken, api_key)
+			.end(function(err, res1) {
+				// console.log("application delete")
+				done(err)
+			})
 
-	// })
+	})
 
 
 	describe('Classes Bulk sys ACL', function() {
@@ -589,6 +589,7 @@ describe('Bulk sys ACL --- ', function() {
 				})
 
 		});
+
 
 	});
 
@@ -1270,10 +1271,6 @@ describe('Bulk sys ACL --- ', function() {
 		});
 
 
-
-
-
-
 	});
 
 
@@ -1432,6 +1429,7 @@ describe('Bulk sys ACL --- ', function() {
 
 		})
 
+	
 	});
 
 

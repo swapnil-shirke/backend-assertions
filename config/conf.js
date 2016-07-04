@@ -1,7 +1,7 @@
 module.exports = {
 
-	host: 'https://api.built.io',
-	// host: 'https://stag-api.built.io',
+	// host: 'https://api.built.io',
+	host: 'https://stag-api.built.io',
 	// host: 'http://code-bltdev-new.cloudthis.com',
 	// _host : 'http://172.16.0.154:8000',
 	version: 'v1',

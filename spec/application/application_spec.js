@@ -96,6 +96,9 @@ describe('Applications ---', function() {
             "isNew",
             "_shouldLean",
             "_shouldFilter",
+            "_shouldSyncPostHooks",
+            "_skip_transformations",
+            "_filterOptions",
             "options",
             "_version",
             "__v"
@@ -582,7 +585,7 @@ describe('Applications ---', function() {
   })
 
   
-  describe('Get valid field types for an apllication', function() {
+  describe('Get valid field types for an application', function() {
     
     it('should be able to get field datatypes supported and the various options for these fields', function(done) {
       api.get(config.endpoints.applications + config.endpoints.valid_field_types)
@@ -1530,6 +1533,7 @@ describe('Applications ---', function() {
           done(err)
         })
     
+    
     });
 
     
@@ -1551,6 +1555,7 @@ describe('Applications ---', function() {
 
           done(err)
         })
+    
     
     });
 

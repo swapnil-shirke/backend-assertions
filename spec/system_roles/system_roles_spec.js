@@ -141,14 +141,14 @@ describe('System roles --- ', function() {
 				.end(function(err, res) {
 					// R.pretty(res.body)
 					res.body.should.be.deep.equal({
-					  "error_message": "Bummer. system role creation failed. Please try again.",
+					  "error_message": "Bummer. System creation failed. Please try again.",
 					  "error_code": 157,
 					  "errors": {
 					    "name": [
 					      "is a required field"
 					    ]
 					  }
-					})
+					})	
 
 					done(err)
 				})
@@ -165,8 +165,9 @@ describe('System roles --- ', function() {
 						"name": "role_test"
 					})
 					.end(function(err, res) {
+						// R.pretty(res.body)
 						res.body.should.be.deep.equal({
-						  "error_message": "Bummer. system role creation failed. Please try again.",
+						  "error_message": "Bummer. System creation failed. Please try again.",
 						  "error_code": 157,
 						  "errors": {
 						    "name": [
@@ -181,8 +182,6 @@ describe('System roles --- ', function() {
 				})
 		
 		});
-
-
 
 	});
 
