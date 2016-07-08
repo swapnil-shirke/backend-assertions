@@ -1529,11 +1529,11 @@ describe('Objects ---', function() {
 
 			});
 
-			it.skip('should provide an error message when data key is not present', function(done) {
+			it('should able to create object without PUSH operation (blank object)', function(done) {
 				
 				var objUid = object.uid 
 	 			
-				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
+				R.Promisify(factories.create('Create_object', sys_user1.authtoken, app.api_key, myclass7.uid, {
 					"object": {
 						"roundone": {
 							"hits": {
@@ -1544,21 +1544,16 @@ describe('Objects ---', function() {
 				}))
 				.then(function(res) {
 					// R.pretty(res.body)
-					res.body.should.be.equal.deep.equal({
-					  "error_message": "Bummer. Object creation failed. Please enter valid data.",
-					  "error_code": 119,
-					  "errors": {
-					    "parameter": [
-					      "is invalid"
-					    ]
-					  }
-					})
+					res.body.notice.should.be.equal("Woot! Object created successfully.")
+					res.body.object.roundone.should.be.deep.equal({
+			      "hits": []
+			    })
 				})
 				.then(function(res) {
 					done()
 				})
 				.catch(function(err) {
-					console.log(err.trace)
+					console.log(err)
 				})
 			
 
@@ -2365,7 +2360,7 @@ describe('Objects ---', function() {
 			});
 
 
-			it.skip('should provide an error message for null field ADD/sub operation', function(done) {
+			it('should provide an error message for null field ADD/sub operation', function(done) {
 				
 				R.Promisify(factories.create('update_object', sys_user1.authtoken, app.api_key, classMath.uid, objectMath.uid, {
 					"object": {
@@ -2384,16 +2379,16 @@ describe('Objects ---', function() {
 					}))
 				})
 				.then(function(res) {
-					R.pretty(res.body)
-					// {
-					//   "error_message": "Bummer. Object update failed. Please enter valid data.",
-					//   "error_code": 121,
-					//   "errors": {
-					//     "5742cad56c0d05b67bbf1c8e')} has the field '3": [
-					//       "has a invalid array operation."
-					//     ]
-					//   }
-					// }
+					// R.pretty(res.body)
+					res.body.should.be.deep.equal({
+					  "error_message": "Bummer. Object update failed. Please enter valid data.",
+					  "error_code": 121,
+					  "errors": {
+					    "3": [
+					      "has an invalid array operation."
+					    ]
+					  }
+					})
 				})
 				.then(function(res) {
 					done()
