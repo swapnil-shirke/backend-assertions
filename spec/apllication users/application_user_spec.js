@@ -13,7 +13,7 @@ describe('App users ---', function() {
 
 
   before(function(done) {
-    // console.log("====start====")
+    
     this.timeout(25000)
     
     R.Promisify(factories.create('login_system_user'))

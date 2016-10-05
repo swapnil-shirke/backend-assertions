@@ -956,20 +956,61 @@
 
 //---------------- Uploads
  
- 	factories.addFactory('create_upload', function(authtoken, api_key, filename, body, query) {
+ 	
+ // 	factories.addFactory('Create_object', function(authtoken, api_key, classUid, body, tenant_uid) {
+		
+	// 	body = body || {}
+		
+	// 	var call = api.post(config.endpoints.classes + "/" + classUid + "/" + "objects")
+	// 		.set('web_ui_api_key', config.web_ui_api_key)
+	// 		.set('authtoken', authtoken)
+	// 		.set('application_api_key', api_key)
+	// 		.send(body)
+
+	// 		if(tenant_uid)
+	// 			call.set('tenant_uid', tenant_uid)
+
+	// 	return call
+	// })
+
+
+ 	factories.addFactory('create_upload', function(authtoken, api_key, filename, body, query, tenant_uid) {
 		
 		filename = filename ||  'png_1.png'
 		body     = body || ''
 		query    = query || {}
 
-		return api.post(config.endpoints.uploads)
+		var call = api.post(config.endpoints.uploads)
 			.set('application_api_key', api_key)
 			.set('authtoken', authtoken)
 			.field('PARAM', body)
 			.query(query)
 			.attach('upload[upload]', config.resource_path + filename)
-			.expect(201)
+			// .expect(201)
+
+			if(tenant_uid)
+				call.set('tenant_uid', tenant_uid)
+
+		return call
+	
 	})
+
+
+ // 	factories.addFactory('create_upload', function(authtoken, api_key, filename, body, query) {
+		
+	// 	filename = filename ||  'png_1.png'
+	// 	body     = body || ''
+	// 	query    = query || {}
+
+	// 	return api.post(config.endpoints.uploads)
+	// 		.set('application_api_key', api_key)
+	// 		.set('authtoken', authtoken)
+	// 		.field('PARAM', body)
+	// 		.query(query)
+	// 		.attach('upload[upload]', config.resource_path + filename)
+	// 		.expect(201)
+	
+	// })
 
 
 	factories.addFactory('get_uploads', function(authtoken, api_key, query) {

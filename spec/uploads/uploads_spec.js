@@ -74,35 +74,35 @@ describe('Uploads --- ', function() {
 				"password_confirmation": password
 			}
 		}))
-			.then(function(res) {
-				return R.Promisify(factories.create('login_app_user', api_key, {
-					"application_user": {
-						"email": email,
-						"password": password
-					}
-				}))
+		.then(function(res) {
+			return R.Promisify(factories.create('login_app_user', api_key, {
+				"application_user": {
+					"email": email,
+					"password": password
+				}
+			}))
+		})
+		.then(function(res) {
+			app_user = res.body.application_user
+		})
+		.then(function(res) {
+			var filename = 'pdf_1.pdf'
+			var PARAM = JSON.stringify({
+				upload: {
+					tags: ['supertest','backend']
+				}
 			})
-			.then(function(res) {
-				app_user = res.body.application_user
-			})
-			.then(function(res) {
-				var filename = 'pdf_1.pdf'
-				var PARAM = JSON.stringify({
-					upload: {
-						tags: ['supertest','backend']
-					}
-				})
-				return R.Promisify(factories.create('create_upload', app_user.authtoken, api_key, filename, PARAM))
-			})
-			.then(function(res) {
-				uploadAppuser = res.body.upload
-			})
-			.then(function(res) {
-				done()
-			})
-			.catch(function(err) {
-				console.log(err)
-			})
+			return R.Promisify(factories.create('create_upload', app_user.authtoken, api_key, filename, PARAM))
+		})
+		.then(function(res) {
+			uploadAppuser = res.body.upload
+		})
+		.then(function(res) {
+			done()
+		})
+		.catch(function(err) {
+			console.log(err)
+		})
 
 	})
 
@@ -210,6 +210,51 @@ describe('Uploads --- ', function() {
 
 					done(err)
 				})
+
+		});
+
+
+		it('should be able to get all created uploads for an app using query', function(done) {
+			factories.create('get_uploads', authtoken, api_key, {
+				"query": {"filename": "pdf_1.pdf"}
+			})
+			.expect(200)
+			.end(function(err, res) {
+				// R.pretty(res.body)
+
+				upload = res.body.uploads[0]
+				uploadID = res.body.uploads[0].uid
+
+				// key assertion 
+				Object.keys(upload).should.to.be.deep.equal(['uid', 'created_at', 'updated_at', 'created_by', 'updated_by', 'content_type', 'file_size', 'tags', 'app_user_object_uid', 'filename', 'url', 'ACL'])
+
+				// Data assertion
+				upload.uid.should.be.a('string')
+				upload.created_at.should.be.a('string')
+				upload.updated_at.should.be.a('string')
+
+				expect(upload.created_by).to.be.null;
+				expect(upload.updated_by).to.be.null;
+				
+				// upload.created_by.should.be.a(null)
+				// upload.updated_by.should.be.a(null)
+				
+				upload.content_type.should.be.a('string')
+				// upload.file_size.should.be.a('number')
+				upload.tags.should.be.a('array')
+				upload.app_user_object_uid.should.be.a('string')
+				upload.url.should.be.a('string')
+				upload.ACL.should.be.a('object')
+
+				upload.uid.should.be.equal(uploadID)
+				upload.created_at.should.be.equal(upload.updated_at)
+				upload.content_type.should.be.equal('application/pdf')
+				upload.app_user_object_uid.should.be.equal(app_user.uid)
+				// upload.filename.should.be.equal(uploadName)
+
+
+				done(err)
+			})
 
 		});
 

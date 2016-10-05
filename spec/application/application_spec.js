@@ -1480,7 +1480,7 @@ describe('Applications ---', function() {
 
 
     it('should be able to get all collaborators present in an application', function(done) {
-      
+      this.timeout(60000)
       R.Promisify(factories.create('login_system_user', config.user2))
       .then(function(res) {
         collaborator = res.body.user
@@ -1500,8 +1500,8 @@ describe('Applications ---', function() {
         // R.pretty(res.body)
         users = res.body.users
 
-        Object.keys(users[0]).should.to.be.deep.equal(['uid','created_at','updated_at','email','username','plan_id','roles'])
-        Object.keys(users[1]).should.to.be.deep.equal(['uid','created_at','updated_at','email','username','plan_id','is_owner','roles'])
+        Object.keys(users[1]).should.to.be.deep.equal(['uid','created_at','updated_at','email','username','company','plan_id','roles'])
+        Object.keys(users[0]).should.to.be.deep.equal(['uid','created_at','updated_at','email','username','plan_id','is_owner','roles'])
 
         users[0].email.should.be.equal(collaborator.email)
         users[1].email.should.be.equal(email)

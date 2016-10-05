@@ -592,12 +592,10 @@ describe('Field validation ---', function() {
 		})
 
 
-
-		// it('should provide an error message for ', function() {
+		it('should behave...', function() {
 			
-		// 	R.Promisify()
+		});
 
-		// });
 
 
 	});

@@ -237,7 +237,7 @@ describe('Objects ---', function() {
 		});
 
 
-		it('should be able to get all objects present for given class as a app user(owner)', function(done) {
+		it('should be able to get all objects present for given class as app user(owner)', function(done) {
 			R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass.uid))
 			.then(function(res) {
 				// R.pretty(res.body)
@@ -303,7 +303,7 @@ describe('Objects ---', function() {
 		});
 
 
-		it('should get be able to all objects and skip it to 2', function(done) {
+		it('should get be able to get all objects and skip it to 2', function(done) {
 			R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, myclass.uid, {
 				"skip": 2
 			}))
@@ -318,6 +318,26 @@ describe('Objects ---', function() {
 				.catch(function(err) {
 					console.log(err)
 				})
+
+		});
+
+
+		it('should get be able to get all objects using query', function(done) {
+			R.Promisify(factories.create('get_all_objects', appUser1.authtoken, app.api_key, myclass.uid, {
+				"query": {"name": 4}
+			}))
+			.then(function(res) {
+				// R.pretty(res.body)
+
+				objects = res.body.objects
+				objects.length.should.be.equal(1)
+			})
+			.then(function(res) {
+				done()
+			})
+			.catch(function(err) {
+				console.log(err)
+			})
 
 		});
 
@@ -2880,37 +2900,6 @@ describe('Objects ---', function() {
 
 		});
 
-		
-		// describe('ACLs CAN', function() {
-				
-		// 	it.only('should be able to get CAN for object owner as app user', function() {
-		// 		R.Promisify('Create_object', appUser1.authtoken, app.api_key, myclass7.uid, {
-		// 			"object": {
-		// 				"roundone": {
-		// 					"hits": ["1", "2", "3", "4", "5"],
-		// 					"name": "supertest"
-		// 				}
-		// 			}
-		// 		})
-		// 		.then(function(res) {
-		// 			R.pretty(res.body)
-		// 		})
-		// 		.then(function(res) {
-		// 			done()
-		// 		})
-		// 		.catch(function(err) {
-  //       	console.log(err)
-  //     	})
-
-		// 	});
-
-
-		// });
-
-
-
-
-
 
 	});
 
@@ -3595,6 +3584,7 @@ describe('Objects ---', function() {
 						}))
 					})
 					.then(function(res) {
+						// R.pretty(res.body)
 						res.body.notice.should.be.equal('Woot! Class updated successfully!')
 						classUnique.schema[0].unique.should.be.equal('global')
 					})
@@ -3660,6 +3650,7 @@ describe('Objects ---', function() {
 						}))
 					})
 					.then(function(res) {
+						// R.pretty(res.body)
 						res.body.notice.should.be.equal('Woot! Class updated successfully!')
 						classUpdated = res.body.class
 						should.not.exist(classUpdated.schema[0].unique)
@@ -3959,6 +3950,116 @@ describe('Objects ---', function() {
 						console.log(err)
 					})
 
+			});
+
+
+
+		});
+
+
+		describe('Tenant uid in url', function() {
+			
+			var uploadGet1, classFile
+			
+
+			before(function(done) {
+				// this.timeout(30000)
+				R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+					"class": {
+						"uid": "filekass",
+						"title": "fileKass",
+						"schema": [{
+							"uid": "name",
+							"data_type": "text",
+							"display_name": "name",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"format": "",
+							"unique": null,
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							}
+						}, {
+							"uid": "file",
+							"data_type": "file",
+							"display_name": "file",
+							"mandatory": false,
+							"max": null,
+							"min": null,
+							"multiple": false,
+							"format": "",
+							"unique": null,
+							"action": "add",
+							"field_metadata": {
+								"allow_rich_text": false,
+								"multiline": false
+							}
+						}],
+						"DEFAULT_ACL": {
+							"others": {
+								"create": true,
+								"read": true
+							}
+						}
+					}
+				}))
+				.then(function(res) {
+					classFile = res.body.class
+				})
+				.then(function(res) {
+					var filename1 = 'json_1.json'		
+					var PARAM = JSON.stringify({
+						"upload": {
+							"ACL": {
+								"users": [{
+									"uid": "anonymous",
+									"read": true,
+									"update": true
+								}],
+								"others": {
+									"read": true
+								}
+							}
+						}
+					})
+
+					return R.Promisify(factories.create('create_upload', appUser1.authtoken, app.api_key, filename1, PARAM, '', tenant1.uid))
+				})
+				.then(function(res) {
+					// R.pretty(res.body)
+					uploadGet1 = res.body.upload
+					expect(uploadGet1.url).to.contain('tenant_uid')
+				})
+				.then(function(res) {
+					done()
+				})
+				.catch(function(err) {
+					console.log(err)
+				})
+
+			})
+
+
+			it('should be able to get tenant uid for upload object link present in created object', function(done) {
+				R.Promisify(factories.create('Create_object', appUser1.authtoken, app.api_key, classFile.uid, {
+					"object": {
+						"name": "swapnil",
+						"file": uploadGet1.uid
+					}
+				}, tenant1.uid))
+				.then(function(res) {
+					// R.pretty(res.body)
+					object = res.body.object
+					expect(object.file.url).to.contain('tenant_uid')
+				})
+				.then(function(res) {
+					done()
+				})
+			
 			});
 
 

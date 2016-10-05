@@ -235,7 +235,7 @@ describe('Objects revisions/revert --- ', function() {
 					// Keys assertion        
 					Object.keys(object).should.to.be.deep.equal(['name', 'app_user_object_uid', 'created_by', 'updated_by', 'created_at', 'updated_at', 'uid', 'published', 'ACL', '__loc', '_version', 'tags'])
 					Object.keys(object.updated_by).should.to.be.deep.equal(['uid', 'created_at', 'updated_at', 'email', 'username', 'plan_id'])
-					Object.keys(object.created_by).should.to.be.deep.equal(['uid', 'created_at', 'updated_at', 'email', 'username', 'plan_id'])
+					Object.keys(object.created_by).should.to.be.deep.equal(['uid', 'created_at', 'updated_at', 'email', 'username', 'company', 'plan_id'])
 
 					// Data type assertion
 					object.name.should.be.a('string')
