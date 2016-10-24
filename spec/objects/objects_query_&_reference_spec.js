@@ -1185,189 +1185,203 @@ describe('Queries and reference', function() {
 	});
 
 
-	describe.skip('Single Reference object', function() {
+	// describe.skip('Single Reference object', function() {
 
-		var myclass1, myclass2
-		var object1, object2
+	// 	var student, marks
+	// 	var object1, object2
   	
-  	before(function(done) {
-  		this.timeout(45000)
-			R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
-				"class": {
-					"title": "project",
-					"uid": "project",
-					"inbuilt_class": false,
-					"schema": [{
-						"uid": "name",
-						"data_type": "text",
-						"display_name": "name",
-						"mandatory": false,
-						"max": null,
-						"min": null,
-						"multiple": false,
-						"format": "",
-						"unique": null,
-						"field_metadata": {
-							"allow_rich_text": false,
-							"multiline": false
-						}
-					}, {
-						"uid": "description",
-						"data_type": "text",
-						"display_name": "description",
-						"mandatory": false,
-						"max": null,
-						"min": null,
-						"multiple": false,
-						"format": "",
-						"unique": null,
-						"field_metadata": {
-							"allow_rich_text": false,
-							"multiline": false
-						}
-					}]
-				}
-			}))
-			.then(function(res) {
-				myclass1 = res.body.class
-			})
-			.then(function(res) {
-				return R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
-					"class": {
-						"title": "Bugs",
-						"uid": "bugs",
-						"inbuilt_class": false,
-						"schema": [{
-							"data_type": "text",
-							"display_name": "Name",
-							"field_metadata": null,
-							"format": "",
-							"mandatory": true,
-							"max": null,
-							"min": null,
-							"multiple": false,
-							"uid": "name"
-						}, {
-							"data_type": "text",
-							"display_name": "Description",
-							"field_metadata": null,
-							"format": "",
-							"mandatory": false,
-							"max": null,
-							"min": null,
-							"multiple": false,
-							"uid": "description"
-						}, {
-							"data_type": "text",
-							"display_name": "Reproducible?",
-							"field_metadata": null,
-							"format": "^(Always|Sometimes|Rarely|Unable)$",
-							"mandatory": false,
-							"max": null,
-							"min": null,
-							"multiple": false,
-							"uid": "reproducible"
-						}, {
-							"data_type": "isodate",
-							"display_name": "Due Date",
-							"field_metadata": null,
-							"format": null,
-							"mandatory": false,
-							"max": null,
-							"min": null,
-							"multiple": false,
-							"uid": "due_date"
-						}, {
-							"data_type": "text",
-							"display_name": "Severity",
-							"field_metadata": null,
-							"format": "^(|Show Stopper|Critical|Major|Minor)$",
-							"mandatory": false,
-							"max": null,
-							"min": null,
-							"multiple": false,
-							"uid": "severity"
-						}, {
-							"data_type": "text",
-							"display_name": "Status",
-							"field_metadata": null,
-							"format": "^(Open|In Progress|To Be Tested|Closed)$",
-							"mandatory": false,
-							"max": null,
-							"min": null,
-							"multiple": false,
-							"uid": "status"
-						}, {
-							"data_type": "reference",
-							"display_name": "Project",
-							"field_metadata": null,
-							"format": null,
-							"mandatory": true,
-							"max": null,
-							"min": null,
-							"multiple": false,
-							"reference_to": "project",
-							"uid": "project"
-						}],
-						"options": {
-							"inbuiltFields": {
-								"location": true
-							}
-						}
-					}
-				}))
-			})
-			.then(function(res) {
-				myclass2 = res.body.class
-			})
-			.then(function(res) {
-				return factories.create('create_objects', 2, appUser1.authtoken, app.api_key, myclass1.uid, [{
-					"name": "backend",
-					"description": "This is a backend project"
-				},
-				{
-					"name": "flow",
-					"description": "This is a flow project"
-				}])
-			})
-			.then(function(res) {
-				return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, myclass1.uid))
-			})
-			.then(function(res) {
-				object1 = res.body.objects[0]
-				object2 = res.body.objects[1]
-			})
-			.then(function(res) {
-				return factories.create('create_objects', 6, appUser2.authtoken, app.api_key, myclass2.uid, [{
-					"name": "one",
-					"project": [object1.uid]
-				},{
-					"name": "two",
-					"project": [object1.uid]
-				},{
-					"name": "three",
-					"project": [object1.uid]
-				},{
-					"name": "four",
-					"project": [object2.uid]
-				},{
-					"name": "five",
-					"project": [object2.uid]
-				},{
-					"name": "six",
-					"project": [object2.uid]
-				}])
-			})
-			.then(function(res) {
-				done()
-			})
-			.catch(function(err) {
-        console.log(err)
-      })
+ //  	before(function(done) {
+ //  		// this.timeout(45000)
+ //  		R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+	// 			"class": {
+	// 				"title": "marks",
+	// 				"uid": "marks",
+	// 				"schema": [{
+	// 					"uid": "u_id",
+	// 					"data_type": "text",
+	// 					"display_name": "U_Id",
+	// 					"mandatory": false,
+	// 					"multiple": false,
+	// 					"unique": false
+	// 				}, {
+	// 					"uid": "marks",
+	// 					"data_type": "group",
+	// 					"display_name": "marks",
+	// 					"mandatory": false,
+	// 					"multiple": true,
+	// 					"unique": false,
+	// 					"schema": [{
+	// 						"uid": "subject",
+	// 						"data_type": "text",
+	// 						"display_name": "subject",
+	// 						"mandatory": false,
+	// 						"multiple": false,
+	// 						"unique": false
+	// 					}, {
+	// 						"uid": "marks",
+	// 						"data_type": "number",
+	// 						"display_name": "marks",
+	// 						"mandatory": false,
+	// 						"multiple": false,
+	// 						"unique": false
+	// 					}]
+	// 				}]
 
-		})
+	// 			}
+	// 		}))
+	// 		.then(function(res) {
+	// 			marks = res.body.class
+	// 		})
+	// 		.then(function(res) {
+	// 			return R.Promisify(factories.create('Create_class', sys_user1.authtoken, app.api_key, {
+	// 				"class": {
+	// 					"title": "student",
+	// 					"uid": "student",
+	// 					"schema": [{
+	// 						"uid": "name",
+	// 						"data_type": "text",
+	// 						"display_name": "name",
+	// 						"mandatory": false,
+	// 						"max": null,
+	// 						"min": null,
+	// 						"multiple": false,
+	// 						"format": "",
+	// 						"unique": false
+	// 					}, {
+	// 						"uid": "std",
+	// 						"data_type": "number",
+	// 						"display_name": "std",
+	// 						"mandatory": false,
+	// 						"max": null,
+	// 						"min": null,
+	// 						"multiple": false,
+	// 						"format": "",
+	// 						"unique": false
+	// 					}, {
+	// 						"uid": "marks",
+	// 						"data_type": "reference",
+	// 						"display_name": "marks",
+	// 						"mandatory": true,
+	// 						"max": null,
+	// 						"min": null,
+	// 						"multiple": false,
+	// 						"format": "",
+	// 						"unique": false,
+	// 						"reference_to": "marks"
+	// 					}]
+	// 				}
+	// 			}))
+	// 		})
+	// 		.then(function(res) {
+	// 			student = res.body.class
+	// 		})
+	// 		.then(function(res) {
+	// 			return factories.create('create_objects', 2, appUser1.authtoken, app.api_key, marks.uid, [{
+	// 				"published": true,
+	// 				"u_id": "123",
+	// 				"marks": [{
+	// 					"subject": "eng",
+	// 					"marks": 54
+	// 				}, {
+	// 					"subject": "maths",
+	// 					"marks": 44
+	// 				}]
+	// 			},
+	// 			{
+	// 				"published": true,
+	// 				"u_id": "124",
+	// 				"marks": [{
+	// 					"subject": "eng",
+	// 					"marks": 64
+	// 				}, {
+	// 					"subject": "maths",
+	// 					"marks": 84
+	// 				}]
+	// 			}])
+	// 		})
+	// 		.then(function(res) {
+	// 			return R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, marks.uid))
+	// 		})
+	// 		.then(function(res) {
+	// 			R.pretty(res.body)
+	// 			object1 = res.body.objects[0]
+	// 			object2 = res.body.objects[1]
+	// 			console.log("====---", object1.uid)
+	// 		})
+	// 		.then(function(res) {
+	// 			console.log("====")
+	// 			return factories.create('Create_objects', 2, appUser1.authtoken, app.api_key, student.uid, [{
+	// 				"published": true,
+	// 				"name": "rajesh",
+	// 				"std": 10,
+	// 				"marks": [object1.uid]
+	// 			},
+	// 			{
+	// 				"published": true,
+	// 				"name": "rajesh2",
+	// 				"std": 100,
+	// 				"marks": [object1.uid]
+	// 			}])
+	// 		})
+	// 		.then(function(res) {
+	// 			done()
+	// 		})
+	// 		.catch(function(err) {
+ //        console.log(err.trace)
+ //      })
 
-	});
+	// 	})
+	
+		
+ //  	it('should ', function(done) {
+ //  		R.Promisify(factories.create('create_object', sys_user1.authtoken, app.api_key, student.uid, {
+	// 				"object": {
+	// 					"published": true,
+	// 					"name": "rajesh",
+	// 					"std": 10,
+	// 					"marks": [object1.uid]
+	// 				}
+	// 			}))
+	// 		.then(function(res) {
+	// 			console.log("===it")
+	// 			// object = R.last(res.body.objects)
+	// 			R.pretty(res.body)
+	// 			// object.name.should.be.equal('three')
+	// 			// object.project[0].should.be.equal(object1.uid)
+	// 			// object.project[1].should.be.equal(object2.uid)
+	// 		})
+	// 		.then(function(res) {
+	// 			done()
+	// 		})
+	// 		.catch(function(err) {
+ //        console.log(err)
+ //      })
+
+	// 	});
+
+
+
+	// 	it('should be able to get reference objects created for an app using $in_query query', function(done) {
+ //  		R.Promisify(factories.create('get_all_objects', sys_user1.authtoken, app.api_key, student.uid))
+	// 		.then(function(res) {
+	// 			console.log("===it2")
+	// 			// object = R.last(res.body.objects)
+	// 			R.pretty(res.body)
+	// 			// object.name.should.be.equal('three')
+	// 			// object.project[0].should.be.equal(object1.uid)
+	// 			// object.project[1].should.be.equal(object2.uid)
+	// 		})
+	// 		.then(function(res) {
+	// 			done()
+	// 		})
+	// 		.catch(function(err) {
+ //        console.log(err)
+ //      })
+
+	// 	});
+
+	// });
+
 
 
 

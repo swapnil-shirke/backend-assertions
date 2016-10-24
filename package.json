@@ -15,7 +15,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "mocha test.js --timeout 55000",
+    "test": "mocha test.js --timeout 99900",
     "report_test": "mocha test.js --timeout 95000 --reporter mochawesome"
   },
   "repository": {

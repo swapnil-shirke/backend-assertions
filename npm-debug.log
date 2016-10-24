@@ -7,8 +7,8 @@
 6 info test api_automation@1.0.0
 7 verbose unsafe-perm in lifecycle true
 8 info api_automation@1.0.0 Failed to exec test script
-9 verbose stack Error: api_automation@1.0.0 test: `mocha test.js --timeout 55000`
-9 verbose stack Exit status 39
+9 verbose stack Error: api_automation@1.0.0 test: `mocha test.js --timeout 99900`
+9 verbose stack Exit status 38
 9 verbose stack     at EventEmitter.<anonymous> (/usr/lib/node_modules/npm/lib/utils/lifecycle.js:217:16)
 9 verbose stack     at emitTwo (events.js:87:13)
 9 verbose stack     at EventEmitter.emit (events.js:172:7)
@@ -24,13 +24,13 @@
 14 error node v4.4.4
 15 error npm  v2.15.1
 16 error code ELIFECYCLE
-17 error api_automation@1.0.0 test: `mocha test.js --timeout 55000`
-17 error Exit status 39
-18 error Failed at the api_automation@1.0.0 test script 'mocha test.js --timeout 55000'.
+17 error api_automation@1.0.0 test: `mocha test.js --timeout 99900`
+17 error Exit status 38
+18 error Failed at the api_automation@1.0.0 test script 'mocha test.js --timeout 99900'.
 18 error This is most likely a problem with the api_automation package,
 18 error not with npm itself.
 18 error Tell the author that this fails on your system:
-18 error     mocha test.js --timeout 55000
+18 error     mocha test.js --timeout 99900
 18 error You can get information on how to open an issue for this project with:
 18 error     npm bugs api_automation
 18 error Or if that isn't available, you can get their info via:
